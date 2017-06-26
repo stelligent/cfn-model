@@ -1,0 +1,16 @@
+{
+  "Parameters": {
+    "VpcId": {
+      "Type": "AWS::EC2::VPC::Id"
+    }
+  },
+
+  "Resources": {
+    "sg": {
+      "Type" : "AWS::EC2::SecurityGroup",
+      "Properties" : {
+        "VpcId" : { "Ref": "VpcId" }
+      }
+    }
+  }
+}

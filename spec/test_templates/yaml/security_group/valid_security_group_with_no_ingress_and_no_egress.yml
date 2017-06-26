@@ -1,0 +1,12 @@
+---
+Parameters:
+  VpcId:
+    Type: "AWS::EC2::VPC::Id"
+
+Resources:
+  sg:
+    Type: "AWS::EC2::SecurityGroup"
+    Properties:
+      GroupDescription: "some_group_desc"
+      VpcId:
+        Ref: VpcId

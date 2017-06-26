@@ -1,0 +1,31 @@
+{
+  "Parameters": {
+    "VpcId": {
+      "Type": "AWS::EC2::VPC::Id"
+    }
+  },
+
+  "Resources": {
+    "sg3": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties": {
+        "GroupDescription": "some_group_desc",
+        "VpcId": {
+          "Ref": "VpcId"
+        }
+      }
+    },
+    "securityGroupIngress1": {
+      "Type": "AWS::EC2::SecurityGroupIngress",
+      "Properties": {
+        "GroupId": {
+          "Fn::GetAtt": ["reallycantfindit", "GroupId"]
+        },
+        "CidrIp": "10.1.2.3/32",
+        "FromPort": 34,
+        "ToPort": 36,
+        "IpProtocol": "tcp"
+      }
+    }
+  }
+}

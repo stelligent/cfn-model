@@ -1,0 +1,14 @@
+{
+  "Resources": {
+
+    "noSourceSecurityGroupIngress": {
+      "Type": "AWS::EC2::SecurityGroupIngress",
+      "Properties": {
+        "GroupId": "sg-12341234",
+        "FromPort": 80,
+        "ToPort": 80,
+        "IpProtocol": "tcp"
+      }
+    }
+  }
+}

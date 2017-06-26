@@ -1,0 +1,14 @@
+---
+Parameters:
+  SgId:
+    Type: "String"
+
+Resources:
+  securityGroupIngress2:
+    Type: "AWS::EC2::SecurityGroupIngress"
+    Properties:
+      GroupId: !Join ["-", ["sg", !Ref SgId]]
+      CidrIp: "10.1.2.3/32"
+      FromPort: 38
+      ToPort: 40
+      IpProtocol: tcp

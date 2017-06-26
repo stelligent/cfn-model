@@ -1,0 +1,10 @@
+---
+Resources:
+  securityGroupIngress1:
+    Type": "AWS::EC2::SecurityGroupIngress",
+    Properties:
+      GroupId: sg-29206a4f
+      CidrIp: "10.1.2.3/32"
+      FromPort: 34
+      ToPort: 36
+      IpProtocol: tcp
