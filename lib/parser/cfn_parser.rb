@@ -33,6 +33,7 @@ class CfnParser
     end
 
     cfn_model = CfnModel.new
+    cfn_model.raw_model = cfn_hash
 
       # pass 1: wire properties into ModelElement objects
     cfn_hash['Resources'].each do |resource_name, resource|

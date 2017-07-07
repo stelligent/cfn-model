@@ -1,5 +1,6 @@
 require_relative 'security_group_parser'
 require_relative 'iam_user_parser'
+require_relative 'iam_policy_parser'
 require_relative 'parser_registry'
 
 class ParserRegistry
@@ -8,7 +9,8 @@ class ParserRegistry
   def initialize
     @registry = {
       'AWS::EC2::SecurityGroup' => SecurityGroupParser,
-      'AWS::IAM::User' => IamUserParser
+      'AWS::IAM::User' => IamUserParser,
+      'AWS::IAM::Policy' => IamPolicyParser
     }
   end
 

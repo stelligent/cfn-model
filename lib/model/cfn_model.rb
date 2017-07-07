@@ -1,6 +1,12 @@
 class CfnModel
   attr_reader :resources
 
+  ##
+  # if you really want it, here it is.  you'll have to mess with structural nits of CloudFormation
+  # if you go in here and deal with variations between yaml/json refs and all that
+  #
+  attr_reader :raw_model
+
   def initialize
     @resources = {}
   end

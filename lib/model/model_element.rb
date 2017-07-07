@@ -15,6 +15,14 @@ module AWS
   module S3
 
   end
+
+  module SNS
+
+  end
+
+  module SQS
+
+  end
 end
 
 class ModelElement
