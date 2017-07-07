@@ -26,6 +26,18 @@
         "ToPort": 36,
         "IpProtocol": "tcp"
       }
+    },
+    "securityGroupIngress2": {
+      "Type": "AWS::EC2::SecurityGroupIngress",
+      "Properties": {
+        "GroupId": {
+          "Ref": "sg3"
+        },
+        "CidrIp": "10.1.2.4/32",
+        "FromPort": 55,
+        "ToPort": 56,
+        "IpProtocol": "tcp"
+      }
     }
   }
 }

@@ -1,0 +1,41 @@
+---
+Parameters:
+  groupNameParm:
+    Type: String
+
+Resources:
+  iamUserWithTwoAdditions:
+    Type: "AWS::IAM::User"
+    Properties:
+      Groups: ["groupA", "groupB"]
+    DependsOn: ["groupA", "groupB"]
+
+  groupA:
+    Type: "AWS::IAM::Group"
+    Properties:
+      GroupName: "groupA"
+
+  groupB:
+    Type: "AWS::IAM::Group"
+    Properties:
+      GroupName: !Ref groupNameParm
+
+  group1:
+    Type: "AWS::IAM::Group"
+
+  group2:
+    Type: "AWS::IAM::Group"
+
+  addition1:
+    Type: "AWS::IAM::UserToGroupAddition"
+    Properties:
+      GroupName: !Ref group1
+      Users:
+        - !Ref iamUserWithTwoAdditions
+
+  addition2:
+    Type: "AWS::IAM::UserToGroupAddition"
+    Properties:
+      GroupName: !Ref group2
+      Users:
+        - !Ref iamUserWithTwoAdditions

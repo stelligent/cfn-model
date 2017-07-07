@@ -1,0 +1,190 @@
+require 'spec_helper'
+require 'parser/cfn_parser'
+
+describe CfnParser do
+  before :each do
+    @cfn_parser = CfnParser.new
+  end
+
+  context 'a template with a security group without a group description' do
+    it 'returns a parse error' do
+      test_templates('security_group/security_group_without_description').each do |test_template|
+        begin
+          _ = @cfn_parser.parse IO.read(test_template)
+        rescue Exception => parse_error
+          begin
+            expect(parse_error.is_a?(ParserError)).to eq true
+            expect(parse_error.errors.size).to eq(1)
+            expect(parse_error.errors[0].to_s).to eq("[/Resources/sgNoDescription/Properties] key 'GroupDescription:' is required.")
+          rescue RSpec::Expectations::ExpectationNotMetError
+            $!.message << "in file: #{test_template}"
+            raise
+          end
+        end
+      end
+    end
+  end
+
+  context 'a security group without a VpcId' do
+    it 'returns a parse error' do
+      test_templates('security_group/security_group_without_vpc_id').each do |test_template|
+        begin
+          _ = @cfn_parser.parse IO.read(test_template)
+        rescue Exception => parse_error
+          begin
+            expect(parse_error.is_a?(ParserError)).to eq true
+            expect(parse_error.errors.size).to eq(1)
+            expect(parse_error.errors[0].to_s).to eq("[/Resources/sgNoVpcId/Properties] key 'VpcId:' is required.")
+          rescue RSpec::Expectations::ExpectationNotMetError
+            $!.message << "in file: #{test_template}"
+            raise
+          end
+        end
+      end
+    end
+  end
+
+  context 'a security group with no ingress and no egress rules' do
+    it 'returns a size-1 collection of SecurityGroup object with size-0 collection of rules' do
+      expected_security_groups = [
+        security_group_with_no_rules
+      ]
+
+      test_templates('security_group/valid_security_group_with_no_ingress_and_no_egress').each do |test_template|
+        cfn_model = @cfn_parser.parse IO.read(test_template)
+
+        expect(cfn_model.security_groups).to eq expected_security_groups
+      end
+    end
+  end
+
+  context 'a security group with one ingress and no egress rules' do
+    it 'returns a size-1 collection of SecurityGroup object with size-1 collection of ingress rules' do
+      expected_security_groups = [
+        security_group_with_one_ingress_rule
+      ]
+
+      test_templates('security_group/valid_security_group_with_single_ingress').each do |test_template|
+        cfn_model = @cfn_parser.parse IO.read(test_template)
+
+        expect(cfn_model.security_groups).to eq expected_security_groups
+      end
+    end
+  end
+
+  context 'a security group with two externalized ingress' do
+    it 'returns a size-1 collection of SecurityGroup object with size-1 collection of ingress rules' do
+      expected_security_groups = [
+        security_group_with_two_ingress_rules(id: 'sg3') do |_, ingress_rule1, ingress_rule2|
+          ingress_rule1.groupId =  { 'Ref' => 'sg3' }
+          ingress_rule2.groupId =  { 'Ref' => 'sg3' }
+        end
+      ]
+
+      test_templates('security_group/valid_security_group_with_externalized_ingress').each do |test_template|
+        cfn_model = @cfn_parser.parse IO.read(test_template)
+
+        expect(cfn_model.security_groups).to eq expected_security_groups
+      end
+    end
+  end
+
+
+  context 'a security group and an ingress with a GroupId that is an ImportedValue' do
+    it 'returns a size-1 collection of SecurityGroup object with size-0 collection of rules' do
+      expected_security_groups = [
+        security_group_with_no_rules
+      ]
+
+      test_templates('security_group/valid_standalone_ingress_with_imported_group_id').each do |test_template|
+        cfn_model = @cfn_parser.parse IO.read(test_template)
+
+        expect(cfn_model.security_groups).to eq expected_security_groups
+      end
+    end
+  end
+
+  context 'a security group and an ingress with a GroupId that is an nested stack output', :bad do
+    it 'returns a size-1 collection of SecurityGroup object with size-0 collection of rules' do
+      expected_security_groups = [
+        security_group_with_no_rules
+      ]
+
+      test_templates('security_group/valid_standalone_ingress_with_nested_stack_reference').each do |test_template|
+        cfn_model = @cfn_parser.parse IO.read(test_template)
+
+        expect(cfn_model.security_groups).to eq expected_security_groups
+      end
+    end
+  end
+
+  # @todo
+  context 'a security group with one externalized ingress - using GetAtt(GroupId)' do
+    it 'returns a size-1 collection of SecurityGroup object with size-2 collection of ingress rules' do
+      expected_security_groups = [
+        security_group_with_two_ingress_rules(id: 'sg3') do |_, ingress_rule1, ingress_rule2|
+          ingress_rule1.groupId = {'Fn::GetAtt' => 'sg3.GroupId'}
+          ingress_rule2.groupId = {'Fn::GetAtt' => %w(sg3 GroupId)}
+        end
+      ]
+
+      # the json and yml structure yield different GroupId which I don't think we need to care about at leat yet
+      # need separate test data for json/yml
+      yaml_test_templates('security_group/valid_security_group_with_externalized_ingress_via_getatt').each do |test_template|
+        cfn_model = @cfn_parser.parse IO.read(test_template)
+
+        expect(cfn_model.security_groups).to eq expected_security_groups
+      end
+    end
+  end
+
+  context 'a security group with one externalized ingress with a bad Ref for GroupId' do
+    it 'returns a ParserError' do
+      test_templates('security_group/security_group_with_invalid_standalone_ingress').each do |test_template|
+        expect {
+          _ = @cfn_parser.parse IO.read(test_template)
+        }.to raise_error(ParserError, 'Unresolved logical resource ids: ["cantfindthis"]')
+      end
+    end
+  end
+
+  context 'a security group with one externalized ingress with a bad Ref for GroupId' do
+    it 'returns a ParserError' do
+      test_templates('security_group/security_group_with_invalid_standalone_getatt').each do |test_template|
+        expect {
+          _ = @cfn_parser.parse IO.read(test_template)
+        }.to raise_error(ParserError, 'Unresolved logical resource ids: ["reallycantfindit"]')
+      end
+    end
+  end
+
+  context 'a security group with one inline and one externalized egress - using Ref(GroupId)', :egress do
+    it 'returns a size-2 collection of SecurityGroup object with size-1 collection of egress rules' do
+      expected_security_groups = [
+        security_group_with_one_egress_rule(security_group_id: 'sg1', egress_group_id: {'Ref' => 'sg1'}),
+        security_group_with_one_ingress_and_one_egress_rule(id: 'sg2'),
+        security_group_with_one_egress_rule(security_group_id: 'sg3', egress_group_id: nil) do |_, egress_rule|
+          egress_rule.cidrIp = '1.2.3.5/32'
+          egress_rule.fromPort = 57
+          egress_rule.toPort = 58
+        end
+      ]
+
+      test_templates('security_group/valid_security_group_with_egress').each do |test_template|
+        cfn_model = @cfn_parser.parse IO.read(test_template)
+
+        expect(cfn_model.security_groups).to eq expected_security_groups
+      end
+    end
+  end
+
+  context 'a security group with one externalized egress with a bad Ref for GroupId' do
+    it 'returns a ParserError' do
+      test_templates('security_group/security_group_with_invalid_standalone_egress').each do |test_template|
+        expect {
+          _ = @cfn_parser.parse IO.read(test_template)
+        }.to raise_error(ParserError, 'Unresolved logical resource ids: ["cantfindthis"]')
+      end
+    end
+  end
+end

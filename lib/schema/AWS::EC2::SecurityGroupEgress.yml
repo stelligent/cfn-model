@@ -1,0 +1,26 @@
+---
+type: map
+mapping:
+  Type:
+    type: str
+    pattern: /AWS::EC2::SecurityGroupEgress/
+  Properties:
+    type: map
+    required: yes
+    mapping:
+      FromPort:
+        type:   any
+        required: yes
+      GroupId:
+        type: any
+        required: yes
+      IpProtocol:
+        type:   any
+        required: yes
+      ToPort:
+        type:   any
+        required: yes
+      =:
+        type: any
+  =:
+    type: any

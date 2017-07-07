@@ -4,7 +4,7 @@ Parameters:
     Type: "AWS::EC2::VPC::Id"
 
 Resources:
-  sg3:
+  sgNoVpcId:
     Type: "AWS::EC2::SecurityGroup"
     Properties:
       GroupDescription: "some_group_desc"

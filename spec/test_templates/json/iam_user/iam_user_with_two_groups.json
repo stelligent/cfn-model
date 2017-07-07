@@ -1,0 +1,10 @@
+{
+  "Resources": {
+    "iamUserWithTwoGroups": {
+      "Type": "AWS::IAM::User",
+      "Properties": {
+        "Groups": ["group1", "group2"]
+      }
+    }
+  }
+}

@@ -1,0 +1,6 @@
+---
+Resources:
+  iamUserWithOneGroup:
+    Type: "AWS::IAM::User"
+    Properties:
+      Groups: group1

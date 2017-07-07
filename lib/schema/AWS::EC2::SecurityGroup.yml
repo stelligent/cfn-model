@@ -1,0 +1,20 @@
+---
+type: map
+mapping:
+  Type:
+    type: str
+    pattern: /AWS::EC2::SecurityGroup/
+  Properties:
+    type: map
+    required: yes
+    mapping:
+      GroupDescription:
+        type:   any
+        required: yes
+      VpcId:
+        type: any
+        required: yes
+      =:
+        type: any
+  =:
+    type: any

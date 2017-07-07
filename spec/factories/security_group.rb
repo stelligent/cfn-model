@@ -1,6 +1,7 @@
 require 'model/security_group'
 require 'model/security_group_ingress'
 
+
 def security_group_with_one_ingress_rule(security_group_id: 'sg2', ingress_group_id: nil)
   ingress_rule = SecurityGroupIngress.new
   ingress_rule.cidrIp = '10.1.2.3/32'
@@ -13,7 +14,7 @@ def security_group_with_one_ingress_rule(security_group_id: 'sg2', ingress_group
   expected_security_group.vpcId = { 'Ref' => 'VpcId' }
   expected_security_group.groupDescription = 'some_group_desc'
   expected_security_group.logical_resource_id = security_group_id
-  expected_security_group.add_ingress_rule ingress_rule
+  expected_security_group.securityGroupIngress << ingress_rule
 
   yield expected_security_group, ingress_rule if block_given?
   expected_security_group
@@ -49,8 +50,8 @@ def security_group_with_two_ingress_rules(id: 'sg2')
   expected_security_group.vpcId = { 'Ref' => 'VpcId' }
   expected_security_group.groupDescription = 'some_group_desc'
   expected_security_group.logical_resource_id = id
-  expected_security_group.add_ingress_rule ingress_rule
-  expected_security_group.add_ingress_rule ingress_rule2
+  expected_security_group.securityGroupIngress << ingress_rule
+  expected_security_group.securityGroupIngress << ingress_rule2
 
   yield expected_security_group, ingress_rule, ingress_rule2 if block_given?
   expected_security_group
@@ -68,7 +69,7 @@ def security_group_with_one_egress_rule(security_group_id: 'sg1', egress_group_i
   expected_security_group.vpcId = { 'Ref' => 'VpcId' }
   expected_security_group.groupDescription = 'some_group_desc'
   expected_security_group.logical_resource_id = security_group_id
-  expected_security_group.add_egress_rule egress_rule
+  expected_security_group.securityGroupEgress << egress_rule
 
   yield expected_security_group, egress_rule if block_given?
 
@@ -94,8 +95,8 @@ def security_group_with_one_ingress_and_one_egress_rule(id: 'sg2')
   expected_security_group.vpcId = { 'Ref' => 'VpcId' }
   expected_security_group.groupDescription = 'some_group_desc'
   expected_security_group.logical_resource_id = id
-  expected_security_group.add_ingress_rule ingress_rule
-  expected_security_group.add_egress_rule egress_rule
+  expected_security_group.securityGroupIngress << ingress_rule
+  expected_security_group.securityGroupEgress << egress_rule
 
   yield expected_security_group, ingress_rule, egress_rule if block_given?
   expected_security_group

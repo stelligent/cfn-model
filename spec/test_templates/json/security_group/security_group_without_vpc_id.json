@@ -1,6 +1,6 @@
 {
   "Resources": {
-    "sg": {
+    "sgNoVpcId": {
       "Type" : "AWS::EC2::SecurityGroup",
       "Properties" : {
         "GroupDescription" : "some_group_desc"

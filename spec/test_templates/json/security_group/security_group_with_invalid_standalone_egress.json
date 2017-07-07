@@ -16,32 +16,14 @@
       }
     },
     "securityGroupIngress1": {
-      "Type": "AWS::EC2::SecurityGroupIngress",
+      "Type": "AWS::EC2::SecurityGroupEgress",
       "Properties": {
         "GroupId": {
-          "Fn::GetAtt": [
-            "sg3",
-            "GroupId"
-          ]
+          "Ref": "cantfindthis"
         },
         "CidrIp": "10.1.2.3/32",
         "FromPort": 34,
         "ToPort": 36,
-        "IpProtocol": "tcp"
-      }
-    },
-    "securityGroupIngress2": {
-      "Type": "AWS::EC2::SecurityGroupIngress",
-      "Properties": {
-        "GroupId": {
-          "Fn::GetAtt": [
-            "sg3",
-            "GroupId"
-          ]
-        },
-        "CidrIp": "10.1.2.4/32",
-        "FromPort": 55,
-        "ToPort": 56,
         "IpProtocol": "tcp"
       }
     }

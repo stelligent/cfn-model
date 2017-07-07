@@ -1,12 +1,18 @@
-require 'parser/security_group_parser'
 
-class SecurityGroupYamlParser < SecurityGroupParser
-
-  protected
+##
+# this is a placeholder for anything related to resolving references
+#
+# not sure if we are going to be able to have a useful generic set of code for
+# references yet... in the meantime pile things up here and hope a pattern becomes
+# clear
+module References
+  def self.is_security_group_id_external(group_id)
+    resolve_security_group_id(group_id).nil?
+  end
 
   ##
   # Return nil if
-  def resolve_group_id(group_id)
+  def self.resolve_security_group_id(group_id)
     return nil if group_id.is_a? String
 
     # an imported value can only yield a literal to an external sg vs. referencing something local
@@ -24,8 +30,7 @@ class SecurityGroupYamlParser < SecurityGroupParser
 
   private
 
-  def logical_resource_id_from_get_att(attribute_spec)
-    puts attribute_spec
+  def self.logical_resource_id_from_get_att(attribute_spec)
     if attribute_spec.is_a? Array
       if attribute_spec[1] == 'GroupId'
         return attribute_spec.first
