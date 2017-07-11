@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
   s.summary       = 'cfn-model'
   s.description   = 'An object model for CloudFormation templates'
   s.homepage      = 'https://github.com/stelligent/cfn-model'
-  s.files         = FileList[ 'lib/**/*.rb' ]
+  s.files         = FileList[ 'lib/**/*.rb', 'lib/**/*.yml', 'lib/**/*.erb']
 
   s.require_paths << 'lib'
 

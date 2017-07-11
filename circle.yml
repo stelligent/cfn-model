@@ -3,7 +3,7 @@ deployment:
     branch: master
     commands:
       - git status
-      - ./publish.sh
+      #- ./publish.sh
 
 
 machine:

@@ -1,0 +1,32 @@
+---
+type: map
+mapping:
+  Type:
+    type: str
+    required: yes
+    pattern: /AWS::ElasticLoadBalancing::LoadBalancer/
+  Properties:
+    type: map
+    required: yes
+    mapping:
+      AccessLoggingPolicy:
+        type: map
+        required: no
+        mapping:
+          Enabled:
+            type: any
+            required: yes
+          S3BucketName:
+            type: any
+            required: yes
+          =:
+            type: any
+      Listeners:
+        type:   seq
+        required: yes
+        sequence:
+          - type:   any
+      =:
+        type: any
+  =:
+    type: any

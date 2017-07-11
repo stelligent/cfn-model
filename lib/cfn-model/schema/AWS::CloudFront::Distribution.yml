@@ -1,0 +1,42 @@
+---
+type: map
+mapping:
+  Type:
+    type: str
+    required: yes
+    pattern: /AWS::CloudFront::Distribution/
+  Properties:
+    type: map
+    required: yes
+    mapping:
+      DistributionConfig:
+        type:   map
+        required: yes
+        mapping:
+          Aliases:
+            type:   seq
+            required: no
+            sequence:
+              - type:   any
+          CacheBehaviors:
+            type:   seq
+            required: no
+            sequence:
+              - type:   any
+          DefaultCacheBehavior:
+            type: any
+            required: yes
+          Enabled:
+            type: any
+            required: yes
+          Origins:
+            type:   seq
+            required: yes
+            sequence:
+              - type:   any
+          =:
+            type: any
+      =:
+        type: any
+  =:
+    type: any

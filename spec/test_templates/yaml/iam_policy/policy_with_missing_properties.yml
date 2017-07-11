@@ -1,0 +1,5 @@
+---
+Resources:
+  policy:
+    Type: "AWS::IAM::Policy"
+    Properties: {}

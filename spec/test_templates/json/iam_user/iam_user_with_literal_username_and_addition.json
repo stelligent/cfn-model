@@ -1,0 +1,39 @@
+{
+  "Resources": {
+    "iamUserWithAddition": {
+      "Type": "AWS::IAM::User",
+      "Properties": {
+        "UserName" : "jimbob"
+      }
+    },
+
+    "groupA": {
+      "Type": "AWS::IAM::Group",
+      "Properties": {
+        "GroupName": "groupA"
+      }
+    },
+
+    "addition1": {
+      "Type": "AWS::IAM::UserToGroupAddition",
+      "Properties": {
+        "GroupName": "groupA",
+        "Users": [
+          "jimbob"
+        ]
+      },
+      "DependsOn": ["iamUserWithAddition", "groupA"]
+    },
+
+    "addition2": {
+      "Type": "AWS::IAM::UserToGroupAddition",
+      "Properties": {
+        "GroupName": "groupA",
+        "Users": [
+          "jimbobnothere"
+        ]
+      },
+      "DependsOn": ["groupA"]
+    }
+  }
+}

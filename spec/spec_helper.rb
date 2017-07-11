@@ -3,16 +3,15 @@ SimpleCov.start do
   add_filter 'spec/'
 end
 
-require 'model/model_element'
-include AWS::IAM
-include AWS::EC2
+require 'cfn-model/model/model_element'
 
 require 'factories/security_group'
 require 'factories/iam_user'
+require 'factories/iam_user'
+Dir["#{__dir__}/factories/*.rb"].each { |model| require "factories/#{File.basename(model, '.rb')}" }
+
 require 'json'
 require 'yaml'
-
-
 
 def test_templates(name)
   %W(

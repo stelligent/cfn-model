@@ -1,0 +1,29 @@
+Dir["#{__dir__}/*_parser.rb"].each { |model| require "cfn-model/parser/#{File.basename(model, '.rb')}" }
+
+class ParserRegistry
+  attr_reader :registry
+
+  def initialize
+    @registry = {
+      'AWS::EC2::SecurityGroup' => SecurityGroupParser,
+      'AWS::IAM::User' => IamUserParser,
+      'AWS::IAM::Role' => IamRoleParser,
+      'AWS::IAM::Policy' => WithPolicyDocumentParser,
+      'AWS::IAM::ManagedPolicy' => WithPolicyDocumentParser,
+      'AWS::SNS::TopicPolicy' => WithPolicyDocumentParser,
+      'AWS::S3::BucketPolicy' => WithPolicyDocumentParser,
+      'AWS::SQS::QueuePolicy' => WithPolicyDocumentParser
+    }
+  end
+
+  def self.instance
+    if @instance.nil?
+      @instance = ParserRegistry.new
+    end
+    @instance
+  end
+
+  # def add_parser(resource_name, parser)
+  #   @registry[resource_name] = parser
+  # end
+end

@@ -1,0 +1,28 @@
+---
+type: map
+mapping:
+  Type:
+    type: str
+    required: yes
+    pattern: /AWS::IAM::Role/
+  Properties:
+    type: map
+    required: yes
+    mapping:
+      ManagedPolicyArns:
+        type:   seq
+        required: no
+        sequence:
+          - type:   any
+      Policies:
+        type:   seq
+        required: no
+        sequence:
+          - type:   any
+      AssumeRolePolicyDocument:
+        type:   any
+        required: yes
+      =:
+        type: any
+  =:
+    type: any

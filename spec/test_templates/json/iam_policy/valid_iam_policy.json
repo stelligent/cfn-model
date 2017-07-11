@@ -1,0 +1,20 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Resources": {
+    "policy": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyName": "wilma",
+        "PolicyDocument": {
+          "Version" : "2012-10-17",
+          "Statement": {
+            "Effect": "Allow",
+            "Action": "*",
+            "Resource": "*"
+          }
+        },
+        "Groups": ["fredGroup"]
+      }
+    }
+  }
+}

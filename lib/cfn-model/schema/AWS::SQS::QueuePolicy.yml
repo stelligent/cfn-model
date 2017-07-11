@@ -1,0 +1,23 @@
+---
+type: map
+mapping:
+  Type:
+    type: str
+    required: yes
+    pattern: /AWS::SQS::QueuePolicy/
+  Properties:
+    type: map
+    required: yes
+    mapping:
+      PolicyDocument:
+        type:   any
+        required: yes
+      Queues:
+        type:   seq
+        required: yes
+        sequence:
+          - type:   any
+      =:
+        type: any
+  =:
+    type: any

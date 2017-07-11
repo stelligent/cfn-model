@@ -1,5 +1,5 @@
 require 'spec_helper'
-require 'parser/cfn_parser'
+require 'cfn-model/parser/cfn_parser'
 
 describe CfnParser do
   before :each do
@@ -62,4 +62,18 @@ describe CfnParser do
       end
     end
   end
+
+  context 'an iam user with four groups via addition' do
+    it 'returns a user with four groups' do
+      expected_iam_user = iam_user_with_one_addition
+
+      test_templates('iam_user/iam_user_with_literal_username_and_addition').each do |test_template|
+        cfn_model = @cfn_parser.parse IO.read(test_template)
+
+        expect(cfn_model.iam_users.size).to eq 1
+        expect(cfn_model.iam_users.first).to eq expected_iam_user
+      end
+    end
+  end
+
 end

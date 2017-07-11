@@ -1,5 +1,5 @@
 require 'spec_helper'
-require 'parser/cfn_parser'
+require 'cfn-model/parser/cfn_parser'
 
 describe CfnParser do
   before :each do

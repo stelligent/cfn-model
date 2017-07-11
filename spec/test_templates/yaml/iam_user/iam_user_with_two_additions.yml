@@ -23,9 +23,6 @@ Resources:
   group1:
     Type: "AWS::IAM::Group"
 
-  group2:
-    Type: "AWS::IAM::Group"
-
   addition1:
     Type: "AWS::IAM::UserToGroupAddition"
     Properties:
@@ -36,6 +33,6 @@ Resources:
   addition2:
     Type: "AWS::IAM::UserToGroupAddition"
     Properties:
-      GroupName: !Ref group2
+      GroupName: groupC
       Users:
         - !Ref iamUserWithTwoAdditions

@@ -1,0 +1,34 @@
+---
+type: map
+mapping:
+  Type:
+    type: str
+    required: yes
+    pattern: /AWS::IAM::ManagedPolicy/
+  Properties:
+    type: map
+    required: yes
+    mapping:
+      Groups:
+        type:   seq
+        required: no
+        sequence:
+          - type:   any
+      Roles:
+        type:   seq
+        required: no
+        sequence:
+          - type:   any
+      Users:
+        type:   seq
+        required: no
+        sequence:
+          - type:   any
+      PolicyDocument:
+        type:   any
+        required: yes
+
+      =:
+        type: any
+  =:
+    type: any
