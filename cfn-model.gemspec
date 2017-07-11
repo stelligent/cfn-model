@@ -5,7 +5,7 @@ Gem::Specification.new do |s|
   s.license       = 'MIT'
   s.version       = '0.0.0'
   s.bindir        = 'bin'
-  s.authors       = %w(someguy)
+  s.authors       = ['Eric Kascic']
   s.summary       = 'cfn-model'
   s.description   = 'An object model for CloudFormation templates'
   s.homepage      = 'https://github.com/stelligent/cfn-model'
