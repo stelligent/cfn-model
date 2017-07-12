@@ -33,10 +33,8 @@ other wrapped objects.
 The raw Hash output of `YAML.load` is also available from `CfnModel`.
 
     require 'cfn-model'
-    
-    cloudformation_hash = YAML.load 'some_cloudformation_template.yml'
-    
-    cfn_model = CfnParser.parse cloudformation_hash
+        
+    cfn_model = CfnParser.parse IO.read('some_cloudformation_template.yml')
     
     cfn_model.resources_by_type('AWS::IAM::User').each do |iam_user|
        # interrogate the iam_user
