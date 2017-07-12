@@ -46,6 +46,9 @@ class SchemaGenerator
         'mapping' => {
           'Type' => {
             'type' => 'str'
+          },
+          '=' => {
+            'type' => 'any'
           }
         }
       }
