@@ -82,7 +82,7 @@ class CfnParser
   def assign_fields_based_upon_properties(resource_object, resource)
     unless resource['Properties'].nil?
       resource['Properties'].each do |property_name, property_value|
-        resource_object.send("#{initialLower(property_name)}=", property_value)
+        resource_object.send("#{initial_lower(property_name)}=", property_value)
       end
     end
   end
@@ -91,7 +91,7 @@ class CfnParser
     begin
       resource_class = Object.const_get type_name, inherit=false
     rescue NameError
-      puts "Never seen class: #{type_name} so going dynamic"
+      # puts "Never seen class: #{type_name} so going dynamic"
       resource_class = Class.new(DynamicModelElement)
 
       begin
@@ -106,7 +106,7 @@ class CfnParser
     resource_class
   end
 
-  def initialLower(str)
+  def initial_lower(str)
     str.slice(0).downcase + str[1..(str.length)]
   end
 end
