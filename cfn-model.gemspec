@@ -4,6 +4,7 @@ Gem::Specification.new do |s|
   s.name          = 'cfn-model'
   s.license       = 'MIT'
   s.version       = '0.0.0'
+  s.executables   = %w(cfn_parse)
   s.authors       = ['Eric Kascic']
   s.summary       = 'cfn-model'
   s.description   = 'An object model for CloudFormation templates'

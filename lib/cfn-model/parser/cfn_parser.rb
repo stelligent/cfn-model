@@ -12,8 +12,11 @@ Dir["#{__dir__}/../model/*.rb"].each { |model| require "cfn-model/model/#{File.b
 #
 class CfnParser
   # this will convert any !Ref or !GetAtt into tranditional hash like in json
-  YAML.add_domain_type('', 'GetAtt') { |type, val| { 'Fn::GetAtt' => val } }
   YAML.add_domain_type('', 'Ref') { |type, val| { 'Ref' => val } }
+
+  %w(GetAtt Join Base64 Sub Split Select ImportValue GetAZs FindInMap And Or If Not).each do |function_name|
+    YAML.add_domain_type('', function_name) { |type, val| { "Fn::#{function_name}" => val } }
+  end
 
   ##
   # Given raw json/yml CloudFormation template, returns a CfnModel object
@@ -92,21 +95,32 @@ class CfnParser
       resource_class = Object.const_get type_name, inherit=false
     rescue NameError
       # puts "Never seen class: #{type_name} so going dynamic"
-      resource_class = Class.new(DynamicModelElement)
-
-      begin
-        module_constant = AWS.const_get(type_name.split('::')[1])
-      rescue NameError
-        module_constant = Module.new
-        module_constant.const_set(type_name.split('::')[1], module_constant)
-      end
-
-      module_constant.const_set(type_name.split('::')[2], resource_class)
+      resource_class = generate_resource_class_from_type type_name
     end
     resource_class
   end
 
   def initial_lower(str)
     str.slice(0).downcase + str[1..(str.length)]
+  end
+
+  def generate_resource_class_from_type(type_name)
+    resource_class = Class.new(DynamicModelElement)
+
+    module_names = type_name.split('::')
+    if module_names.first == 'Custom'
+      Object.const_set(module_names[1], resource_class)
+    elsif module_names.first == 'AWS'
+      begin
+        module_constant = AWS.const_get(module_names[1])
+      rescue NameError
+        module_constant = Module.new
+        module_constant.const_set(module_names[1], module_constant)
+      end
+      module_constant.const_set(module_names[2], resource_class)
+    else
+      raise "Unknown namespace in resource type: #{module_names.first}"
+    end
+    resource_class
   end
 end

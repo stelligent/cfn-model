@@ -37,6 +37,10 @@ module AWS
   end
 end
 
+module Custom
+
+end
+
 class ModelElement
   attr_accessor :logical_resource_id, :resource_type
 

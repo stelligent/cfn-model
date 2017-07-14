@@ -1,0 +1,8 @@
+#!/usr/bin/env ruby
+require 'cfn-model'
+
+puts '======'
+puts ARGV[0]
+puts '======'
+cfn_model = CfnParser.new.parse IO.read(ARGV[0])
+puts cfn_model

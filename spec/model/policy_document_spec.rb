@@ -25,4 +25,26 @@ describe PolicyDocument do
       end
     end
   end
+
+  describe '#wildcard_allowed_principals' do
+    context 'statement with wildcard principal' do
+      it 'returns array with the Statement' do
+        ok_statement = Statement.new
+        ok_statement.effect = 'Allow'
+        ok_statement.principal = '*'
+
+        bad_statement = Statement.new
+        bad_statement.effect = 'Allow'
+        bad_statement.principal = {
+          'AWS' => '1234'
+        }
+
+        policy_document = PolicyDocument.new
+        policy_document.statements << ok_statement
+        policy_document.statements << bad_statement
+
+        expect(policy_document.wildcard_allowed_principals).to eq [ok_statement]
+      end
+    end
+  end
 end

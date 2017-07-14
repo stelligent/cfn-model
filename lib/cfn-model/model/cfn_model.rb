@@ -39,4 +39,8 @@ class CfnModel
   def resources_by_type(resource_type)
     @resources.values.select { |resource| resource.resource_type == resource_type }
   end
+
+  def to_s
+    @resources.to_s
+  end
 end
