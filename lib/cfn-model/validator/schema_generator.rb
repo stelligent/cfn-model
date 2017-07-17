@@ -71,7 +71,7 @@ class SchemaGenerator
   end
 
   def schema_file(file)
-    "#{__dir__}/../schema/#{file}"
+    "#{__dir__}/../schema/#{file.gsub(/::/, '_')}"
   end
 
   def schema_for_type(type)
