@@ -12,7 +12,13 @@
         "GroupDescription": "some_group_desc",
         "VpcId": {
           "Ref": "VpcId"
-        }
+        },
+        "Tags": [
+          {
+            "Key" : "Vintage",
+            "Value" : "1995"
+          }
+        ]
       }
     },
 

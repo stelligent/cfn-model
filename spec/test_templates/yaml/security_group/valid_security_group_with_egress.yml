@@ -10,6 +10,9 @@ Resources:
       GroupDescription: "some_group_desc"
       VpcId:
         Ref: VpcId
+      Tags:
+        - Key: Vintage
+          Value: '1995'
 
   sg2:
     Type: "AWS::EC2::SecurityGroup"
