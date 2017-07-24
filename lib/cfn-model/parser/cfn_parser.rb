@@ -105,7 +105,7 @@ class CfnParser
   end
 
   def generate_resource_class_from_type(type_name)
-    resource_class = Class.new(DynamicModelElement)
+    resource_class = Class.new(ModelElement)
 
     module_names = type_name.split('::')
     if module_names.first == 'Custom'
