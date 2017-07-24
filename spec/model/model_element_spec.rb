@@ -5,7 +5,28 @@ class AnotherResource < ModelElement
   attr_accessor :field1
 end
 
+class SomeResource < ModelElement
+
+end
+
+
 describe ModelElement do
+  context 'an untouched object without any instance variables' do
+    it 'assigns an instance variable' do
+      some_resource = SomeResource.new
+      some_resource.random_property_name = 'uncle_freddie'
+
+      expect(some_resource.random_property_name).to eq 'uncle_freddie'
+    end
+  end
+
+  context 'an untouched object without any instance variables' do
+    it 'returns nil when no instance variable has been set' do
+      some_resource = SomeResource.new
+      expect(some_resource.random_property_name2).to be_nil
+    end
+  end
+
   describe '#to_s' do
     context 'field1 has value' do
       it 'returns string with field1 value' do

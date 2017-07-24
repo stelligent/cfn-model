@@ -87,7 +87,7 @@ END
         expect(cfn_model.resources.size).to eq 1
 
         time_travel_machine = cfn_model.resources_by_type('AWS::TimeTravel::Machine').first
-        expect(time_travel_machine.is_a?(DynamicModelElement)).to eq true
+        expect(time_travel_machine.is_a?(ModelElement)).to eq true
         expect(time_travel_machine.fuel).to eq 'dilithium'
       end
     end
