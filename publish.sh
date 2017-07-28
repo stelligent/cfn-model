@@ -29,7 +29,7 @@ else
   new_version=0.1.$((current_version+1))
 fi
 
-sed -i "s/0\.1\.0/${new_version}/g" ${gem_name}.gemspec
+sed -i "s/9\.9\.9/${new_version}/g" ${gem_name}.gemspec
 
 #on circle ci - head is ambiguous for reasons that i don't grok
 #we haven't made the new tag and we can't if we are going to annotate
