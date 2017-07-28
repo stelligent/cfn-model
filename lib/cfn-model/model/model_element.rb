@@ -12,6 +12,10 @@ module AWS
 
   end
 
+  module ElasticLoadBalancingV2
+
+  end
+
   module IAM
 
   end

@@ -1,20 +1,14 @@
 require_relative 'model_element'
 
-class AWS::IAM::Role  < ModelElement
+class AWS::IAM::Role < ModelElement
   attr_accessor :roleName, :assumeRolePolicyDocument, :policies, :path, :managedPolicyArns
+
+  attr_accessor :policy_objects, :assume_role_policy_document
 
   def initialize
     @policies = []
     @managedPolicyArns = []
+    @policy_objects = []
     @resource_type = 'AWS::IAM::Role'
-  end
-end
-
-class Policy
-  attr_accessor :policyName, :policyDocument
-
-  def ==(another_policy)
-    policyName == another_policy.policyName &&
-      policyDocument == another_policy.policyDocument
   end
 end

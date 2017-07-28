@@ -13,7 +13,15 @@ def valid_iam_policy
 
   role = AWS::IAM::Policy.new
   role.policyName = 'wilma'
-  role.policyDocument = policy_document
+  role.policyDocument = {
+    'Version'=> '2012-10-17',
+    'Statement'=> {
+      'Effect' => 'Allow',
+      'Action' => '*',
+      'Resource' => '*'
+    }
+  }
+  role.policy_document = policy_document
   role.groups = %w(fredGroup)
   role
 end

@@ -161,7 +161,7 @@ describe CfnParser do
   context 'a security group with one inline and one externalized egress - using Ref(GroupId)', :egress do
     it 'returns a size-2 collection of SecurityGroup object with size-1 collection of egress rules' do
       expected_security_groups = [
-        security_group_with_one_egress_rule(security_group_id: 'sg1', egress_group_id: {'Ref' => 'sg1'}) do |sg, _|
+        security_group_with_one_external_egress_rule(security_group_id: 'sg1', egress_group_id: {'Ref' => 'sg1'}) do |sg, _|
           sg.tags = [
             {
               'Key' => 'Vintage',
@@ -170,10 +170,14 @@ describe CfnParser do
           ]
         end,
         security_group_with_one_ingress_and_one_egress_rule(id: 'sg2'),
-        security_group_with_one_egress_rule(security_group_id: 'sg3', egress_group_id: nil) do |_, egress_rule|
+        security_group_with_one_egress_rule(security_group_id: 'sg3', egress_group_id: nil) do |_, egress_rule, raw_egress|
           egress_rule.cidrIp = '1.2.3.5/32'
           egress_rule.fromPort = 57
           egress_rule.toPort = 58
+
+          raw_egress['CidrIp'] = '1.2.3.5/32'
+          raw_egress['FromPort'] = 57
+          raw_egress['ToPort'] = 58
         end
       ]
 

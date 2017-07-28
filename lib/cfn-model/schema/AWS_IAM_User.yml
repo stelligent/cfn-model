@@ -18,8 +18,8 @@ mapping:
         required: no
         mapping:
           Password:
-           type: any
-           required: yes
+            type: any
+            required: yes
           =:
             type: any
       ManagedPolicyArns:

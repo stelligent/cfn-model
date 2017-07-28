@@ -40,6 +40,24 @@ class CfnModel
     @resources.values.select { |resource| resource.resource_type == resource_type }
   end
 
+  def find_security_group_by_group_id(security_group_reference)
+    security_group_id = References.resolve_security_group_id(security_group_reference)
+    if security_group_id.nil?
+      # leave it alone since external ref or something we don't grok
+      security_group_reference
+    else
+      matched_security_group = security_groups.find do |security_group|
+        security_group.logical_resource_id == security_group_id
+      end
+      if matched_security_group.nil?
+        # leave it alone since external ref or something we don't grok
+        security_group_reference
+      else
+        matched_security_group
+      end
+    end
+  end
+
   def to_s
     @resources.to_s
   end

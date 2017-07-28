@@ -15,6 +15,20 @@ mapping:
       VpcId:
         type: any
         required: yes
+      Tags:
+        type:   seq
+        required: no
+        sequence:
+          - type: map
+            mapping:
+              Key:
+                type: any
+                required: yes
+              Value:
+                type: any
+                required: yes
+              =:
+                type: any
 # this can be a Hash or an Array... kwalify doesn't seem to have a union concept so defer any such
 # validation into the parser object
 #      SecurityGroupIngress:

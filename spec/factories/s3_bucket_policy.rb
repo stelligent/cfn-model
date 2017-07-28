@@ -16,6 +16,18 @@ def valid_bucket_policy
   bucket_policy.bucket = {
     'Ref' => 'S3Bucket'
   }
-  bucket_policy.policyDocument = policy_document
+  bucket_policy.policy_document = policy_document
+  bucket_policy.policyDocument = {
+    'Statement' => [
+      {
+        'Effect' => 'Allow',
+        'Action' => ['*'],
+        'Resource' => 'arn:aws:s3:::fakebucketfakebucket/*',
+        'Principal' => {
+          'AWS' => ['156460612806']
+        }
+      }
+    ]
+  }
   bucket_policy
 end

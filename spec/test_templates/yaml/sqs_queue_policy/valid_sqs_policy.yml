@@ -1,0 +1,20 @@
+---
+Parameters:
+  Queues:
+    Type: "List<AWS::SQS::Queue>"
+
+Resources:
+  MyQueuePolicy:
+    Type: "AWS::SQS::QueuePolicy"
+    Properties:
+      Queues: !Ref Queues
+
+      PolicyDocument:
+        Version: "2012-10-17"
+        Id: "MyQueuePolicy"
+        Statement:
+          - Sid: "Allow-SendMessage-To-Both-Queues-From-SNS-Topic"
+            Effect: Allow
+            Principal: "*"
+            Action: ["sqs:SendMessage"]
+            Resource: "*"

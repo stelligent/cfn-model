@@ -1,0 +1,23 @@
+---
+Parameters:
+  SubnetId:
+    Type: "AWS::EC2::Subnet::Id"
+    Default: subnet-d7a7a4eb
+  VpcId:
+    Type: "AWS::EC2::VPC::Id"
+    Default: vpc-e91e8490
+  CentrallyMaintainedSgId:
+    Type: "AWS::EC2::SecurityGroup::Id"
+    Default: sg-12345
+
+Resources:
+  myEni:
+    Type: AWS::EC2::NetworkInterface
+    Properties:
+      GroupSet:
+        - !Ref CentrallyMaintainedSgId
+      PrivateIpAddress: 10.0.1.44
+      SubnetId: !Ref SubnetId
+      Tags:
+        - Key: Name
+          Value: PrimaryCaboWabo3

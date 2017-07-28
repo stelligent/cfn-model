@@ -24,7 +24,7 @@ class SecurityGroupParser
       security_group.securityGroupIngress = [security_group.securityGroupIngress]
     end
 
-    security_group.securityGroupIngress = security_group.securityGroupIngress.map do |ingress|
+    security_group.ingresses = security_group.securityGroupIngress.map do |ingress|
       ingress_object = AWS::EC2::SecurityGroupIngress.new
       ingress.each do |k,v|
         ingress_object.send("#{initialLower(k)}=", v)
@@ -39,7 +39,7 @@ class SecurityGroupParser
       security_group.securityGroupEgress = [security_group.securityGroupEgress]
     end
 
-    security_group.securityGroupEgress = security_group.securityGroupEgress.map do |egress|
+    security_group.egresses = security_group.securityGroupEgress.map do |egress|
       egress_object = AWS::EC2::SecurityGroupEgress.new
       egress.each do |k,v|
         egress_object.send("#{initialLower(k)}=", v)
@@ -62,7 +62,7 @@ class SecurityGroupParser
       next if group_id.nil?
 
       if security_group.logical_resource_id == group_id
-        security_group.securityGroupIngress << security_group_ingress
+        security_group.ingresses << security_group_ingress
       end
     end
   end
@@ -76,7 +76,7 @@ class SecurityGroupParser
       next if group_id.nil?
 
       if security_group.logical_resource_id == group_id
-        security_group.securityGroupEgress << security_group_egress
+        security_group.egresses << security_group_egress
       end
     end
   end

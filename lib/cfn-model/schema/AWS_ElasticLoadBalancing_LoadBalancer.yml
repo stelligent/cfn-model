@@ -21,11 +21,167 @@ mapping:
             required: yes
           =:
             type: any
+      AppCookieStickinessPolicy:
+        type:   seq
+        required: no
+        sequence:
+          - type:   map
+            mapping:
+              CookieName:
+                type: any
+                required: yes
+              PolicyName:
+                type: any
+                required: yes
+              =:
+                type: any
+
+      # sigh this could be List<AWS::EC2::AvailabilityZone::Name> so can't enfore seq
+      AvailabilityZones:
+        type:   any
+        required: no
+
+      ConnectionDrainingPolicy:
+        type: map
+        required: no
+        mapping:
+          Enabled:
+            type: any
+            required: yes
+          Timeout:
+            type: any
+            required: no
+          =:
+            type: any
+      ConnectionSettings:
+        type: map
+        required: no
+        mapping:
+          IdleTimeout:
+            type: any
+            required: yes
+          =:
+            type: any
+      HealthCheck:
+        type: map
+        required: no
+        mapping:
+          HealthyThreshold:
+            type: any
+            required: yes
+          Interval:
+            type: any
+            required: yes
+          Target:
+            type: any
+            required: yes
+          Timeout:
+            type: any
+            required: yes
+          UnhealthyThreshold:
+            type: any
+            required: yes
+          =:
+            type: any
+
+      # sigh this could be List<AWS::EC2::Instance::Id> so can't enfore seq
+      Instances:
+        type:   any
+        required: no
+
+      LBCookieStickinessPolicy:
+        type: map
+        required: no
+        mapping:
+          CookieExpirationPeriod:
+            type: any
+            required: no
+          PolicyName:
+            type: any
+            required: yes
+          =:
+            type: any
       Listeners:
         type:   seq
         required: yes
         sequence:
-          - type:   any
+          - type: map
+            mapping:
+              InstancePort:
+                type: any
+                required: yes
+              LoadBalancerPort:
+                type: any
+                required: yes
+              PolicyNames:
+                type:   seq
+                required: no
+                sequence:
+                  - type:   any
+              =:
+                type: any
+      Policies:
+        type:   seq
+        required: no
+        sequence:
+          - type: map
+            mapping:
+              Attributes:
+                type:   seq
+                required: yes
+                sequence:
+                  - type: map
+                    required: yes
+                    mapping:
+                      Name:
+                        type: any
+                        required: yes
+                      Value:
+                        type: any
+                        required: yes
+                      =:
+                        type: any
+              InstancePorts:
+                type:   seq
+                required: no
+                sequence:
+                  - type:   any
+              LoadBalancerPorts:
+                type:   seq
+                required: no
+                sequence:
+                  - type:   any
+              PolicyName:
+                type: any
+                required: yes
+              PolicyType:
+                type: any
+                required: yes
+
+      # sigh this could be List<AWS::EC2::SecurityGroup::Id> so can't enfore seq
+      SecurityGroups:
+        type:   any
+        required: no
+
+      # sigh this could be List<AWS::EC2::Subnet::Id> so can't enfore seq
+      Subnets:
+        type:   any
+        required: no
+
+      Tags:
+        type:   seq
+        required: no
+        sequence:
+          - type: map
+            mapping:
+              Key:
+                type: any
+                required: yes
+              Value:
+                type: any
+                required: yes
+              =:
+                type: any
       =:
         type: any
   =:

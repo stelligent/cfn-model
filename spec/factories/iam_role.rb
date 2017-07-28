@@ -23,12 +23,35 @@ def iam_role_with_single_statement
   policy_document.statements << statement
 
   policy = Policy.new
-  policy.policyName = 'root'
-  policy.policyDocument = policy_document
+  policy.policy_name = 'root'
+  policy.policy_document = policy_document
 
   role = AWS::IAM::Role.new
   role.path = '/'
-  role.assumeRolePolicyDocument = trust_policy
-  role.policies << policy
+  role.assumeRolePolicyDocument = {
+    'Version'=> '2012-10-17',
+    'Statement'=> {
+      'Effect' => 'Allow',
+      'Principal' => {
+        'Service' => ['ec2.amazonaws.com'],
+        'AWS' => 'arn:aws:iam::324320755747:root'
+      },
+      'Action' => ['sts:AssumeRole']
+    }
+  }
+  role.assume_role_policy_document = trust_policy
+  role.policy_objects << policy
+  role.policies << {
+    'PolicyName' => 'root',
+    'PolicyDocument' => {
+      'Version' => '2012-10-17',
+      'Statement' => {
+        'Effect' => 'Allow',
+        'Action' => '*',
+        'Resource' => '*'
+      }
+    }
+  }
+
   role
 end

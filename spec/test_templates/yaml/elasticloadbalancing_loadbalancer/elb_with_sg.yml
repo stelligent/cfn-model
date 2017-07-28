@@ -1,0 +1,32 @@
+---
+Parameters:
+  SubnetId:
+    Type: "AWS::EC2::Subnet::Id"
+    Default: subnet-d7a7a4eb
+  VpcId:
+    Type: "AWS::EC2::VPC::Id"
+    Default: vpc-e91e8490
+Resources:
+  MyLoadBalancer:
+    Type: AWS::ElasticLoadBalancing::LoadBalancer
+    Properties:
+      Listeners:
+        - LoadBalancerPort: '80'
+          InstancePort: '80'
+          Protocol: HTTP
+      SecurityGroups:
+        - !Ref httpSg
+      Subnets:
+        - !Ref SubnetId
+
+  httpSg:
+    Type: "AWS::EC2::SecurityGroup"
+    Properties:
+      GroupDescription: "some_group_desc"
+      SecurityGroupIngress:
+        CidrIp: "0.0.0.0/0"
+        FromPort: 80
+        ToPort: 80
+        IpProtocol: tcp
+      VpcId:
+        Ref: VpcId

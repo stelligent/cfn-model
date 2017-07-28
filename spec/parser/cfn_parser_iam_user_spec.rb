@@ -52,7 +52,7 @@ describe CfnParser do
 
   context 'an iam user with four groups via addition' do
     it 'returns a user with four groups' do
-      expected_iam_user = iam_user_with_four_groups
+      expected_iam_user = iam_user_with_two_groups_and_two_additions
 
       test_templates('iam_user/iam_user_with_two_additions').each do |test_template|
         cfn_model = @cfn_parser.parse IO.read(test_template)

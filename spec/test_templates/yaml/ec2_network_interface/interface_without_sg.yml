@@ -1,0 +1,15 @@
+---
+Parameters:
+  SubnetId:
+    Type: "AWS::EC2::Subnet::Id"
+    Default: subnet-d7a7a4eb
+
+Resources:
+  myEni:
+    Type: AWS::EC2::NetworkInterface
+    Properties:
+      PrivateIpAddress: 10.0.1.44
+      SubnetId: !Ref SubnetId
+      Tags:
+        - Key: Name
+          Value: PrimaryCaboWabo2

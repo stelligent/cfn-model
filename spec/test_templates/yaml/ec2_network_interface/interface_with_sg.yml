@@ -1,0 +1,36 @@
+---
+Parameters:
+  SubnetId:
+    Type: "AWS::EC2::Subnet::Id"
+    Default: subnet-d7a7a4eb
+  VpcId:
+    Type: "AWS::EC2::VPC::Id"
+    Default: vpc-e91e8490
+
+Resources:
+  myEni:
+    Type: AWS::EC2::NetworkInterface
+    Properties:
+      GroupSet:
+        - !Ref sg2
+      PrivateIpAddress: 10.0.1.44
+      SubnetId: !Ref SubnetId
+      Tags:
+        - Key: Name
+          Value: PrimaryCaboWabo
+  sg2:
+    Type: "AWS::EC2::SecurityGroup"
+    Properties:
+      GroupDescription: "some_group_desc"
+      SecurityGroupIngress:
+        - CidrIp: "10.1.2.3/32"
+          FromPort: 34
+          ToPort: 36
+          IpProtocol: tcp
+      SecurityGroupEgress:
+        - CidrIp: "1.2.3.4/32"
+          FromPort: 55
+          ToPort: 56
+          IpProtocol: tcp
+      VpcId:
+        Ref: VpcId

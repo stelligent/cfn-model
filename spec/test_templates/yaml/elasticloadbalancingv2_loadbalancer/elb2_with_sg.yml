@@ -1,0 +1,38 @@
+---
+Parameters:
+  SubnetId1:
+    Type: "AWS::EC2::Subnet::Id"
+    Default: subnet-d7a7a4eb
+  SubnetId2:
+    Type: "AWS::EC2::Subnet::Id"
+    Default: subnet-d7a7a4eb
+  VpcId:
+    Type: "AWS::EC2::VPC::Id"
+    Default: vpc-e91e8490
+
+Resources:
+  MyLoadBalancer:
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+    Properties:
+      Scheme: internal
+      Subnets:
+        - Ref: SubnetId1
+        - Ref: SubnetId2
+      LoadBalancerAttributes:
+        - Key: idle_timeout.timeout_seconds
+          Value: '50'
+      SecurityGroups:
+        - !Ref httpSg
+
+  httpSg:
+    Type: "AWS::EC2::SecurityGroup"
+    Properties:
+      GroupDescription: "some_group_desc"
+      SecurityGroupIngress:
+        CidrIp: "0.0.0.0/0"
+        FromPort: 80
+        ToPort: 80
+        IpProtocol: tcp
+      VpcId:
+        Ref: VpcId
+

@@ -1,0 +1,35 @@
+---
+Parameters:
+  SubnetId:
+    Type: "AWS::EC2::Subnet::Id"
+    Default: subnet-d7a7a4eb
+  VpcId:
+    Type: "AWS::EC2::VPC::Id"
+    Default: vpc-e91e8490
+
+Resources:
+  ec2Instance:
+    Type: AWS::EC2::Instance
+    Properties:
+      InstanceType: t2.nano
+      ImageId: ami-a4c7edb2
+      SubnetId: !Ref SubnetId
+      SecurityGroupIds:
+        - !Ref sg2
+
+  sg2:
+    Type: "AWS::EC2::SecurityGroup"
+    Properties:
+      GroupDescription: "some_group_desc"
+      SecurityGroupIngress:
+        - CidrIp: "10.1.2.3/32"
+          FromPort: 34
+          ToPort: 36
+          IpProtocol: tcp
+      SecurityGroupEgress:
+        - CidrIp: "1.2.3.4/32"
+          FromPort: 55
+          ToPort: 56
+          IpProtocol: tcp
+      VpcId:
+        Ref: VpcId
