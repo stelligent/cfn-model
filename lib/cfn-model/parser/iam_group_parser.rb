@@ -8,8 +8,8 @@ class IamGroupParser
 
     iam_group.policy_objects = iam_group.policies.map do |policy|
       new_policy = Policy.new
-      new_policy.policyName = policy['PolicyName']
-      new_policy.policyDocument = PolicyDocumentParser.new.parse(policy['PolicyDocument'])
+      new_policy.policy_name = policy['PolicyName']
+      new_policy.policy_document = PolicyDocumentParser.new.parse(policy['PolicyDocument'])
       new_policy
     end
     iam_group

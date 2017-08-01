@@ -1,0 +1,12 @@
+---
+Resources:
+  iamGroup:
+    Type: "AWS::IAM::Group"
+    Properties:
+      Policies:
+        - PolicyDocument:
+            Statement:
+              Effect: Allow
+              Action: '*'
+              Resource: '*'
+          PolicyName: jimbob

@@ -1,0 +1,4 @@
+---
+Resources:
+  iamGroup:
+    Type: "AWS::IAM::Group"
