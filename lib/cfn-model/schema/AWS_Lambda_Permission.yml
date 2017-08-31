@@ -16,7 +16,7 @@ mapping:
         type: any
         required: yes
       Principal:
-        type: str
+        type: any
         required: yes
       =:
         type: any
