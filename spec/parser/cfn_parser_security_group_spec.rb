@@ -123,7 +123,7 @@ describe CfnParser do
     it 'returns a size-1 collection of SecurityGroup object with size-2 collection of ingress rules' do
       expected_security_groups = [
         security_group_with_two_ingress_rules(id: 'sg3') do |_, ingress_rule1, ingress_rule2|
-          ingress_rule1.groupId = {'Fn::GetAtt' => 'sg3.GroupId'}
+          ingress_rule1.groupId = {'Fn::GetAtt' => %w(sg3 GroupId)}
           ingress_rule2.groupId = {'Fn::GetAtt' => %w(sg3 GroupId)}
         end
       ]

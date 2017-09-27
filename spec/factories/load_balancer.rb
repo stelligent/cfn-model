@@ -78,3 +78,21 @@ def load_balancer2_with_open_http_ingress
   ]
   expected_load_balancer
 end
+
+
+def network_load_balancer
+  expected_load_balancer = AWS::ElasticLoadBalancingV2::LoadBalancer.new
+  expected_load_balancer.scheme = 'internet-facing'
+  expected_load_balancer.type = 'network'
+  expected_load_balancer.subnetMappings = [
+    {
+      'AllocationId' => { 'Fn::GetAtt' => ['FirstEIP','AllocationId']},
+      'SubnetId' => {'Ref'=>'SubnetId1'}
+    },
+    {
+      'AllocationId' => { 'Fn::GetAtt' => ['SecondEIP','AllocationId']},
+      'SubnetId' => {'Ref'=>'SubnetId2'}
+    }
+  ]
+  expected_load_balancer
+end

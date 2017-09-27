@@ -1,0 +1,33 @@
+---
+Parameters:
+  SubnetId1:
+    Type: "AWS::EC2::Subnet::Id"
+    Default: subnet-d7a7a4eb
+  SubnetId2:
+    Type: "AWS::EC2::Subnet::Id"
+    Default: subnet-d7a7a4eb
+  VpcId:
+    Type: "AWS::EC2::VPC::Id"
+    Default: vpc-e91e8490
+
+Resources:
+  MyLoadBalancer:
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+    Properties:
+      Type: network
+      Scheme: internet-facing
+      SubnetMappings:
+        - AllocationId: !GetAtt FirstEIP.AllocationId
+          SubnetId: !Ref SubnetId1
+        - AllocationId: !GetAtt SecondEIP.AllocationId
+          SubnetId: !Ref SubnetId2
+
+  FirstEIP:
+    Type: 'AWS::EC2::EIP'
+    Properties:
+      Domain: vpc
+
+  SecondEIP:
+    Type: 'AWS::EC2::EIP'
+    Properties:
+      Domain: vpc

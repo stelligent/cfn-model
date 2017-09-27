@@ -39,4 +39,16 @@ describe CfnParser, :elb do
       end
     end
   end
+
+  context 'a template with a network load balancer' do
+    it 'returns a LoadBalancer of a network type' do
+      expected_load_balancer = network_load_balancer
+
+      yaml_test_templates('elasticloadbalancingv2_loadbalancer/network_load_balancer').each do |test_template|
+        cfn_model = @cfn_parser.parse IO.read(test_template)
+
+        expect(cfn_model.resources_by_type('AWS::ElasticLoadBalancingV2::LoadBalancer').first).to eq expected_load_balancer
+      end
+    end
+  end
 end

@@ -17,7 +17,7 @@ describe CfnParser do
         expect(custom_resources.size).to eq 1
         actual_custom_resource = custom_resources.first
         expect(actual_custom_resource.serviceToken).to eq({
-                                                                    'Fn::GetAtt' => 'TestLambdaFunction.Arn'
+                                                                    'Fn::GetAtt' => %w(TestLambdaFunction Arn)
                                                                   })
       end
     end
