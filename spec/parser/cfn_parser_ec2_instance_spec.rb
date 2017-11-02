@@ -24,4 +24,19 @@ describe CfnParser do
       end
     end
   end
+
+  context 'an ec2 instance with a ref to a list of security group ids', :ec2 do
+    it 'returns ec2 instance with security group' do
+      yaml_test_templates('ec2_instance/instance_with_sgid_list_ref').each do |test_template|
+        cfn_model = @cfn_parser.parse IO.read(test_template)
+
+        ec2_instances = cfn_model.resources_by_type('AWS::EC2::Instance')
+
+        expect(ec2_instances.size).to eq 1
+        ec2_instance = ec2_instances.first
+
+        expect(ec2_instance.security_groups.size).to eq 0
+      end
+    end
+  end
 end
