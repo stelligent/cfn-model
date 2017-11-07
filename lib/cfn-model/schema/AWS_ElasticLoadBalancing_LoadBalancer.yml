@@ -21,6 +21,8 @@ mapping:
             required: yes
           =:
             type: any
+
+      # beware of Fn::If
       AppCookieStickinessPolicy:
         type:   seq
         required: no
@@ -101,6 +103,8 @@ mapping:
             required: yes
           =:
             type: any
+
+      # beware of Fn::If
       Listeners:
         type:   seq
         required: yes
@@ -113,19 +117,17 @@ mapping:
               LoadBalancerPort:
                 type: any
                 required: yes
-              PolicyNames:
-                type:   seq
-                required: no
-                sequence:
-                  - type:   any
               =:
                 type: any
+
+      # beware of Fn::If
       Policies:
         type:   seq
         required: no
         sequence:
           - type: map
             mapping:
+              # beware of Fn::If      
               Attributes:
                 type:   seq
                 required: yes
@@ -141,22 +143,24 @@ mapping:
                         required: yes
                       =:
                         type: any
-              InstancePorts:
-                type:   seq
-                required: no
-                sequence:
-                  - type:   any
-              LoadBalancerPorts:
-                type:   seq
-                required: no
-                sequence:
-                  - type:   any
+#              InstancePorts:
+#                type:   seq
+#                required: no
+#                sequence:
+#                  - type:   any
+#              LoadBalancerPorts:
+#                type:   seq
+#                required: no
+#                sequence:
+#                  - type:   any
               PolicyName:
                 type: any
                 required: yes
               PolicyType:
                 type: any
                 required: yes
+              =:
+                type: any
 
       # sigh this could be List<AWS::EC2::SecurityGroup::Id> so can't enfore seq
       SecurityGroups:
