@@ -18,6 +18,22 @@ describe CfnParser, :elb do
     end
   end
 
+  context 'a template with an ELB and a conditional policy on listener' do
+    it 'returns a LoadBalancer' do
+      json_test_templates('elasticloadbalancing_loadbalancer/load_balancer_with_conditional_policy_names').each do |test_template|
+        cfn_model = @cfn_parser.parse IO.read(test_template)
+
+        expect(cfn_model.resources_by_type('AWS::ElasticLoadBalancing::LoadBalancer').first.appCookieStickinessPolicy).to eq({
+          'Fn::If' => [
+            'EnableAppCookie',
+            [ {'PolicyName' => 'AppStickiness', 'CookieName' => 'unclefreddie'} ],
+            { 'Ref' => 'AWS::NoValue'}
+          ]
+        })
+      end
+    end
+  end
+
   # context 'a template with an ELB2 and only 1 subnet' do
   #   it 'raises an error' do
   #     yaml_test_templates('elasticloadbalancingv2_loadbalancer/elb2_with_one_subnet').each do |test_template|

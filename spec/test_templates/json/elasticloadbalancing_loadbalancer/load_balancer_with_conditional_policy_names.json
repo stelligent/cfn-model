@@ -1,0 +1,39 @@
+{
+  "Conditions": {
+    "EnableAppCookie": {
+      "Fn::Equals": [true, true]
+    }
+  },
+
+  "Resources": {
+    "elb1": {
+      "Type" : "AWS::ElasticLoadBalancing::LoadBalancer",
+      "Properties" : {
+        "AvailabilityZones" : [
+          "eu-west-1a"
+        ],
+        "AppCookieStickinessPolicy": {
+          "Fn::If": [
+            "EnableAppCookie",
+            [ { "PolicyName": "AppStickiness", "CookieName": "unclefreddie" } ],
+            {"Ref" : "AWS::NoValue"}
+          ]
+        },
+        "Listeners" : [
+          {
+            "LoadBalancerPort" : "80",
+            "InstancePort" : "80",
+            "Protocol" : "HTTP",
+            "PolicyNames": {
+              "Fn::If": [
+                "EnableAppCookie",
+                [ "AppStickiness" ],
+                {"Ref" : "AWS::NoValue"}
+              ]
+            }
+          }
+        ]
+      }
+    }
+  }
+}
