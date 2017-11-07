@@ -24,19 +24,19 @@ mapping:
 
       # beware of Fn::If
       AppCookieStickinessPolicy:
-        type:   seq
+        type:   any
         required: no
-        sequence:
-          - type:   map
-            mapping:
-              CookieName:
-                type: any
-                required: yes
-              PolicyName:
-                type: any
-                required: yes
-              =:
-                type: any
+#        sequence:
+#          - type:   map
+#            mapping:
+#              CookieName:
+#                type: any
+#                required: yes
+#              PolicyName:
+#                type: any
+#                required: yes
+#              =:
+#                type: any
 
       # sigh this could be List<AWS::EC2::AvailabilityZone::Name> so can't enfore seq
       AvailabilityZones:
@@ -127,7 +127,7 @@ mapping:
         sequence:
           - type: map
             mapping:
-              # beware of Fn::If      
+              # beware of Fn::If
               Attributes:
                 type:   seq
                 required: yes
