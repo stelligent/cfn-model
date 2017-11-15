@@ -14,7 +14,7 @@ mapping:
         required: yes
       VpcId:
         type: any
-        required: yes
+        required: no
       Tags:
         type:   seq
         required: no
