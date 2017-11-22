@@ -67,6 +67,7 @@ class CfnParser
       resource_object = resource_class.new
       resource_object.logical_resource_id = resource_name
       resource_object.resource_type = resource['Type']
+      resource_object.metadata = resource['Metadata']
 
       assign_fields_based_upon_properties resource_object, resource
 

@@ -46,7 +46,7 @@ module Custom
 end
 
 class ModelElement
-  attr_accessor :logical_resource_id, :resource_type
+  attr_accessor :logical_resource_id, :resource_type, :metadata
 
   def to_s
     <<END
