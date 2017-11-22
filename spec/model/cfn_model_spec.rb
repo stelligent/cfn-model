@@ -34,4 +34,20 @@ describe CfnModel, :model do
       end
     end
   end
+
+  describe '#copy' do
+    context 'when copy is made and resource is removed from copy' do
+      it 'the original model still has the resource' do
+        ingress1 = AWS::EC2::SecurityGroupIngress.new
+        @cfn_model.resources['ingress1'] = ingress1
+
+        ingress2 = AWS::EC2::SecurityGroupIngress.new
+        @cfn_model.resources['ingress2'] = ingress2
+
+        cfn_model_copy = @cfn_model.copy
+        cfn_model_copy.resources.delete 'ingress2'
+        expect(@cfn_model.resources['ingress2']).to eq ingress2
+      end
+    end
+  end
 end

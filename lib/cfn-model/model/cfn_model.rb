@@ -14,6 +14,19 @@ class CfnModel
     @raw_model = nil
   end
 
+  ##
+  # A new instance of CfnModel with a copy of the raw_model and
+  # and resources.  The resource objects themselves aren't cloned but
+  # the Hash is a clone
+  def copy
+    new_cfn_model = CfnModel.new
+    @resources.each do |k, v|
+      new_cfn_model.resources[k] = v
+    end
+    new_cfn_model.raw_model = @raw_model.dup unless @raw_model.nil?
+    new_cfn_model
+  end
+
   def security_groups
     resources_by_type 'AWS::EC2::SecurityGroup'
   end
