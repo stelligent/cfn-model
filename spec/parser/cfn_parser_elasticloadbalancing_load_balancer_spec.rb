@@ -56,6 +56,18 @@ describe CfnParser, :elb do
     end
   end
 
+  context 'a template with an ELB and an attached security group list' do
+    it 'returns a LoadBalancer with security group object in securityGroups field' do
+      expected_load_balancer = load_balancer_with_open_http_ingress_and_comma_delimited_sg
+
+      json_test_templates('elasticloadbalancing_loadbalancer/elb_with_sg_list').each do |test_template|
+        cfn_model = @cfn_parser.parse IO.read(test_template)
+
+        expect(cfn_model.resources_by_type('AWS::ElasticLoadBalancing::LoadBalancer').first).to eq expected_load_balancer
+      end
+    end
+  end
+
   context 'a template with a network load balancer' do
     it 'returns a LoadBalancer of a network type' do
       expected_load_balancer = network_load_balancer

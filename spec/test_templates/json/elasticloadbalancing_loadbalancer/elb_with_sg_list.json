@@ -1,0 +1,35 @@
+{
+  "Parameters": {
+    "SubnetId": {
+      "Type": "AWS::EC2::Subnet::Id",
+      "Default": "subnet-6617eb0e"
+    },
+    "sgCommaDelimitedList": {
+      "Type": "CommaDelimitedList",
+      "Default": "sg-1a0c2a72,sg-620c2a0a"
+    }
+  },
+
+  "Resources": {
+    "MyLoadBalancer": {
+      "Type": "AWS::ElasticLoadBalancing::LoadBalancer",
+      "Properties": {
+        "Listeners": [
+          {
+            "LoadBalancerPort": "80",
+            "InstancePort": "80",
+            "Protocol": "HTTP"
+          }
+        ],
+        "SecurityGroups": {
+          "Ref": "sgCommaDelimitedList"
+        },
+        "Subnets": [
+          {
+            "Ref": "SubnetId"
+          }
+        ]
+      }
+    }
+  }
+}

@@ -38,6 +38,26 @@ def load_balancer_with_open_http_ingress
   expected_load_balancer
 end
 
+def load_balancer_with_open_http_ingress_and_comma_delimited_sg
+  expected_load_balancer = AWS::ElasticLoadBalancing::LoadBalancer.new
+  expected_load_balancer.listeners = [
+    {
+      'LoadBalancerPort' => '80',
+      'InstancePort' => '80',
+      'Protocol' => 'HTTP'
+    }
+  ]
+  expected_load_balancer.securityGroups = {
+    'Ref' => 'sgCommaDelimitedList'
+  }
+  expected_load_balancer.subnets = [
+    {
+      'Ref' => 'SubnetId'
+    }
+  ]
+  expected_load_balancer
+end
+
 def load_balancer2_with_open_http_ingress
   ingress_rule = AWS::EC2::SecurityGroupIngress.new
   ingress_rule.cidrIp = '0.0.0.0/0'
