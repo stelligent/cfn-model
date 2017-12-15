@@ -1,0 +1,19 @@
+---
+Parameters:
+  cond1:
+    Type: String
+    Default: "true"
+
+Conditions:
+  cond1: !Equals [ !Ref cond1, true ]
+
+Resources:
+  topic:
+    Type: "AWS::SNS::Topic"
+    Properties:
+      DisplayName: foo
+      TopicName:
+        Fn::If:
+          - cond1
+          - bif
+          - zane

@@ -1,0 +1,26 @@
+---
+Parameters:
+  VpcId:
+    Type: "AWS::EC2::VPC::Id"
+  ExtraIngress:
+    Type: String
+    Default: "true"
+
+Conditions:
+  ExtraIngress: !Equals [ !Ref ExtraIngress, true ]
+
+Resources:
+  sg2:
+    Type: "AWS::EC2::SecurityGroup"
+    Properties:
+      GroupDescription: "some_group_desc"
+      SecurityGroupIngress:
+        - Fn::If:
+            - ExtraIngress
+            - CidrIp: "10.1.2.4/32"
+              FromPort: 44
+              ToPort: 46
+              IpProtocol: tcp
+            - !Ref AWS::NoValue
+      VpcId:
+        Ref: VpcId

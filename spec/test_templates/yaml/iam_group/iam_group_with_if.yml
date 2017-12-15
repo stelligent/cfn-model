@@ -1,0 +1,23 @@
+---
+Parameters:
+  OtherPolicy:
+    Type: String
+    Default: "true"
+
+Conditions:
+  OtherPolicy: !Equals [ !Ref OtherPolicy, true ]
+
+Resources:
+  iamGroup:
+    Type: "AWS::IAM::Group"
+    Properties:
+      Policies:
+        - Fn::If:
+            - OtherPolicy
+            - PolicyDocument:
+                Statement:
+                  Effect: Allow
+                  Action: '*'
+                  Resource: '*'
+              PolicyName: jimbob
+            - !Ref AWS::NoValue
