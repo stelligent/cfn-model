@@ -7,11 +7,13 @@ class IamUserParser
     iam_user = resource
 
     iam_user.policy_objects = iam_user.policies.map do |policy|
+      next unless policy.has_key? 'PolicyName'
+
       new_policy = Policy.new
       new_policy.policy_name = policy['PolicyName']
       new_policy.policy_document = PolicyDocumentParser.new.parse(policy['PolicyDocument'])
       new_policy
-    end
+    end.reject { |policy| policy.nil? }
 
     iam_user.groups.each { |group_name| iam_user.group_names << group_name }
 

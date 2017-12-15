@@ -19,19 +19,30 @@ class SecurityGroupParser
 
   private
 
+  def silently_fail
+    begin
+      yield
+    rescue
+    end
+  end
+
   def objectify_ingress(security_group)
     if security_group.securityGroupIngress.is_a? Hash
       security_group.securityGroupIngress = [security_group.securityGroupIngress]
     end
 
     security_group.ingresses = security_group.securityGroupIngress.map do |ingress|
+      mapped_at_least_one_attribute = false
       ingress_object = AWS::EC2::SecurityGroupIngress.new
       ingress.each do |k,v|
-        ingress_object.send("#{initialLower(k)}=", v)
+        silently_fail do
+          ingress_object.send("#{initialLower(k)}=", v)
+          mapped_at_least_one_attribute = true
+        end
       end
       #ingress_object.valid?
-      ingress_object
-    end
+      mapped_at_least_one_attribute ? ingress_object : nil
+    end.reject { |ingress| ingress.nil? }
   end
 
   def objectify_egress(security_group)
@@ -40,12 +51,20 @@ class SecurityGroupParser
     end
 
     security_group.egresses = security_group.securityGroupEgress.map do |egress|
+      mapped_at_least_one_attribute = false
+
       egress_object = AWS::EC2::SecurityGroupEgress.new
       egress.each do |k,v|
-        egress_object.send("#{initialLower(k)}=", v)
-      end
+        next if k.match /::/
+        silently_fail do
+          egress_object.send("#{initialLower(k)}=", v)
+          mapped_at_least_one_attribute = true
+        end
+
+      end.reject { |ingress| ingress.nil? }
       #egress_object.valid?
       egress_object
+      mapped_at_least_one_attribute ? egress_object : nil
     end
   end
 

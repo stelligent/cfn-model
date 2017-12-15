@@ -198,4 +198,31 @@ describe CfnParser do
       end
     end
   end
+
+  context 'when security group has Fn::If as an inline ingress' do
+    it 'maps the Fn::If to a hash and skips objectification of it' do
+      yaml_test_templates('security_group/pesky_if').each do |test_template|
+        cfn_model = @cfn_parser.parse IO.read(test_template)
+
+        expectation = [
+          {
+            'Fn::If' => [
+              'ExtraIngress',
+              {
+                'CidrIp' => '10.1.2.4/32',
+                'FromPort' => 44,
+                'ToPort' => 46,
+                'IpProtocol' => 'tcp'
+              },
+              {
+                'Ref' => 'AWS::NoValue'
+              }
+            ]
+          }
+        ]
+
+        expect(cfn_model.resources_by_type('AWS::EC2::SecurityGroup').first.securityGroupIngress).to eq expectation
+      end
+    end
+  end
 end
