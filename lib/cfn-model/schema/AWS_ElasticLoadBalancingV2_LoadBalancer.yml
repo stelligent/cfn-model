@@ -7,63 +7,8 @@ mapping:
     pattern: /AWS::ElasticLoadBalancingV2::LoadBalancer/
   Properties:
     type: map
-    required: yes
+    required: no
     mapping:
-      LoadBalancerAttributes:
-        type:   seq
-        required: no
-        sequence:
-          - type: map
-            mapping:
-              Key:
-                type: any
-                required: yes
-              Value:
-                type: any
-                required: yes
-              =:
-                type: any
-
-      # sigh this could be List<AWS::EC2::SecurityGroup::Id> so can't enfore seq
-      SecurityGroups:
-        type:   any
-        required: no
-
-      # sigh this could be List<AWS::EC2::Subnet::Id> so can't enfore seq
-      Subnets:
-        type: any
-        required: no
-
-      SubnetMappings:
-        type: seq
-        required: no
-        sequence:
-          - type: map
-            mapping:
-              SubnetId:
-                type: any
-                required: yes
-              AllocationId:
-                type: any
-                required: yes
-      Tags:
-        type:   seq
-        required: no
-        sequence:
-          - type: map
-            mapping:
-              Key:
-                type: any
-                required: yes
-              Value:
-                type: any
-                required: yes
-              =:
-                type: any
-
-      Type:
-        type: any
-        required: no
       =:
         type: any
   =:

@@ -21,47 +21,8 @@ describe SchemaGenerator do
           },
           'Properties' => {
             'type' => 'map',
+            'required' => false,
             'mapping' => {
-              'Groups' => {
-                'type' =>   'seq',
-                'required' => false,
-                'sequence' => [
-                  {
-                    'type' =>   'any'
-                  }
-                ]
-              },
-              'LoginProfile' => {
-                'type' => 'map',
-                'required' =>false,
-                'mapping' => {
-                  'Password' => {
-                    'type' => 'any',
-                    'required' => true
-                  },
-                  '=' => {
-                    'type' => 'any'
-                  }
-                }
-              },
-              'ManagedPolicyArns' => {
-                'type' => 'seq',
-                'required' => false,
-                'sequence' => [
-                  {
-                    'type' => 'any'
-                  }
-                ]
-              },
-              'Policies' => {
-                'type' => 'seq',
-                'required' => false,
-                'sequence' => [
-                  {
-                    'type' => 'any'
-                  }
-                ]
-              },
               '=' => {
                 'type' =>  'any'
               }

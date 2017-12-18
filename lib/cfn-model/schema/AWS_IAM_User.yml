@@ -7,31 +7,8 @@ mapping:
     pattern: /AWS::IAM::User/
   Properties:
     type: map
+    required: no
     mapping:
-      Groups:
-        type:   seq
-        required: no
-        sequence:
-          - type:   any
-      LoginProfile:
-        type: map
-        required: no
-        mapping:
-          Password:
-            type: any
-            required: yes
-          =:
-            type: any
-      ManagedPolicyArns:
-        type:   seq
-        required: no
-        sequence:
-          - type:   any
-      Policies:
-        type:   seq
-        required: no
-        sequence:
-          - type:   any
       =:
         type: any
   =:

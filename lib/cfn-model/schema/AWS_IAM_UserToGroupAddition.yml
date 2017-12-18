@@ -13,10 +13,8 @@ mapping:
         type:   any
         required: yes
       Users:
-        type:   seq
+        type:   any
         required: yes
-        sequence:
-          - type:   any
       =:
         type: any
   =:

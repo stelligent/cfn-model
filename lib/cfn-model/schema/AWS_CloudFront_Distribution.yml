@@ -13,16 +13,6 @@ mapping:
         type:   map
         required: yes
         mapping:
-          Aliases:
-            type:   seq
-            required: no
-            sequence:
-              - type:   any
-          CacheBehaviors:
-            type:   seq
-            required: no
-            sequence:
-              - type:   any
           DefaultCacheBehavior:
             type: any
             required: yes
@@ -30,10 +20,8 @@ mapping:
             type: any
             required: yes
           Origins:
-            type:   seq
+            type:   any
             required: yes
-            sequence:
-              - type:   any
           =:
             type: any
       =:

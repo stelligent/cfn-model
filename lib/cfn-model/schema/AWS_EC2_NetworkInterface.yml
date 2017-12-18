@@ -9,53 +9,9 @@ mapping:
     type: map
     required: yes
     mapping:
-      # sigh this could be List<AWS::EC2::SecurityGroup::Id> so can't enfore seq
-      GroupSet:
-        type:   any
-        required: no
-
-      Ipv6Addresses:
-        type:   seq
-        required: no
-        sequence:
-          - type: map
-            mapping:
-              Ipv6Address:
-                type: any
-                required: yes
-              =:
-                type: any
-      PrivateIpAddresses:
-        type: seq
-        required: no
-        sequence:
-          - type: map
-            mapping:
-              PrivateIpAddress:
-                type: any
-                required: yes
-              Primary:
-                type: any
-                required: yes
-              =:
-                type: any
       SubnetId:
         type: any
         required: yes
-      Tags:
-        type:   seq
-        required: no
-        sequence:
-          - type: map
-            mapping:
-              Key:
-                type: any
-                required: yes
-              Value:
-                type: any
-                required: yes
-              =:
-                type: any
       =:
         type: any
   =:

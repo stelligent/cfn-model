@@ -31,24 +31,24 @@ describe CfnParser do
     end
   end
 
-  context 'an iam user with invalid String group', :moo do
-    it 'returns an error' do
-      test_templates('iam_user/invalid_iam_user_with_one_group').each do |test_template|
-        begin
-          _ = @cfn_parser.parse IO.read(test_template)
-        rescue Exception => parse_error
-          begin
-            expect(parse_error.is_a?(ParserError)).to eq true
-            expect(parse_error.errors.size).to eq(1)
-            expect(parse_error.errors[0].to_s).to eq("[/Resources/iamUserWithOneGroup/Properties/Groups] 'group1': not a sequence.")
-          rescue RSpec::Expectations::ExpectationNotMetError
-            $!.message << "in file: #{test_template}"
-            raise
-          end
-        end
-      end
-    end
-  end
+  # context 'an iam user with invalid String group', :moo do
+  #   it 'returns an error' do
+  #     test_templates('iam_user/invalid_iam_user_with_one_group').each do |test_template|
+  #       begin
+  #         _ = @cfn_parser.parse IO.read(test_template)
+  #       rescue Exception => parse_error
+  #         begin
+  #           expect(parse_error.is_a?(ParserError)).to eq true
+  #           expect(parse_error.errors.size).to eq(1)
+  #           expect(parse_error.errors[0].to_s).to eq("[/Resources/iamUserWithOneGroup/Properties/Groups] 'group1': not a sequence.")
+  #         rescue RSpec::Expectations::ExpectationNotMetError
+  #           $!.message << "in file: #{test_template}"
+  #           raise
+  #         end
+  #       end
+  #     end
+  #   end
+  # end
 
   context 'an iam user with four groups via addition' do
     it 'returns a user with four groups' do
