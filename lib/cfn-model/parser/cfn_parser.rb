@@ -94,7 +94,7 @@ class CfnParser
   def assign_fields_based_upon_properties(resource_object, resource)
     unless resource['Properties'].nil?
       resource['Properties'].each do |property_name, property_value|
-        resource_object.send("#{initial_lower(property_name)}=", property_value)
+        resource_object.send("#{map_property_name_to_attribute(property_name)}=", property_value)
       end
     end
   end
@@ -109,8 +109,8 @@ class CfnParser
     resource_class
   end
 
-  def initial_lower(str)
-    str.slice(0).downcase + str[1..(str.length)]
+  def map_property_name_to_attribute(str)
+    (str.slice(0).downcase + str[1..(str.length)]).gsub /-/, '_'
   end
 
   def generate_resource_class_from_type(type_name)

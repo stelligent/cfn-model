@@ -15,6 +15,7 @@ Resources:
       ServiceToken: !GetAtt "TestLambdaFunction.Arn"
       Base: !Ref Base
       Id: !Ref CustomResourceId
+      actions-csv: some_value
 
   TestLambdaFunction:
     Type: "AWS::Lambda::Function"
