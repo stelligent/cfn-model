@@ -118,7 +118,7 @@ class CfnParser
 
     module_names = type_name.split('::')
     if module_names.first == 'Custom'
-      Object.const_set(module_names[1], resource_class)
+      Object.const_set(initial_upper(module_names[1]), resource_class)
     elsif module_names.first == 'AWS'
       begin
         module_constant = AWS.const_get(module_names[1])
@@ -131,5 +131,9 @@ class CfnParser
       raise "Unknown namespace in resource type: #{module_names.first}"
     end
     resource_class
+  end
+
+  def initial_upper(str)
+    str.slice(0).upcase + str[1..(str.length)]
   end
 end
