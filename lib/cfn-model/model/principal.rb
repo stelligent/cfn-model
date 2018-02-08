@@ -2,6 +2,8 @@ class Principal
   def self.wildcard?(principal)
     if principal.is_a? String
       return has_asterisk principal
+    elsif principal.is_a? Integer
+      return has_asterisk principal.to_s
     elsif principal.is_a? Hash
       # if new principal types arrive, let's not tie ourselves down - the * is still likely the thing to look for
       # unless %w(AWS FederatedUser CanonicalUser Service).include?(principal.keys.first)
