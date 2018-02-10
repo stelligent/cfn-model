@@ -17,6 +17,14 @@ Resources:
       Id: !Ref CustomResourceId
       actions-csv: some_value
 
+  TestCustomResource2:
+    Type: "Custom::TestCustomResourceWithLambda"
+    Properties:
+      ServiceToken: !GetAtt "TestLambdaFunction.Arn"
+      Base: !Ref Base
+      Id: !Ref CustomResourceId
+      actions-csv: some_value
+
   TestLambdaFunction:
     Type: "AWS::Lambda::Function"
     Properties:

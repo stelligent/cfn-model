@@ -118,7 +118,12 @@ class CfnParser
 
     module_names = type_name.split('::')
     if module_names.first == 'Custom'
-      Object.const_set(initial_upper(module_names[1]), resource_class)
+      custom_resource_class_name = initial_upper(module_names[1])
+      begin
+        resource_class = Object.const_get custom_resource_class_name
+      rescue NameError
+        Object.const_set(custom_resource_class_name, resource_class)
+      end
     elsif module_names.first == 'AWS'
       begin
         module_constant = AWS.const_get(module_names[1])

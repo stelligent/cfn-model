@@ -14,7 +14,7 @@ describe CfnParser do
 
         custom_resources = cfn_model.resources_by_type('Custom::TestCustomResourceWithLambda')
 
-        expect(custom_resources.size).to eq 1
+        expect(custom_resources.size).to eq 2
         actual_custom_resource = custom_resources.first
         expect(actual_custom_resource.serviceToken).to eq({
                                                                     'Fn::GetAtt' => %w(TestLambdaFunction Arn)
