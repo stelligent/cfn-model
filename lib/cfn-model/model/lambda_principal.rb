@@ -8,7 +8,7 @@ class LambdaPrincipal
       false
     else
       #not legal?
-      raise "whacky lambda principal not string or hash: #{principal}"
+      raise "whacky lambda principal not string or int: #{principal}"
     end
   end
 
