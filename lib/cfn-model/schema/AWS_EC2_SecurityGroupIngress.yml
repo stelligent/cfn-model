@@ -11,7 +11,7 @@ mapping:
     mapping:
       FromPort:
         type:   any
-        required: yes
+        required: no
       GroupId:
         type: any
         required: yes
@@ -20,7 +20,7 @@ mapping:
         required: yes
       ToPort:
         type:   any
-        required: yes
+        required: no
       =:
         type: any
   =:

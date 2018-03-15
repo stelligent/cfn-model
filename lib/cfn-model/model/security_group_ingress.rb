@@ -16,7 +16,7 @@ class AWS::EC2::SecurityGroupIngress < ModelElement
   attr_accessor :groupId,
                 :groupName
 
-  # required
+  # Required: Conditional from/To required when IP Protocol is explicitly specified (TCP, ICMP, etc), not required when using all protocols (ie -1)
   attr_accessor :fromPort,
                 :toPort,
                 :ipProtocol
