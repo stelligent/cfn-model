@@ -6,7 +6,8 @@ class AWS::SQS::QueuePolicy  < ModelElement
   # PolicyDocument - objectified policyDocument
   attr_accessor :policy_document
 
-  def initialize
+  def initialize(cfn_model)
+    super
     @queues = []
     @resource_type = 'AWS::SQS::QueuePolicy'
   end

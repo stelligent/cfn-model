@@ -6,7 +6,8 @@ class AWS::IAM::Group  < ModelElement
   # synthesized version of policies
   attr_accessor :policy_objects
 
-  def initialize
+  def initialize(cfn_model)
+    super
     @managedPolicyArns = []
     @policies = []
     @policy_objects = []

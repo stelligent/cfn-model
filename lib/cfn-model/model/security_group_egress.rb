@@ -16,7 +16,8 @@ class AWS::EC2::SecurityGroupEgress < ModelElement
                 :toPort,
                 :ipProtocol
 
-  def initialize
+  def initialize(cfn_model)
+    super
     @resource_type = 'AWS::EC2::SecurityGroupEgress'
   end
 

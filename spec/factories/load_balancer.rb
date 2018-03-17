@@ -1,11 +1,11 @@
-def load_balancer_with_open_http_ingress
-  ingress_rule = AWS::EC2::SecurityGroupIngress.new
+def load_balancer_with_open_http_ingress(cfn_model: CfnModel.new)
+  ingress_rule = AWS::EC2::SecurityGroupIngress.new cfn_model
   ingress_rule.cidrIp = '0.0.0.0/0'
   ingress_rule.fromPort = 80
   ingress_rule.toPort = 80
   ingress_rule.ipProtocol = 'tcp'
 
-  expected_security_group = AWS::EC2::SecurityGroup.new
+  expected_security_group = AWS::EC2::SecurityGroup.new cfn_model
   expected_security_group.groupDescription = 'some_group_desc'
   expected_security_group.ingresses << ingress_rule
   expected_security_group.securityGroupIngress << {
@@ -18,7 +18,7 @@ def load_balancer_with_open_http_ingress
     'Ref' => 'VpcId'
   }
 
-  expected_load_balancer = AWS::ElasticLoadBalancing::LoadBalancer.new
+  expected_load_balancer = AWS::ElasticLoadBalancing::LoadBalancer.new cfn_model
   expected_load_balancer.listeners = [
     {
       'LoadBalancerPort' => '80',
@@ -38,8 +38,8 @@ def load_balancer_with_open_http_ingress
   expected_load_balancer
 end
 
-def load_balancer_with_open_http_ingress_and_comma_delimited_sg
-  expected_load_balancer = AWS::ElasticLoadBalancing::LoadBalancer.new
+def load_balancer_with_open_http_ingress_and_comma_delimited_sg(cfn_model: CfnModel.new)
+  expected_load_balancer = AWS::ElasticLoadBalancing::LoadBalancer.new cfn_model
   expected_load_balancer.listeners = [
     {
       'LoadBalancerPort' => '80',
@@ -58,14 +58,14 @@ def load_balancer_with_open_http_ingress_and_comma_delimited_sg
   expected_load_balancer
 end
 
-def load_balancer2_with_open_http_ingress
-  ingress_rule = AWS::EC2::SecurityGroupIngress.new
+def load_balancer2_with_open_http_ingress(cfn_model: CfnModel.new)
+  ingress_rule = AWS::EC2::SecurityGroupIngress.new cfn_model
   ingress_rule.cidrIp = '0.0.0.0/0'
   ingress_rule.fromPort = 80
   ingress_rule.toPort = 80
   ingress_rule.ipProtocol = 'tcp'
 
-  expected_security_group = AWS::EC2::SecurityGroup.new
+  expected_security_group = AWS::EC2::SecurityGroup.new cfn_model
   expected_security_group.groupDescription = 'some_group_desc'
   expected_security_group.ingresses << ingress_rule
   expected_security_group.securityGroupIngress << {
@@ -78,7 +78,7 @@ def load_balancer2_with_open_http_ingress
     'Ref' => 'VpcId'
   }
 
-  expected_load_balancer = AWS::ElasticLoadBalancingV2::LoadBalancer.new
+  expected_load_balancer = AWS::ElasticLoadBalancingV2::LoadBalancer.new cfn_model
   expected_load_balancer.scheme = 'internal'
   expected_load_balancer.securityGroups << {
     'Ref' => 'httpSg'
@@ -100,8 +100,8 @@ def load_balancer2_with_open_http_ingress
 end
 
 
-def network_load_balancer
-  expected_load_balancer = AWS::ElasticLoadBalancingV2::LoadBalancer.new
+def network_load_balancer(cfn_model: CfnModel.new)
+  expected_load_balancer = AWS::ElasticLoadBalancingV2::LoadBalancer.new cfn_model
   expected_load_balancer.scheme = 'internet-facing'
   expected_load_balancer.type = 'network'
   expected_load_balancer.subnetMappings = [

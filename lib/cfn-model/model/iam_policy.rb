@@ -5,7 +5,8 @@ class AWS::IAM::Policy < ModelElement
 
   attr_accessor :policy_document
 
-  def initialize
+  def initialize(cfn_model)
+    super
     @groups = []
     @roles = []
     @users = []

@@ -6,7 +6,8 @@ class AWS::EC2::Instance  < ModelElement
   # SecurityGroup objects based upon securityGroupIds
   attr_accessor :security_groups
 
-  def initialize
+  def initialize(cfn_model)
+    super
     @securityGroupIds = []
     @networkInterfaces = []
     @security_groups = []

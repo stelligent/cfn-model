@@ -1,6 +1,6 @@
 require 'cfn-model/model/bucket_policy'
 
-def valid_bucket_policy
+def valid_bucket_policy(cfn_model: CfnModel.new)
   statement = Statement.new
   statement.effect = 'Allow'
   statement.actions << '*'
@@ -12,7 +12,7 @@ def valid_bucket_policy
   policy_document = PolicyDocument.new
   policy_document.statements << statement
 
-  bucket_policy = AWS::S3::BucketPolicy.new
+  bucket_policy = AWS::S3::BucketPolicy.new cfn_model
   bucket_policy.bucket = {
     'Ref' => 'S3Bucket'
   }

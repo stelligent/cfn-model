@@ -3,12 +3,12 @@ require 'cfn-model/model/policy'
 require 'cfn-model/model/policy_document'
 require 'cfn-model/model/statement'
 
-def iam_group_with_no_policies
-  AWS::IAM::Group.new
+def iam_group_with_no_policies(cfn_model: CfnModel.new)
+  AWS::IAM::Group.new cfn_model
 end
 
-def iam_group_with_policies
-  expected_group = AWS::IAM::Group.new
+def iam_group_with_policies(cfn_model: CfnModel.new)
+  expected_group = AWS::IAM::Group.new cfn_model
 
   expected_group.policies << {
     'PolicyDocument' => {

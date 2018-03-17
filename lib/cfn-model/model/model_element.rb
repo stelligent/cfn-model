@@ -1,3 +1,4 @@
+require_relative 'references'
 
 module AWS
   module CloudFormation
@@ -45,8 +46,16 @@ module Custom
 
 end
 
+#ModelElement is a bit of a misnomer I think.... this is really a Resource, and Parameter and Resource
+#have a lot in common, but are different
 class ModelElement
   attr_accessor :logical_resource_id, :resource_type, :metadata
+
+  # the dreaded two way relationship
+  def initialize(cfn_model)
+    raise 'cfn_model must be specificed' if cfn_model.nil?
+    @cfn_model = cfn_model
+  end
 
   def to_s
     <<END
@@ -59,7 +68,7 @@ END
   def ==(another_model_element)
     found_unequal_instance_var = false
     instance_variables_without_at_sign.each do |instance_variable|
-      if instance_variable != :logical_resource_id
+      if instance_variable != :logical_resource_id && instance_variable != :cfn_model
         if self.send(instance_variable) != another_model_element.send(instance_variable)
           found_unequal_instance_var = true
         end
@@ -79,7 +88,7 @@ END
     if method_name =~ /^(\w+)=$/
       instance_variable_set "@#{$1}", args[0]
     else
-      instance_variable_get "@#{method_name}"
+      References.resolve_value(@cfn_model, instance_variable_get("@#{method_name}"))
     end
   end
 

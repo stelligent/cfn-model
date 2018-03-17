@@ -7,7 +7,8 @@ class AWS::EC2::SecurityGroup < ModelElement
 
   attr_accessor :ingresses, :egresses
 
-  def initialize
+  def initialize(cfn_model)
+    super
     @securityGroupIngress = []
     @securityGroupEgress = []
     @ingresses = []

@@ -1,16 +1,16 @@
 require 'cfn-model/model/security_group'
 require 'cfn-model/model/security_group_ingress'
+require 'cfn-model/model/cfn_model'
 
-
-def security_group_with_one_ingress_rule(security_group_id: 'sg2', ingress_group_id: nil)
-  ingress_rule = AWS::EC2::SecurityGroupIngress.new
+def security_group_with_one_ingress_rule(cfn_model: CfnModel.new, security_group_id: 'sg2', ingress_group_id: nil)
+  ingress_rule = AWS::EC2::SecurityGroupIngress.new cfn_model
   ingress_rule.cidrIp = '10.1.2.3/32'
   ingress_rule.fromPort = 34
   ingress_rule.toPort = 36
   ingress_rule.ipProtocol = 'tcp'
   ingress_rule.groupId = ingress_group_id
 
-  expected_security_group = AWS::EC2::SecurityGroup.new
+  expected_security_group = AWS::EC2::SecurityGroup.new cfn_model
   expected_security_group.vpcId = { 'Ref' => 'VpcId' }
   expected_security_group.groupDescription = 'some_group_desc'
   expected_security_group.logical_resource_id = security_group_id
@@ -26,8 +26,8 @@ def security_group_with_one_ingress_rule(security_group_id: 'sg2', ingress_group
   expected_security_group
 end
 
-def security_group_with_no_rules(id: 'sg')
-  expected_security_group = AWS::EC2::SecurityGroup.new
+def security_group_with_no_rules(cfn_model: CfnModel.new, id: 'sg')
+  expected_security_group = AWS::EC2::SecurityGroup.new cfn_model
   expected_security_group.vpcId = { 'Ref' => 'VpcId' }
   expected_security_group.groupDescription = 'some_group_desc'
   expected_security_group.logical_resource_id = id
@@ -37,22 +37,22 @@ def security_group_with_no_rules(id: 'sg')
 end
 
 
-def security_group_with_two_ingress_rules(id: 'sg2')
-  ingress_rule = AWS::EC2::SecurityGroupIngress.new
+def security_group_with_two_ingress_rules(cfn_model: CfnModel.new, id: 'sg2')
+  ingress_rule = AWS::EC2::SecurityGroupIngress.new cfn_model
   ingress_rule.cidrIp = '10.1.2.3/32'
   ingress_rule.fromPort = 34
   ingress_rule.toPort = 36
   ingress_rule.ipProtocol = 'tcp'
   ingress_rule.groupId = nil
 
-  ingress_rule2 = AWS::EC2::SecurityGroupIngress.new
+  ingress_rule2 = AWS::EC2::SecurityGroupIngress.new cfn_model
   ingress_rule2.cidrIp = '10.1.2.4/32'
   ingress_rule2.fromPort = 55
   ingress_rule2.toPort = 56
   ingress_rule2.ipProtocol = 'tcp'
   ingress_rule2.groupId = nil
 
-  expected_security_group = AWS::EC2::SecurityGroup.new
+  expected_security_group = AWS::EC2::SecurityGroup.new cfn_model
   expected_security_group.vpcId = { 'Ref' => 'VpcId' }
   expected_security_group.groupDescription = 'some_group_desc'
   expected_security_group.logical_resource_id = id
@@ -63,15 +63,15 @@ def security_group_with_two_ingress_rules(id: 'sg2')
   expected_security_group
 end
 
-def security_group_with_one_external_egress_rule(security_group_id: 'sg1', egress_group_id: nil)
-  egress_rule = AWS::EC2::SecurityGroupEgress.new
+def security_group_with_one_external_egress_rule(cfn_model: CfnModel.new, security_group_id: 'sg1', egress_group_id: nil)
+  egress_rule = AWS::EC2::SecurityGroupEgress.new cfn_model
   egress_rule.cidrIp = '5.5.5.5/32'
   egress_rule.fromPort = 39
   egress_rule.toPort = 42
   egress_rule.ipProtocol = 'tcp'
   egress_rule.groupId = egress_group_id
 
-  expected_security_group = AWS::EC2::SecurityGroup.new
+  expected_security_group = AWS::EC2::SecurityGroup.new cfn_model
   expected_security_group.vpcId = { 'Ref' => 'VpcId' }
   expected_security_group.groupDescription = 'some_group_desc'
   expected_security_group.logical_resource_id = security_group_id
@@ -82,7 +82,7 @@ def security_group_with_one_external_egress_rule(security_group_id: 'sg1', egres
   expected_security_group
 end
 
-def security_group_with_one_egress_rule(security_group_id: 'sg1', egress_group_id: nil)
+def security_group_with_one_egress_rule(cfn_model: CfnModel.new, security_group_id: 'sg1', egress_group_id: nil)
   raw_egress = {
     'CidrIp' => '5.5.5.5/32',
     'FromPort' => 39,
@@ -90,14 +90,14 @@ def security_group_with_one_egress_rule(security_group_id: 'sg1', egress_group_i
     'IpProtocol' => 'tcp'
   }
 
-  egress_rule = AWS::EC2::SecurityGroupEgress.new
+  egress_rule = AWS::EC2::SecurityGroupEgress.new cfn_model
   egress_rule.cidrIp = '5.5.5.5/32'
   egress_rule.fromPort = 39
   egress_rule.toPort = 42
   egress_rule.ipProtocol = 'tcp'
   egress_rule.groupId = egress_group_id
 
-  expected_security_group = AWS::EC2::SecurityGroup.new
+  expected_security_group = AWS::EC2::SecurityGroup.new cfn_model
   expected_security_group.vpcId = { 'Ref' => 'VpcId' }
   expected_security_group.groupDescription = 'some_group_desc'
   expected_security_group.logical_resource_id = security_group_id
@@ -109,20 +109,20 @@ def security_group_with_one_egress_rule(security_group_id: 'sg1', egress_group_i
   expected_security_group
 end
 
-def security_group_with_one_ingress_and_one_egress_rule(id: 'sg2')
-  ingress_rule = AWS::EC2::SecurityGroupIngress.new
+def security_group_with_one_ingress_and_one_egress_rule(cfn_model: CfnModel.new, id: 'sg2')
+  ingress_rule = AWS::EC2::SecurityGroupIngress.new cfn_model
   ingress_rule.cidrIp = '10.1.2.3/32'
   ingress_rule.fromPort = 34
   ingress_rule.toPort = 36
   ingress_rule.ipProtocol = 'tcp'
 
-  egress_rule = AWS::EC2::SecurityGroupEgress.new
+  egress_rule = AWS::EC2::SecurityGroupEgress.new cfn_model
   egress_rule.cidrIp = '1.2.3.4/32'
   egress_rule.fromPort = 55
   egress_rule.toPort = 56
   egress_rule.ipProtocol = 'tcp'
 
-  expected_security_group = AWS::EC2::SecurityGroup.new
+  expected_security_group = AWS::EC2::SecurityGroup.new cfn_model
   expected_security_group.vpcId = { 'Ref' => 'VpcId' }
   expected_security_group.groupDescription = 'some_group_desc'
   expected_security_group.logical_resource_id = id

@@ -7,7 +7,8 @@ class AWS::EC2::NetworkInterface  < ModelElement
   # SecurityGroup objects based upon groupSet
   attr_accessor :security_groups
 
-  def initialize
+  def initialize(cfn_model)
+    super
     @groupSet = []
     @ipv6Addresses = []
     @privateIpAddresses = []

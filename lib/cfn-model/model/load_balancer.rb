@@ -6,7 +6,8 @@ class AWS::ElasticLoadBalancing::LoadBalancer < ModelElement
 
   attr_accessor :security_groups
 
-  def initialize
+  def initialize(cfn_model)
+    super
     @securityGroups = []
     @security_groups = []
     @subnets = []
@@ -26,7 +27,8 @@ class AWS::ElasticLoadBalancingV2::LoadBalancer < ModelElement
 
   attr_accessor :security_groups
 
-  def initialize
+  def initialize(cfn_model)
+    super
     @securityGroups = []
     @security_groups = []
     @loadBalancerAttributes = []

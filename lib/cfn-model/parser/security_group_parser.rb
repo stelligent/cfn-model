@@ -8,9 +8,9 @@ class SecurityGroupParser
   def parse(cfn_model:, resource:)
      security_group = resource
 
-     objectify_egress security_group
+     objectify_egress cfn_model, security_group
 
-     objectify_ingress security_group
+     objectify_ingress cfn_model, security_group
 
      wire_ingress_rules_to_security_group(cfn_model: cfn_model, security_group: security_group)
      wire_egress_rules_to_security_group(cfn_model: cfn_model, security_group: security_group)
@@ -26,14 +26,14 @@ class SecurityGroupParser
     end
   end
 
-  def objectify_ingress(security_group)
+  def objectify_ingress(cfn_model, security_group)
     if security_group.securityGroupIngress.is_a? Hash
       security_group.securityGroupIngress = [security_group.securityGroupIngress]
     end
 
     security_group.ingresses = security_group.securityGroupIngress.map do |ingress|
       mapped_at_least_one_attribute = false
-      ingress_object = AWS::EC2::SecurityGroupIngress.new
+      ingress_object = AWS::EC2::SecurityGroupIngress.new cfn_model
       ingress.each do |k,v|
         silently_fail do
           ingress_object.send("#{initialLower(k)}=", v)
@@ -45,7 +45,7 @@ class SecurityGroupParser
     end.reject { |ingress| ingress.nil? }
   end
 
-  def objectify_egress(security_group)
+  def objectify_egress(cfn_model, security_group)
     if security_group.securityGroupEgress.is_a? Hash
       security_group.securityGroupEgress = [security_group.securityGroupEgress]
     end
@@ -53,7 +53,7 @@ class SecurityGroupParser
     security_group.egresses = security_group.securityGroupEgress.map do |egress|
       mapped_at_least_one_attribute = false
 
-      egress_object = AWS::EC2::SecurityGroupEgress.new
+      egress_object = AWS::EC2::SecurityGroupEgress.new cfn_model
       egress.each do |k,v|
         next if k.match /::/
         silently_fail do

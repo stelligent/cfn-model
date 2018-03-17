@@ -1,4 +1,5 @@
 require 'yaml'
+require 'json'
 require 'cfn-model/validator/cloudformation_validator'
 require 'cfn-model/validator/reference_validator'
 require_relative 'parser_registry'
@@ -29,7 +30,7 @@ class CfnParser
   ##
   # Given raw json/yml CloudFormation template, returns a CfnModel object
   # or raise ParserErrors if something is amiss with the format
-  def parse(cloudformation_yml)
+  def parse(cloudformation_yml, parameter_values_json=nil)
     cfn_hash = pre_validate_model cloudformation_yml
 
     cfn_model = CfnModel.new
@@ -37,14 +38,38 @@ class CfnParser
 
     # pass 1: wire properties into ModelElement objects
     transform_hash_into_model_elements cfn_hash, cfn_model
+    transform_hash_into_parameters cfn_hash, cfn_model
 
     # pass 2: tie together separate resources only where necessary to make life easier for rule logic
     post_process_resource_model_elements cfn_model
+
+    apply_parameter_values(cfn_model, parameter_values_json)
 
     cfn_model
   end
 
   private
+
+  def apply_parameter_values(cfn_model, parameter_values_json)
+    unless parameter_values_json.nil?
+      parameter_values = JSON.load parameter_values_json
+      return unless parameter_values.has_key? 'Parameters'
+      parameter_values['Parameters'].each do |parameter_name, parameter_value|
+        if cfn_model.parameters.has_key?(parameter_name)
+          cfn_model.parameters[parameter_name].synthesized_value = parameter_value.to_s
+        end
+      end
+
+      # any leftovers get default value
+      # if external values were specified, we take that as a cue to consider defaults
+      # if no external values, we will ignore default values
+      cfn_model.parameters.each do |_, parameter|
+        if parameter.synthesized_value.nil? && !parameter.default.nil?
+          parameter.synthesized_value = parameter.default.to_s
+        end
+      end
+    end
+  end
 
   def post_process_resource_model_elements(cfn_model)
     cfn_model.resources.each do |_, resource|
@@ -64,7 +89,7 @@ class CfnParser
     cfn_hash['Resources'].each do |resource_name, resource|
       resource_class = class_from_type_name resource['Type']
 
-      resource_object = resource_class.new
+      resource_object = resource_class.new(cfn_model)
       resource_object.logical_resource_id = resource_name
       resource_object.resource_type = resource['Type']
       resource_object.metadata = resource['Metadata']
@@ -72,6 +97,24 @@ class CfnParser
       assign_fields_based_upon_properties resource_object, resource
 
       cfn_model.resources[resource_name] = resource_object
+    end
+    cfn_model
+  end
+
+  def transform_hash_into_parameters(cfn_hash, cfn_model)
+    return cfn_model unless cfn_hash.has_key?('Parameters')
+
+    cfn_hash['Parameters'].each do |parameter_name, parameter_hash|
+      parameter = Parameter.new
+      parameter.id = parameter_name
+      parameter.type = parameter_hash['Type']
+
+      parameter_hash.each do |property_name, property_value|
+        next if %w(Type).include? property_name
+        parameter.send("#{map_property_name_to_attribute(property_name)}=", property_value)
+      end
+
+      cfn_model.parameters[parameter_name] = parameter
     end
     cfn_model
   end

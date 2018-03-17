@@ -25,7 +25,8 @@ class AWS::EC2::SecurityGroupIngress < ModelElement
   # account than the account creating the stack, you must specify the SourceSecurityGroupOwnerId; otherwise, this property is optional.
   attr_accessor :sourceSecurityGroupOwnerId
 
-  def initialize
+  def initialize(cfn_model)
+    super
     @resource_type = 'AWS::EC2::SecurityGroupIngress'
   end
 

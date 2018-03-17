@@ -34,8 +34,6 @@ describe CfnParser do
     it 'maps the Fn::If to a hash' do
       yaml_test_templates('iam_group/iam_group_with_if').each do |test_template|
         cfn_model = @cfn_parser.parse IO.read(test_template)
-        puts cfn_model
-
 
         expect(cfn_model.resources_by_type('AWS::IAM::Group').first.policies.first).to eq({
                                                                                        'Fn::If' => [
