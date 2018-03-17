@@ -1,8 +1,6 @@
 require_relative 'model_element'
 
 class AWS::IAM::Group  < ModelElement
-  attr_accessor :groupName, :managedPolicyArns, :path, :policies
-
   # synthesized version of policies
   attr_accessor :policy_objects
 

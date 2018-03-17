@@ -1,9 +1,6 @@
 require_relative 'model_element'
 
 class AWS::ElasticLoadBalancing::LoadBalancer < ModelElement
-  attr_accessor :securityGroups, :subnets, :tags, :scheme, :loadBalancerName, :crossZone, :availabilityZones, :connectionDrainingPolicy
-  attr_accessor :connectionSettings, :accessLoggingPolicy, :instances, :appCookieStickinessPolicy, :lBCookieStickinessPolicy, :healthCheck, :policies, :listeners
-
   attr_accessor :security_groups
 
   def initialize(cfn_model)
@@ -23,8 +20,6 @@ class AWS::ElasticLoadBalancing::LoadBalancer < ModelElement
 end
 
 class AWS::ElasticLoadBalancingV2::LoadBalancer < ModelElement
-  attr_accessor :securityGroups, :loadBalancerAttributes, :subnets, :tags, :scheme, :name, :ipAddressType
-
   attr_accessor :security_groups
 
   def initialize(cfn_model)
