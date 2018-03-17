@@ -1,0 +1,6 @@
+{
+  "Parameters": {
+    "EgressCidr1": "1.2.3.4/24",
+    "EgressCidr2": "0.0.0.0/0"
+  }
+}
