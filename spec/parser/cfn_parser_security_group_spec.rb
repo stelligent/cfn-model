@@ -284,7 +284,6 @@ describe CfnParser do
     end
   end
 
-end
   context 'egresses are parameterized', :synth do
     it 'maps the Fn::If to a hash and skips objectification of it' do
       yaml_test_templates('security_group/security_group_with_parameterized_egress').each do |test_template|
@@ -297,4 +296,5 @@ end
         expect(cfn_model.resources['sg1'].egresses.first.cidrIp).to eq '0.0.0.0/0'
       end
     end
+  end 
 end#
