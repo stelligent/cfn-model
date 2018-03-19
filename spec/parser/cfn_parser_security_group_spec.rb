@@ -285,3 +285,17 @@ describe CfnParser do
   end
 
 end
+  context 'egresses are parameterized', :synth do
+    it 'maps the Fn::If to a hash and skips objectification of it' do
+      yaml_test_templates('security_group/security_group_with_parameterized_egress').each do |test_template|
+        cfn_model = @cfn_parser.parse IO.read(test_template),
+                                      IO.read('spec/test_templates/yaml/security_group/egress.json')
+
+
+        puts cfn_model.resources['sg2'].egresses
+        expect(cfn_model.resources['sg2'].egresses.first.cidrIp).to eq '1.2.3.4/24'
+        expect(cfn_model.resources['sg1'].egresses.first.cidrIp).to eq '0.0.0.0/0'
+      end
+    end
+  end#
+end

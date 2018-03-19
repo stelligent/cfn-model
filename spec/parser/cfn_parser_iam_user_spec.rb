@@ -9,7 +9,7 @@ describe CfnParser do
   context 'an iam user with no groups' do
     it 'returns a user with no groups' do
       test_templates('iam_user/iam_user_with_no_group').each do |test_template|
-        expected_iam_user = iam_user_with_no_groups
+        expected_iam_user = iam_user_with_no_groups(cfn_model: CfnModel.new)
         cfn_model = @cfn_parser.parse IO.read(test_template)
 
         expect(cfn_model.iam_users.size).to eq 1
@@ -20,7 +20,7 @@ describe CfnParser do
 
   context 'an iam user with two groups', :moo do
     it 'returns a user with two groups' do
-      expected_iam_user = iam_user_with_two_groups
+      expected_iam_user = iam_user_with_two_groups(cfn_model: CfnModel.new)
 
       test_templates('iam_user/iam_user_with_two_groups').each do |test_template|
         cfn_model = @cfn_parser.parse IO.read(test_template)
@@ -52,7 +52,7 @@ describe CfnParser do
 
   context 'an iam user with four groups via addition' do
     it 'returns a user with four groups' do
-      expected_iam_user = iam_user_with_two_groups_and_two_additions
+      expected_iam_user = iam_user_with_two_groups_and_two_additions(cfn_model: CfnModel.new)
 
       test_templates('iam_user/iam_user_with_two_additions').each do |test_template|
         cfn_model = @cfn_parser.parse IO.read(test_template)
@@ -65,7 +65,7 @@ describe CfnParser do
 
   context 'an iam user with four groups via addition' do
     it 'returns a user with four groups' do
-      expected_iam_user = iam_user_with_one_addition
+      expected_iam_user = iam_user_with_one_addition(cfn_model: CfnModel.new)
 
       test_templates('iam_user/iam_user_with_literal_username_and_addition').each do |test_template|
         cfn_model = @cfn_parser.parse IO.read(test_template)

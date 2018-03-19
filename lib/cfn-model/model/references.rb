@@ -6,6 +6,28 @@
 # references yet... in the meantime pile things up here and hope a pattern becomes
 # clear
 module References
+  def self.resolve_value(cfn_model, value)
+    if value.is_a? Hash
+      if value.has_key?('Ref')
+        ref_id = value['Ref']
+        if ref_id.is_a? String
+          if cfn_model.parameters.has_key?(ref_id)
+            return value if cfn_model.parameters[ref_id].synthesized_value.nil?
+            return cfn_model.parameters[ref_id].synthesized_value
+          else
+            return value
+          end
+        else
+          return value
+        end
+      else
+        return value
+      end
+    else
+      return value
+    end
+  end
+
   def self.is_security_group_id_external(group_id)
     resolve_security_group_id(group_id).nil?
   end

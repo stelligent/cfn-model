@@ -1,6 +1,6 @@
 require 'cfn-model/model/iam_role'
 
-def iam_role_with_single_statement
+def iam_role_with_single_statement(cfn_model: CfnModel.new)
   trust_statement = Statement.new
   trust_statement.effect = 'Allow'
   trust_statement.actions << 'sts:AssumeRole'
@@ -26,7 +26,7 @@ def iam_role_with_single_statement
   policy.policy_name = 'root'
   policy.policy_document = policy_document
 
-  role = AWS::IAM::Role.new
+  role = AWS::IAM::Role.new cfn_model
   role.path = '/'
   role.assumeRolePolicyDocument = {
     'Version'=> '2012-10-17',

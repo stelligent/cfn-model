@@ -24,6 +24,19 @@ Fred:
 END
       }.to raise_error 'Illegal cfn - no Resources'
     end
+
+    context 'just an array' do
+      it 'raises an error' do
+        expect {
+          ResourceTypeValidator.validate <<END
+[
+  "something",
+  "tricky"
+]
+END
+        }.to raise_error 'Illegal cfn - no Resources'
+      end
+    end
   end
 
   context 'empty Resources' do

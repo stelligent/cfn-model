@@ -8,7 +8,7 @@ class ResourceTypeValidator
       raise ParserError.new 'yml empty'
     end
 
-    if hash['Resources'].nil? or hash['Resources'].empty?
+    if hash.is_a? Array or hash['Resources'].nil? or hash['Resources'].empty?
       raise ParserError.new 'Illegal cfn - no Resources'
     end
 

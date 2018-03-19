@@ -1,0 +1,46 @@
+---
+Parameters:
+  VpcId:
+    Type: "AWS::EC2::VPC::Id"
+  EgressCidr1:
+    Type: String
+  EgressCidr2:
+    Type: String
+
+Resources:
+  sg1:
+    Type: "AWS::EC2::SecurityGroup"
+    Properties:
+      GroupDescription: "some_group_desc"
+      VpcId:
+        Ref: VpcId
+      Tags:
+        - Key: Vintage
+          Value: '1995'
+
+  sg2:
+    Type: "AWS::EC2::SecurityGroup"
+    Properties:
+      GroupDescription: "some_group_desc"
+      SecurityGroupIngress:
+        - CidrIp: "10.1.2.3/32"
+          FromPort: 34
+          ToPort: 36
+          IpProtocol: tcp
+      SecurityGroupEgress:
+        - CidrIp: !Ref EgressCidr1
+          FromPort: 55
+          ToPort: 56
+          IpProtocol: tcp
+      VpcId:
+        Ref: VpcId
+
+
+  securityGroupEgress1:
+    Type: "AWS::EC2::SecurityGroupEgress"
+    Properties:
+      GroupId: !Ref sg1
+      CidrIp: !Ref EgressCidr2
+      FromPort: 39
+      ToPort: 42
+      IpProtocol: tcp

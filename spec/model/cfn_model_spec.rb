@@ -15,7 +15,7 @@ describe CfnModel, :model do
 
     context 'ingress resource that points to internal sg' do
       it 'returns empty array' do
-        @cfn_model.resources['ingress'] = AWS::EC2::SecurityGroupIngress.new
+        @cfn_model.resources['ingress'] = AWS::EC2::SecurityGroupIngress.new @cfn_model
         @cfn_model.resources['ingress'].groupId = {
           'Ref' => 'secGroup'
         }
@@ -25,7 +25,7 @@ describe CfnModel, :model do
 
     context 'ingress resource that points to external sg' do
       it 'returns array with the ingress resource' do
-        @cfn_model.resources['ingress'] = AWS::EC2::SecurityGroupIngress.new
+        @cfn_model.resources['ingress'] = AWS::EC2::SecurityGroupIngress.new @cfn_model
         @cfn_model.resources['ingress'].groupId = {
           'Fn::ImportValue' => 'foo'
         }
@@ -38,10 +38,10 @@ describe CfnModel, :model do
   describe '#copy' do
     context 'when copy is made and resource is removed from copy' do
       it 'the original model still has the resource' do
-        ingress1 = AWS::EC2::SecurityGroupIngress.new
+        ingress1 = AWS::EC2::SecurityGroupIngress.new @cfn_model
         @cfn_model.resources['ingress1'] = ingress1
 
-        ingress2 = AWS::EC2::SecurityGroupIngress.new
+        ingress2 = AWS::EC2::SecurityGroupIngress.new @cfn_model
         @cfn_model.resources['ingress2'] = ingress2
 
         cfn_model_copy = @cfn_model.copy

@@ -8,6 +8,9 @@ Parameters:
     Default: vpc-e91e8490
   SgIds:
     Type: "List<AWS::EC2::SecurityGroup::Id>"
+  Password:
+    Type: String
+    NoEcho: true
 
 Resources:
   ec2Instance:

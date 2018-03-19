@@ -1,6 +1,7 @@
 require 'cfn-model/model/iam_policy'
+require 'cfn-model/model/cfn_model'
 
-def valid_iam_policy
+def valid_iam_policy(cfn_model: CfnModel.new)
   statement = Statement.new
   statement.effect = 'Allow'
   statement.actions << '*'
@@ -11,7 +12,7 @@ def valid_iam_policy
   policy_document.statements << statement
 
 
-  role = AWS::IAM::Policy.new
+  role = AWS::IAM::Policy.new cfn_model
   role.policyName = 'wilma'
   role.policyDocument = {
     'Version'=> '2012-10-17',
