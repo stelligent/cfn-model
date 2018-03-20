@@ -53,7 +53,7 @@ class CfnParser
   def apply_parameter_values(cfn_model, parameter_values_json)
     unless parameter_values_json.nil?
       parameter_values = JSON.load parameter_values_json
-      return if parameter_values.is_a? Array
+      return unless parameter_values.is_a? Hash
       return unless parameter_values.has_key? 'Parameters'
       parameter_values['Parameters'].each do |parameter_name, parameter_value|
         if cfn_model.parameters.has_key?(parameter_name)
