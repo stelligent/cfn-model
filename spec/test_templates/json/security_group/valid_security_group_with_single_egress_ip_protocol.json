@@ -1,0 +1,21 @@
+{
+  "Parameters": {
+    "VpcId": {
+      "Type": "AWS::EC2::VPC::Id"
+    }
+  },
+
+  "Resources": {
+    "sg3": {
+      "Type" : "AWS::EC2::SecurityGroup",
+      "Properties" : {
+        "GroupDescription" : "some_group_desc",
+        "SecurityGroupEgress" : {
+          "CidrIp": "10.1.2.3/32",
+          "IpProtocol": "-1"
+        },
+        "VpcId" : { "Ref": "VpcId" }
+      }
+    }
+  }
+}

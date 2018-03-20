@@ -1,0 +1,18 @@
+{
+  "Parameters": {
+    "VpcId": {
+      "Type": "AWS::EC2::VPC::Id"
+    }
+  },
+
+  "Resources": {
+    "sgi3": {
+      "Type": "AWS::EC2::SecurityGroupIngress",
+      "Properties": {
+        "GroupId": "group1",
+        "CidrIp": "10.1.2.3/32",
+        "IpProtocol": "-1"
+      }
+    }
+  }
+}
