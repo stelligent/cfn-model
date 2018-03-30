@@ -23,10 +23,9 @@ describe LambdaPrincipal, :prin do
     end
 
     context 'not a String or Integer' do
-      it 'raises an error' do
-        expect{
-          _ = LambdaPrincipal.wildcard?(['*'])
-        }.to raise_error 'whacky lambda principal not string or int: ["*"]'
+      it 'returns false' do
+        aws_account_id = {'Fn::Join' => []}
+        expect(LambdaPrincipal.wildcard?(aws_account_id)).to eq false
       end
     end
   end

@@ -2,13 +2,8 @@ class LambdaPrincipal
   def self.wildcard?(principal)
     if principal.is_a? String
       return has_asterisk principal
-    elsif principal.is_a? Integer
-      false
-    elsif principal.nil?
-      false
     else
-      #not legal?
-      raise "whacky lambda principal not string or int: #{principal}"
+      false
     end
   end
 
