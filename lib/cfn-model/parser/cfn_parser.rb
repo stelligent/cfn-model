@@ -1,5 +1,6 @@
 require 'yaml'
 require 'json'
+require 'cfn-model/parser/transform_registry'
 require 'cfn-model/validator/cloudformation_validator'
 require 'cfn-model/validator/reference_validator'
 require_relative 'parser_registry'
