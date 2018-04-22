@@ -1,0 +1,8 @@
+---
+Resources:
+  MyServerlessFunctionLogicalID:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: index.handler
+      Runtime: nodejs4.3
+      CodeUri: 's3://testBucket/mySourceCode.zip'
