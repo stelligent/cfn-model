@@ -32,13 +32,15 @@ class CfnParser
   # Given raw json/yml CloudFormation template, returns a CfnModel object
   # or raise ParserErrors if something is amiss with the format
   def parse(cloudformation_yml, parameter_values_json=nil)
+    pre_validate_model cloudformation_yml
+
     cfn_hash = YAML.load cloudformation_yml
 
     # Transform raw resources in template as performed by
     # transforms
     TransformRegistry.instance.perform_transforms cfn_hash
 
-    pre_validate_model cloudformation_yml
+    validate_references cfn_hash
 
     cfn_model = CfnModel.new
     cfn_model.raw_model = cfn_hash
@@ -132,9 +134,9 @@ class CfnParser
     if !errors.nil? && !errors.empty?
       raise ParserError.new('Basic CloudFormation syntax error', errors)
     end
+  end
 
-    cfn_hash = YAML.load cloudformation_yml
-
+  def validate_references(cfn_hash)
     unresolved_refs = ReferenceValidator.new.unresolved_references(cfn_hash)
     unless unresolved_refs.empty?
       raise ParserError.new("Unresolved logical resource ids: #{unresolved_refs.to_a}")
