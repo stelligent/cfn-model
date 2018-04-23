@@ -31,3 +31,11 @@ def json_test_templates(name)
     spec/test_templates/json/#{name}.json
   )
 end
+
+def json_test_template(name)
+  IO.read(yaml_test_templates(name).first)
+end
+
+def yaml_test_template(name)
+  IO.read(yaml_test_templates(name).first)
+end
