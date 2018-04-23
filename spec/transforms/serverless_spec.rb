@@ -30,6 +30,15 @@ describe CfnModel::Transforms::Serverless do
           yaml_test_templates('sam/sam_without_serverless').first
         )
       actual_cfn_model = @cfn_parser.parse cloudformation_template_yml
+      expect(actual_cfn_model.raw_model).to(
+        eq(
+          YAML.safe_load(
+            yaml_test_template(
+              'sam/sam_without_serverless'
+            )
+          )
+        )
+      )
     end
   end
 
