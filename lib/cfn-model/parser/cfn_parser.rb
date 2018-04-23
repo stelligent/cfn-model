@@ -38,7 +38,7 @@ class CfnParser
 
     # Transform raw resources in template as performed by
     # transforms
-    TransformRegistry.instance.perform_transforms cfn_hash
+    CfnModel::TransformRegistry.instance.perform_transforms cfn_hash
 
     validate_references cfn_hash
 
