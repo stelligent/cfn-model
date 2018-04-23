@@ -14,29 +14,29 @@ class CfnModel
       end
 
       def self.instance
-        if @instance.nil?
-          @instance = TransformRegistry.new
-        end
+        @instance ||= Serverless.new
         @instance
       end
 
       private
 
       def replace_serverless_function(cfn_hash, resource_name)
+        resource = cfn_hash['Resources'][resource_name]
         # Bucket is 3rd element of an S3 URI split on '/'
         code_bucket = \
-          cfn_hash[resource_name]['Properties']['CodeUri'].split('/')[2]
+          resource['Properties']['CodeUri']
+          .split('/')[2]
         # Object key is 4th element to end of an S3 URI split on '/'
         code_key = \
-          cfn_hash[resource_name]['Properties']['CodeUri']
-            .split('/')[3..-1].join('/')
+          resource['Properties']['CodeUri']
+          .split('/')[3..-1].join('/')
 
         cfn_hash.merge!(
           lambda_function(
-            handler: cfn_hash[resource_name]['Properties']['Handler'],
+            handler: resource['Properties']['Handler'],
             code_bucket: code_bucket,
             code_key: code_key,
-            runtime: cfn_hash[resource_name]['Properties']['Runtime']
+            runtime: resource['Properties']['Runtime']
           )
         )
 
@@ -48,11 +48,13 @@ class CfnModel
       # Return the hash structure of the 'FunctionNameRole'
       # AWS::IAM::Role resource as created by Serverless transform
       def function_name_role
-        { 'FunctionNameRole' => {
+        { 'FunctionNameRole' =>
+          {
             'Type' => 'AWS::IAM::Role',
             'Properties' => {
               'ManagedPolicyArns' =>
-              ['arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole'],
+              ['arn:aws:iam::aws:policy/service-role/' \
+               'AWSLambdaBasicExecutionRole'],
               'AssumeRolePolicyDocument' => {
                 'Version' => '2012-10-17',
                 'Statement' => [{
@@ -70,20 +72,14 @@ class CfnModel
       # Return the hash structure of a AWS::Lambda::Function as created
       # by Serverless transform
       def lambda_function(handler:, code_bucket:, code_key:, runtime:)
-        {
-          'Type' => 'AWS::Lambda::Function',
+        { 'Type' => 'AWS::Lambda::Function',
           'Properties' => {
             'Handler' => handler,
-            'Code' => {
-              'S3Bucket' => code_bucket,
-              'S3Key' => code_key
-            },
-            'Role' => {
-              'Fn::GetAtt' => %w[FunctionNameRole Arn]
-            },
+            'Code' => { 'S3Bucket' => code_bucket,
+                        'S3Key' => code_key },
+            'Role' => { 'Fn::GetAtt' => %w[FunctionNameRole Arn] },
             'Runtime' => runtime
-          }
-        }
+          } }
       end
     end
   end
