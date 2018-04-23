@@ -53,11 +53,21 @@ describe CfnModel::Transforms::Serverless do
       cloudformation_template_yml = \
         yaml_test_template('sam/valid_simple_lambda_fn')
       actual_cfn_model = @cfn_parser.parse cloudformation_template_yml
+      expect(
+        actual_cfn_model.raw_model['Resources']['MyServerlessFunctionLogicalID']['Type']
+      ).to(
+        eq 'AWS::Lambda::Function'
+      )
     end
     it 'Ensures "FunctionNameRole" AWS::IAM::Role' do
       cloudformation_template_yml = \
         yaml_test_template('sam/valid_simple_lambda_fn')
       actual_cfn_model = @cfn_parser.parse cloudformation_template_yml
+      expect(
+        actual_cfn_model.raw_model['Resources']['FunctionNameRole']['Type']
+      ).to(
+        eq 'AWS::IAM::Role'
+      )
     end
   end
 end
