@@ -49,6 +49,11 @@ describe CfnModel::Transforms::Serverless do
           yaml_test_templates('sam/valid_simple_lambda_fn').first
         )
       actual_cfn_model = @cfn_parser.parse cloudformation_template_yml
+      expect(
+        actual_cfn_model.raw_model['Resources']['MyServerlessFunctionLogicalID']['Type']
+      ).not_to(
+        eq 'AWS::Serverless::Function'
+      )
     end
     it 'Adds AWS::Lambda::Function resource' do
       cloudformation_template_yml = \
