@@ -2,7 +2,7 @@ require 'spec_helper'
 require 'cfn-model/parser/cfn_parser'
 require 'cfn-model/transforms/serverless'
 
-describe CfnParser::Transforms::Serverless do
+describe CfnModel::Transforms::Serverless do
   before :each do
     @cfn_parser = CfnParser.new
   end
