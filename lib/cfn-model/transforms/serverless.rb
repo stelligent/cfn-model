@@ -79,7 +79,7 @@ class CfnModel
               'S3Key' => code_key
             },
             'Role' => {
-              'Fn::GetAtt' => ['FunctionNameRole', 'Arn']
+              'Fn::GetAtt' => %w[FunctionNameRole Arn]
             },
             'Runtime' => runtime
           }
