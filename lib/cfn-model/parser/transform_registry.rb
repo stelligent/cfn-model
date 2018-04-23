@@ -24,3 +24,5 @@ class CfnModel::TransformRegistry
     @instance
   end
 end
+
+class CfnModel::Transforms
