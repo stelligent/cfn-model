@@ -30,42 +30,39 @@ class CfnModel
           resource['Properties']['CodeUri']
           .split('/')[3..-1].join('/')
 
-        cfn_hash.merge!(
+        cfn_hash['Resources'][resource_name] = \
           lambda_function(
             handler: resource['Properties']['Handler'],
             code_bucket: code_bucket,
             code_key: code_key,
             runtime: resource['Properties']['Runtime']
           )
-        )
 
-        cfn_hash.merge!(
-          function_name_role
-        )
+        cfn_hash['Resources']['FunctionNameRole'] = function_name_role
+        puts "cfn_hash = #{cfn_hash}"
       end
 
       # Return the hash structure of the 'FunctionNameRole'
       # AWS::IAM::Role resource as created by Serverless transform
       def function_name_role
-        { 'FunctionNameRole' =>
-          {
-            'Type' => 'AWS::IAM::Role',
-            'Properties' => {
-              'ManagedPolicyArns' =>
-              ['arn:aws:iam::aws:policy/service-role/' \
-               'AWSLambdaBasicExecutionRole'],
-              'AssumeRolePolicyDocument' => {
-                'Version' => '2012-10-17',
-                'Statement' => [{
-                  'Action' => ['sts:AssumeRole'],
-                  'Effect' => 'Allow',
-                  'Principal' => {
-                    'Service' => ['lambda.amazonaws.com']
-                  }
-                }]
-              }
+        {
+          'Type' => 'AWS::IAM::Role',
+          'Properties' => {
+            'ManagedPolicyArns' =>
+            ['arn:aws:iam::aws:policy/service-role/' \
+              'AWSLambdaBasicExecutionRole'],
+            'AssumeRolePolicyDocument' => {
+              'Version' => '2012-10-17',
+              'Statement' => [{
+                'Action' => ['sts:AssumeRole'],
+                'Effect' => 'Allow',
+                'Principal' => {
+                  'Service' => ['lambda.amazonaws.com']
+                }
+              }]
             }
-          } }
+          }
+        }
       end
 
       # Return the hash structure of a AWS::Lambda::Function as created
