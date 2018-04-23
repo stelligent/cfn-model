@@ -5,12 +5,11 @@ class CfnModel
     # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/transform-aws-serverless.html
     class Serverless
       def perform_transform(cfn_hash)
-        new_hash = cfn_hash.dup
-        cfn_hash['Resources'].each do |r_name, r_value|
+        resources = cfn_hash['Resources'].clone
+        resources.each do |r_name, r_value|
           next unless r_value['Type'].eql? 'AWS::Serverless::Function'
-          replace_serverless_function new_hash, r_name
+          replace_serverless_function cfn_hash, r_name
         end
-        cfn_hash = new_hash
       end
 
       def self.instance
