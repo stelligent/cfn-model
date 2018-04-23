@@ -10,9 +10,7 @@ describe CfnModel::Transforms::Serverless do
   context 'Template without serverless transform' do
     it 'Does not modify a template without AWS::Serverless::Function' do
       cloudformation_template_yml = \
-        IO.read(
-          yaml_test_templates('ec2_instance/instance_with_sgid_list_ref').first
-        )
+        yaml_test_template('ec2_instance/instance_with_sgid_list_ref')
       actual_cfn_model = @cfn_parser.parse cloudformation_template_yml
       expect(actual_cfn_model.raw_model).to(
         eq(
@@ -26,9 +24,7 @@ describe CfnModel::Transforms::Serverless do
     end
     it 'Does not modify a template with AWS::Serverless::Function' do
       cloudformation_template_yml = \
-        IO.read(
-          yaml_test_templates('sam/sam_without_serverless').first
-        )
+        yaml_test_template('sam/sam_without_serverless')
       actual_cfn_model = @cfn_parser.parse cloudformation_template_yml
       expect(actual_cfn_model.raw_model).to(
         eq(
@@ -45,9 +41,7 @@ describe CfnModel::Transforms::Serverless do
   context 'Template with serverless transform' do
     it 'Removes AWS::Serverless::Function resource' do
       cloudformation_template_yml = \
-        IO.read(
-          yaml_test_templates('sam/valid_simple_lambda_fn').first
-        )
+        yaml_test_template('sam/valid_simple_lambda_fn')
       actual_cfn_model = @cfn_parser.parse cloudformation_template_yml
       expect(
         actual_cfn_model.raw_model['Resources']['MyServerlessFunctionLogicalID']['Type']
@@ -57,16 +51,12 @@ describe CfnModel::Transforms::Serverless do
     end
     it 'Adds AWS::Lambda::Function resource' do
       cloudformation_template_yml = \
-        IO.read(
-          yaml_test_templates('sam/valid_simple_lambda_fn').first
-        )
+        yaml_test_template('sam/valid_simple_lambda_fn')
       actual_cfn_model = @cfn_parser.parse cloudformation_template_yml
     end
     it 'Ensures "FunctionNameRole" AWS::IAM::Role' do
       cloudformation_template_yml = \
-        IO.read(
-          yaml_test_templates('sam/valid_simple_lambda_fn').first
-        )
+        yaml_test_template('sam/valid_simple_lambda_fn')
       actual_cfn_model = @cfn_parser.parse cloudformation_template_yml
     end
   end
