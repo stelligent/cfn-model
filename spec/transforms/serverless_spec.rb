@@ -14,6 +14,15 @@ describe CfnModel::Transforms::Serverless do
           yaml_test_templates('ec2_instance/instance_with_sgid_list_ref').first
         )
       actual_cfn_model = @cfn_parser.parse cloudformation_template_yml
+      expect(actual_cfn_model.raw_model).to(
+        eq(
+          YAML.safe_load(
+            yaml_test_template(
+              'ec2_instance/instance_with_sgid_list_ref'
+            )
+          )
+        )
+      )
     end
     it 'Does not modify a template with AWS::Serverless::Function' do
       cloudformation_template_yml = \
