@@ -2,7 +2,7 @@ Dir["#{__dir__}/../transforms/*.rb"].each do |transform|
   require "cfn-model/transforms/#{File.basename(transform, '.rb')}"
 end
 
-class TransformRegistry
+class CfnModel::TransformRegistry
   attr_reader :registry
 
   def initialize
