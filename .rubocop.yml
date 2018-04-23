@@ -5,3 +5,6 @@ AllCops:
 # Ruby 2.3+
 Layout/IndentHeredoc:
   Enabled: false
+# A bit longer than default
+Metrics/LineLength:
+  Max: 100
