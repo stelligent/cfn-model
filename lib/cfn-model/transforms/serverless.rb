@@ -39,7 +39,6 @@ class CfnModel
           )
 
         cfn_hash['Resources']['FunctionNameRole'] = function_name_role
-        puts "cfn_hash = #{cfn_hash}"
       end
 
       # Return the hash structure of the 'FunctionNameRole'
