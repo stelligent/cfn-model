@@ -19,16 +19,23 @@ class CfnModel
 
       private
 
+      def bucket_from_uri(uri)
+        uri.split('/')[2]
+      end
+
+      def object_key_from_uri(uri)
+        uri.split('/')[3..-1].join('/')
+      end
+
+      # rubucop:disable Metrics/AbcSize
+      # rubucop:disable Metrics/MethodLength
+
       def replace_serverless_function(cfn_hash, resource_name)
         resource = cfn_hash['Resources'][resource_name]
         # Bucket is 3rd element of an S3 URI split on '/'
-        code_bucket = \
-          resource['Properties']['CodeUri']
-          .split('/')[2]
+        code_bucket = bucket_from_uri resource['Properties']['CodeUri']
         # Object key is 4th element to end of an S3 URI split on '/'
-        code_key = \
-          resource['Properties']['CodeUri']
-          .split('/')[3..-1].join('/')
+        code_key = object_key_from_uri resource['Properties']['CodeUri']
 
         cfn_hash['Resources'][resource_name] = \
           lambda_function(
