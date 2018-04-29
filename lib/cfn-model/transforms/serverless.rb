@@ -6,9 +6,9 @@ class CfnModel
     class Serverless
       def perform_transform(cfn_hash)
         resources = cfn_hash['Resources'].clone
-        resources.each do |r_name, r_value|
-          next unless r_value['Type'].eql? 'AWS::Serverless::Function'
-          replace_serverless_function cfn_hash, r_name
+        resources.each do |resource_name, resource|
+          next unless resource['Type'].eql? 'AWS::Serverless::Function'
+          replace_serverless_function cfn_hash, resource_name
         end
       end
 
