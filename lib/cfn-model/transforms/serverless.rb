@@ -19,22 +19,23 @@ class CfnModel
 
       private
 
+      # Bucket is 3rd element of an S3 URI split on '/'
       def bucket_from_uri(uri)
         uri.split('/')[2]
       end
 
+      # Object key is 4th element to end of an S3 URI split on '/'
       def object_key_from_uri(uri)
         uri.split('/')[3..-1].join('/')
       end
 
-      # rubucop:disable Metrics/AbcSize
-      # rubucop:disable Metrics/MethodLength
+      # rubocop:disable Metrics/AbcSize
+      # rubocop:disable Metrics/MethodLength
 
       def replace_serverless_function(cfn_hash, resource_name)
         resource = cfn_hash['Resources'][resource_name]
-        # Bucket is 3rd element of an S3 URI split on '/'
+
         code_bucket = bucket_from_uri resource['Properties']['CodeUri']
-        # Object key is 4th element to end of an S3 URI split on '/'
         code_key = object_key_from_uri resource['Properties']['CodeUri']
 
         cfn_hash['Resources'][resource_name] = \
@@ -47,6 +48,10 @@ class CfnModel
 
         cfn_hash['Resources']['FunctionNameRole'] = function_name_role
       end
+      # rubocop:enable Metrics/AbcSize
+      # rubocop:enable Metrics/MethodLength
+
+      # rubocop:disable Metrics/MethodLength
 
       # Return the hash structure of the 'FunctionNameRole'
       # AWS::IAM::Role resource as created by Serverless transform
@@ -60,16 +65,14 @@ class CfnModel
             'AssumeRolePolicyDocument' => {
               'Version' => '2012-10-17',
               'Statement' => [{
-                'Action' => ['sts:AssumeRole'],
-                'Effect' => 'Allow',
-                'Principal' => {
-                  'Service' => ['lambda.amazonaws.com']
-                }
+                'Action' => ['sts:AssumeRole'], 'Effect' => 'Allow',
+                'Principal' => { 'Service' => ['lambda.amazonaws.com'] }
               }]
             }
           }
         }
       end
+      # rubocop:enable Metrics/MethodLength
 
       # Return the hash structure of a AWS::Lambda::Function as created
       # by Serverless transform
