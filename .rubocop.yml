@@ -1,0 +1,10 @@
+---
+AllCops:
+  TargetRubyVersion: 2.2
+# Not going to use a Rails gem for this, disable until
+# Ruby 2.3+
+Layout/IndentHeredoc:
+  Enabled: false
+# A bit longer than default
+Metrics/LineLength:
+  Max: 100

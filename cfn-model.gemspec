@@ -15,5 +15,7 @@ Gem::Specification.new do |s|
 
   s.required_ruby_version = '~> 2.2'
 
+  s.add_development_dependency 'rubocop'
+
   s.add_runtime_dependency('kwalify', '0.7.2')
 end

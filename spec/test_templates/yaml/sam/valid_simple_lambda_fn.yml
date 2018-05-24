@@ -1,0 +1,11 @@
+---
+# Example from
+# https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/transform-aws-serverless.html
+Transform: AWS::Serverless-2016-10-31
+Resources:
+  MyServerlessFunctionLogicalID:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: index.handler
+      Runtime: nodejs4.3
+      CodeUri: 's3://testBucket/mySourceCode.zip'
