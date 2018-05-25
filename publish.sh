@@ -35,7 +35,7 @@ sed -i "s/9\.9\.9/${new_version}/g" ${gem_name}.gemspec
 #we haven't made the new tag and we can't if we are going to annotate
 head=$(git log -n 1 --oneline | awk '{print $1}')
 
-issue_prefix='^(Issue |)#'
+issue_prefix='^(Issue |)#(([0-9])*)'
 echo "Remember! You need to start your commit messages with #{issue_prefix}x, where x is the issue number your commit resolves."
 
 if [[ ${current_version} == nil ]];
@@ -45,7 +45,8 @@ else
   log_rev_range="v0.1.${current_version}..${head}"
 fi
 
-issues=$(git log ${log_rev_range} --oneline | awk '{print $2}' | grep "${issue_prefix}" | uniq)
+issues=$(git log ${log_rev_range} --pretty="format:%s" | \
+         grep "${issue_prefix}" | cut -d " " -f 2 | sort | uniq)
 
 git tag -a v${new_version} -m "${new_version}" -m "Issues with commits, not necessarily closed: ${issues}"
 
