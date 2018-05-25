@@ -35,7 +35,7 @@ sed -i "s/9\.9\.9/${new_version}/g" ${gem_name}.gemspec
 #we haven't made the new tag and we can't if we are going to annotate
 head=$(git log -n 1 --oneline | awk '{print $1}')
 
-issue_prefix='^#'
+issue_prefix='^(Issue |)#'
 echo "Remember! You need to start your commit messages with #{issue_prefix}x, where x is the issue number your commit resolves."
 
 if [[ ${current_version} == nil ]];
