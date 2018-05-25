@@ -46,7 +46,8 @@ else
 fi
 
 issues=$(git log ${log_rev_range} --pretty="format:%s" | \
-         grep "${issue_prefix}" | cut -d " " -f 2 | sort | uniq)
+         egrep "${issue_prefix}" | sed 's/^Issue //' | \
+         cut -d " " -f 1 | sort | uniq)
 
 git tag -a v${new_version} -m "${new_version}" -m "Issues with commits, not necessarily closed: ${issues}"
 
