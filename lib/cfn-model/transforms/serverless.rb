@@ -38,9 +38,8 @@ class CfnModel
       # rubocop:disable Metrics/MethodLength
 
       def replace_serverless_function(cfn_hash, resource_name)
-        code_uri = resource['Properties']['CodeUri']
-
         resource = cfn_hash['Resources'][resource_name]
+        code_uri = resource['Properties']['CodeUri']
 
         lambda_fn_params = {
           handler: resource['Properties']['Handler'],
