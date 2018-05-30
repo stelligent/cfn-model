@@ -29,22 +29,29 @@ class CfnModel
         uri.split('/')[3..-1].join('/')
       end
 
+      # Is a URL a S3 URL
+      def is_s3_uri?(uri)
+        uri[0..4].eql? 's3://'
+      end
+
       # rubocop:disable Metrics/AbcSize
       # rubocop:disable Metrics/MethodLength
 
       def replace_serverless_function(cfn_hash, resource_name)
+        code_uri = resource['Properties']['CodeUri']
+
         resource = cfn_hash['Resources'][resource_name]
 
-        code_bucket = bucket_from_uri resource['Properties']['CodeUri']
-        code_key = object_key_from_uri resource['Properties']['CodeUri']
-
+        lambda_fn_params = {
+          handler: resource['Properties']['Handler'],
+          runtime: resource['Properties']['Runtime']
+        }
+        if is_s3_uri? code_uri
+          lambda_fn_params[:code_bucket] = bucket_from_uri code_uri
+          lambda_fn_params[:code_key] = object_key_from_uri code_uri
+        end
         cfn_hash['Resources'][resource_name] = \
-          lambda_function(
-            handler: resource['Properties']['Handler'],
-            code_bucket: code_bucket,
-            code_key: code_key,
-            runtime: resource['Properties']['Runtime']
-          )
+          lambda_function lambda_fn_params
 
         cfn_hash['Resources']['FunctionNameRole'] = function_name_role
       end
