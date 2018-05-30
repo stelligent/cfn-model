@@ -16,7 +16,7 @@ class CfnModel
 
     def perform_transforms(cfn_hash)
       transform_name = cfn_hash['Transform']
-      return unless transform_name
+      return unless transform_name && @registry[transform_name]
       @registry[transform_name].instance.perform_transform cfn_hash
     end
 
