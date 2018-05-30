@@ -1,0 +1,32 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: 'AWS::Serverless-2016-10-31'
+Description: 'Create Serverless application.'
+Parameters:
+  Environment:
+    Description: Name of the AWS deployment environment
+    Type: String
+    AllowedValues:
+    - rd
+    - di
+    - qa
+    - ct
+    - pr
+  ProductIdentifier:
+    Description: Tag for the name of the product
+    Type: String
+Resources:
+  MyServerlessFunctionLogicalID:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      FunctionName: !Sub '${Environment}-${ProductIdentifier}'
+      Handler: handler.hello
+      Runtime: python3.6
+      CodeUri: ../app
+      Description: >-
+        Sample application1
+      MemorySize: 128
+      Timeout: 3
+      Role: !Sub 'arn:aws:iam::${AWS::AccountId}:role/${Environment}-${ProductIdentifier}-Role'
+      Environment:
+        Variables:
+          AWS_ENV: !Ref Environment
