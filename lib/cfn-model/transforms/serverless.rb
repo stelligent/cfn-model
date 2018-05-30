@@ -82,15 +82,24 @@ class CfnModel
 
       # Return the hash structure of a AWS::Lambda::Function as created
       # by Serverless transform
-      def lambda_function(handler:, code_bucket:, code_key:, runtime:)
+      def lambda_function(handler:,
+                          code_bucket: nil,
+                          code_key: nil,
+                          runtime:)
+        fn_resource = \
         { 'Type' => 'AWS::Lambda::Function',
           'Properties' => {
             'Handler' => handler,
-            'Code' => { 'S3Bucket' => code_bucket,
-                        'S3Key' => code_key },
             'Role' => { 'Fn::GetAtt' => %w[FunctionNameRole Arn] },
             'Runtime' => runtime
           } }
+        if code_bucket && code_key
+          fn_resource['Properties']['Code'] = {
+            'S3Bucket' => code_bucket,
+            'S3Key' => code_key
+          }
+        end
+        fn_resource
       end
     end
   end
