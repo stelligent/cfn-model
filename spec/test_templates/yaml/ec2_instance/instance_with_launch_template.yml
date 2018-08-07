@@ -1,0 +1,21 @@
+Parameters:
+  ImageId:
+    Type: String
+    Default: ami-97785bed
+  InstanceType:
+    Type: String
+    Default: t2.micro
+
+Resources:
+  Instance:
+    Type: AWS::EC2::Instance
+    Properties:
+      LaunchTemplate:
+        LaunchTemplateId: !Ref LaunchTemplate
+        Version: 1
+  LaunchTemplate:
+    Type: AWS::EC2::LaunchTemplate
+    Properties:
+      LaunchTemplateData:
+        ImageId: !Ref ImageId
+        InstanceType: !Ref InstanceType

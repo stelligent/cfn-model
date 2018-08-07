@@ -9,10 +9,6 @@ mapping:
     type: map
     required: yes
     mapping:
-      ImageId:
-        type: any
-        required: yes
-
       =:
         type: any
   =:
