@@ -62,6 +62,10 @@ would yield an object:
       time_travel_machine = cfn_model.resources_by_type('AWS::TimeTravel::Machine').first
       expect(time_travel_machine.fuel).to eq 'dilithium'
       
+# Tests
+
+- run `rake spec` to execute serverspec tests
+
 # Deeper Dive
 
 ## Parsing
