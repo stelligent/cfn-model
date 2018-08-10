@@ -80,3 +80,4 @@ would yield an object:
 
 * Need to ponder a more general treatment for Refs 
 * Interesting to ponder doing analysis against a template combined with externally supplied Parameter values
+* Required attributes keep becoming optional... need to find way to bring validation in line with authoritative rules
