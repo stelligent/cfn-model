@@ -62,12 +62,15 @@ class CfnParser
   def apply_parameter_values(cfn_model, parameter_values_json)
     unless parameter_values_json.nil?
       parameter_values = JSON.load parameter_values_json
-      return unless parameter_values.is_a? Hash
-      return unless parameter_values.has_key? 'Parameters'
+      unless parameter_values.is_a?(Hash) && parameter_values.has_key?('Parameters')
+        raise JSON::ParserError.new('JSON parameters must be a dictionary with key "Parameters"')
+      end
       parameter_values['Parameters'].each do |parameter_name, parameter_value|
         if cfn_model.parameters.has_key?(parameter_name)
           cfn_model.parameters[parameter_name].synthesized_value = parameter_value.to_s
         end
+        # not going to complain if there are extra parameters in JSON.... if doing a scan
+        # you only have one file for all the templates
       end
 
       # any leftovers get default value

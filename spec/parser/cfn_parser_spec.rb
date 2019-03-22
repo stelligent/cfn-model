@@ -139,4 +139,55 @@ END
       expect(actual_cfn_model.resources['ec2Instance'].subnetId).to eq 'subnet-1234'
     end
   end
+
+  context 'template with external parameter values in incorrect format - json array' do
+    it 'raises a JSON::ParserError' do
+
+      parameters_json = <<END
+[
+  {
+    "ParameterKey": "SubnetId",
+    "ParameterValue": "sg-1234"
+  }
+]
+END
+      cloudformation_template_yml = IO.read(yaml_test_templates('ec2_instance/instance_with_sgid_list_ref').first)
+
+      expect {
+        actual_cfn_model = @cfn_parser.parse cloudformation_template_yml, parameters_json
+      }.to raise_error JSON::ParserError
+    end
+  end
+
+  context 'template with external parameter values in incorrect format - missing key' do
+    it 'raises a JSON::ParserError' do
+
+      parameters_json = <<END
+{
+  "Parms": {
+    "x": "y"
+  }
+}
+END
+      cloudformation_template_yml = IO.read(yaml_test_templates('ec2_instance/instance_with_sgid_list_ref').first)
+
+      expect {
+        actual_cfn_model = @cfn_parser.parse cloudformation_template_yml, parameters_json
+      }.to raise_error JSON::ParserError
+    end
+  end
+
+  context 'template with external parameter values in incorrect format - mangled JSON' do
+    it 'raises a JSON::ParserError' do
+
+      parameters_json = <<END
+this isn't JSON really
+END
+      cloudformation_template_yml = IO.read(yaml_test_templates('ec2_instance/instance_with_sgid_list_ref').first)
+
+      expect {
+        actual_cfn_model = @cfn_parser.parse cloudformation_template_yml, parameters_json
+      }.to raise_error JSON::ParserError
+    end
+  end
 end
