@@ -15,6 +15,7 @@ git config --global user.email "build@build.com"
 git config --global user.name "build"
 
 set +ex
+mkdir ~/.gem
 echo :rubygems_api_key: ${rubygems_api_key} > ~/.gem/credentials
 set -ex
 chmod 0600 ~/.gem/credentials
