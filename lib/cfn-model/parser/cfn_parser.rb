@@ -4,6 +4,7 @@ require 'cfn-model/parser/transform_registry'
 require 'cfn-model/validator/cloudformation_validator'
 require 'cfn-model/validator/reference_validator'
 require_relative 'parser_registry'
+require_relative 'parameter_substitution'
 require_relative 'parser_error'
 Dir["#{__dir__}/../model/*.rb"].each { |model| require "cfn-model/model/#{File.basename(model, '.rb')}" }
 
@@ -32,6 +33,14 @@ class CfnParser
   # Given raw json/yml CloudFormation template, returns a CfnModel object
   # or raise ParserErrors if something is amiss with the format
   def parse(cloudformation_yml, parameter_values_json=nil)
+    cfn_model = parse_without_parameters(cloudformation_yml)
+
+    apply_parameter_values(cfn_model, parameter_values_json)
+
+    cfn_model
+  end
+
+  def parse_without_parameters(cloudformation_yml)
     pre_validate_model cloudformation_yml
 
     cfn_hash = YAML.load cloudformation_yml
@@ -52,36 +61,16 @@ class CfnParser
     # pass 2: tie together separate resources only where necessary to make life easier for rule logic
     post_process_resource_model_elements cfn_model
 
-    apply_parameter_values(cfn_model, parameter_values_json)
-
     cfn_model
   end
 
   private
 
   def apply_parameter_values(cfn_model, parameter_values_json)
-    unless parameter_values_json.nil?
-      parameter_values = JSON.load parameter_values_json
-      unless parameter_values.is_a?(Hash) && parameter_values.has_key?('Parameters')
-        raise JSON::ParserError.new('JSON parameters must be a dictionary with key "Parameters"')
-      end
-      parameter_values['Parameters'].each do |parameter_name, parameter_value|
-        if cfn_model.parameters.has_key?(parameter_name)
-          cfn_model.parameters[parameter_name].synthesized_value = parameter_value.to_s
-        end
-        # not going to complain if there are extra parameters in JSON.... if doing a scan
-        # you only have one file for all the templates
-      end
-
-      # any leftovers get default value
-      # if external values were specified, we take that as a cue to consider defaults
-      # if no external values, we will ignore default values
-      cfn_model.parameters.each do |_, parameter|
-        if parameter.synthesized_value.nil? && !parameter.default.nil?
-          parameter.synthesized_value = parameter.default.to_s
-        end
-      end
-    end
+    ParameterSubstitution.new.apply_parameter_values(
+      cfn_model,
+      parameter_values_json
+    )
   end
 
   def post_process_resource_model_elements(cfn_model)

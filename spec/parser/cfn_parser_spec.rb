@@ -146,7 +146,6 @@ END
       parameters_json = <<END
 [
   {
-    "ParameterKey": "SubnetId",
     "ParameterValue": "sg-1234"
   }
 ]
