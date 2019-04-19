@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 Dir["#{__dir__}/*_parser.rb"].each { |model| require "cfn-model/parser/#{File.basename(model, '.rb')}" }
 
 class ParserRegistry

@@ -1,4 +1,5 @@
-#copy-paste alert with ModelElement which should instead be Resource anyway
+# frozen_string_literal: true
+
 class Parameter
   attr_accessor :id, :type
 
@@ -31,7 +32,7 @@ END
 
   def emit_instance_vars
     instance_vars_str = ''
-    self.instance_variables.each do |instance_variable|
+    instance_variables.each do |instance_variable|
       instance_vars_str += "  #{instance_variable}=#{instance_variable_get(instance_variable)}\n"
     end
     instance_vars_str

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative 'parser_error'
 require 'cfn-model/model/security_group_egress'
 require 'cfn-model/model/security_group_ingress'

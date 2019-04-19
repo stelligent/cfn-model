@@ -1,6 +1,8 @@
+# frozen_string_literal: true
+
 require_relative 'model_element'
 
-class AWS::S3::BucketPolicy  < ModelElement
+class AWS::S3::BucketPolicy < ModelElement
   # PolicyDocument - objectified policyDocument
   attr_accessor :policy_document
 

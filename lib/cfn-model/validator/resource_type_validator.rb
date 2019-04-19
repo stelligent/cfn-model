@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'cfn-model/parser/parser_error'
 
 class ResourceTypeValidator

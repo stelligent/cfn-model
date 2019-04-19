@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Principal
   def self.wildcard?(principal)
     if principal.is_a? String
@@ -25,10 +27,8 @@ class Principal
       raise "whacky principal not string or hash: #{principal}"
     end
   end
-
-  private
-
-  def self.has_asterisk(string)
+  
+  private_class_method def self.has_asterisk(string)
     !(string =~ /\*/).nil?
   end
 end

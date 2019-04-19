@@ -1,6 +1,8 @@
+# frozen_string_literal: true
+
 require_relative 'model_element'
 
-class AWS::IAM::Group  < ModelElement
+class AWS::IAM::Group < ModelElement
   # synthesized version of policies
   attr_accessor :policy_objects
 

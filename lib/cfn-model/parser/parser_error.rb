@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class ParserError < RuntimeError
   attr_accessor :errors
 

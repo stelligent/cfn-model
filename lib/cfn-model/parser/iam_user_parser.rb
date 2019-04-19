@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'cfn-model/model/policy_document'
 require 'cfn-model/model/policy'
 require_relative 'policy_document_parser'
