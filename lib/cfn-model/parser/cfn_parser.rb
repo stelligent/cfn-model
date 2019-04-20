@@ -34,7 +34,7 @@ class CfnParser
   ##
   # Given raw json/yml CloudFormation template, returns a CfnModel object
   # or raise ParserErrors if something is amiss with the format
-  def parse(cloudformation_yml, parameter_values_json=nil)
+  def parse(cloudformation_yml, parameter_values_json = nil)
     cfn_model = parse_without_parameters(cloudformation_yml)
 
     apply_parameter_values(cfn_model, parameter_values_json)
@@ -45,7 +45,7 @@ class CfnParser
   def parse_without_parameters(cloudformation_yml)
     pre_validate_model cloudformation_yml
 
-    cfn_hash = YAML.load cloudformation_yml
+    cfn_hash = YAML.safe_load cloudformation_yml
 
     # Transform raw resources in template as performed by
     # transforms
@@ -106,7 +106,7 @@ class CfnParser
   end
 
   def transform_hash_into_parameters(cfn_hash, cfn_model)
-    return cfn_model unless cfn_hash.has_key?('Parameters')
+    return cfn_model unless cfn_hash.key?('Parameters')
 
     cfn_hash['Parameters'].each do |parameter_name, parameter_hash|
       parameter = Parameter.new
@@ -115,6 +115,7 @@ class CfnParser
 
       parameter_hash.each do |property_name, property_value|
         next if %w(Type).include? property_name
+
         parameter.send("#{map_property_name_to_attribute(property_name)}=", property_value)
       end
 
@@ -133,7 +134,7 @@ class CfnParser
   def validate_references(cfn_hash)
     unresolved_refs = ReferenceValidator.new.unresolved_references(cfn_hash)
     unless unresolved_refs.empty?
-      raise ParserError.new("Unresolved logical resource ids: #{unresolved_refs.to_a}")
+      raise ParserError, "Unresolved logical resource ids: #{unresolved_refs.to_a}"
     end
   end
 

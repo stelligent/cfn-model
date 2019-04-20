@@ -57,11 +57,11 @@ class ModelElement
 END
   end
 
-  def ==(another_model_element)
+  def ==(other)
     found_unequal_instance_var = false
     instance_variables_without_at_sign.each do |instance_variable|
       if instance_variable != :logical_resource_id && instance_variable != :cfn_model
-        if send(instance_variable) != another_model_element.send(instance_variable)
+        if send(instance_variable) != other.send(instance_variable)
           found_unequal_instance_var = true
         end
       end

@@ -39,7 +39,7 @@ class IamUserParser
       end
 
       if addition_user_name.is_a? Hash
-        if !addition_user_name['Ref'].nil?
+        unless addition_user_name['Ref'].nil?
           if addition_user_name['Ref'] == user_to_find.logical_resource_id
             return true
           end

@@ -27,12 +27,12 @@ class Statement
     @resources.select { |action| action.to_s =~ /\*/ }
   end
 
-  def ==(another_statement)
-    @effect == another_statement.effect &&
-      actions_equal?(another_statement) &&
-      resource_equals?(another_statement) &&
-      principal_equals?(another_statement) &&
-      @condition == another_statement.condition
+  def ==(other)
+    @effect == other.effect &&
+      actions_equal?(other) &&
+      resource_equals?(other) &&
+      principal_equals?(other) &&
+      @condition == other.condition
   end
 
   private

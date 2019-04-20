@@ -27,7 +27,7 @@ class ParameterSubstitution
     legacy_format = {
       PARAMETERS => {}
     }
-    parameter_values.reduce(legacy_format) do |result, parameter_value|
+    parameter_values.each_with_object(legacy_format) do |parameter_value, result|
       result[PARAMETERS][parameter_value[PARAMETER_KEY]] = parameter_value[PARAMETER_VALUE]
       result
     end

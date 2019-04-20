@@ -6,15 +6,15 @@ class Parameter
   attr_accessor :synthesized_value
 
   def is_no_echo?
-    !@noEcho.nil? && @noEcho.to_s.downcase == 'true'
+    !@noEcho.nil? && @noEcho.to_s.casecmp('true').zero?
   end
 
   def to_s
-    <<END
+    <<INSTANCE_VARS
 {
 #{emit_instance_vars}
 }
-END
+INSTANCE_VARS
   end
 
   ##

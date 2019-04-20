@@ -10,6 +10,7 @@ class CfnModel
         resources = cfn_hash['Resources'].clone
         resources.each do |resource_name, resource|
           next unless resource['Type'].eql? 'AWS::Serverless::Function'
+          
           replace_serverless_function cfn_hash, resource_name
         end
       end
