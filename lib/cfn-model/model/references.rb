@@ -14,22 +14,22 @@ module References
         if ref_id.is_a? String
           if cfn_model.parameters.has_key?(ref_id)
             return value if cfn_model.parameters[ref_id].synthesized_value.nil?
-            return cfn_model.parameters[ref_id].synthesized_value
+            cfn_model.parameters[ref_id].synthesized_value
           else
-            return value
+            value
           end
         else
-          return value
+          value
         end
       else
-        return value
+        value
       end
     else
-      return value
+      value
     end
   end
 
-  def self.is_security_group_id_external(group_id)
+  def self.security_group_id_external?(group_id)
     resolve_security_group_id(group_id).nil?
   end
 
@@ -47,28 +47,26 @@ module References
       # anything else will be string manipulation functions
       # which again leads us back to a string which must be an external security group known out of band
       # so don't/can't link it up to a security group
-      return nil
+      nil
     end
   end
 
-  private
-
-  def self.logical_resource_id_from_get_att(attribute_spec)
+  private_class_method def self.logical_resource_id_from_get_att(attribute_spec)
     if attribute_spec.is_a? Array
       if attribute_spec[1] == 'GroupId'
-        return attribute_spec.first
+        attribute_spec.first
       else
         # this could be a reference to a nested stack output so treat it as external
         # and presume the ingress is freestanding.
-        return nil
+        nil
       end
     elsif attribute_spec.is_a? String
       if attribute_spec.split('.')[1] == 'GroupId'
-        return attribute_spec.split('.').first
+        attribute_spec.split('.').first
       else
         # this could be a reference to a nested stack output so treat it as external
         # and presume the ingress is freestanding.
-        return nil
+        nil
       end
     end
   end

@@ -12,7 +12,7 @@ describe References do
           'Fn::ImportValue' => 'someValue'
         }
         expected_value = true
-        actual_value = References.is_security_group_id_external import_value
+        actual_value = References.security_group_id_external? import_value
         expect(actual_value).to eq expected_value
       end
     end
@@ -23,7 +23,7 @@ describe References do
           'Ref' => 'someResourceId'
         }
         expected_value = false
-        actual_value = References.is_security_group_id_external ref_function
+        actual_value = References.security_group_id_external? ref_function
         expect(actual_value).to eq expected_value
       end
     end

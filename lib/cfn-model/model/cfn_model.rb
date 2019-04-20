@@ -44,14 +44,14 @@ class CfnModel
   def standalone_ingress
     security_group_ingresses = resources_by_type 'AWS::EC2::SecurityGroupIngress'
     security_group_ingresses.select do |security_group_ingress|
-      References.is_security_group_id_external(security_group_ingress.groupId)
+      References.security_group_id_external?(security_group_ingress.groupId)
     end
   end
 
   def standalone_egress
     security_group_egresses = resources_by_type 'AWS::EC2::SecurityGroupEgress'
     security_group_egresses.select do |security_group_egress|
-      References.is_security_group_id_external(security_group_egress.groupId)
+      References.security_group_id_external?(security_group_egress.groupId)
     end
   end
 

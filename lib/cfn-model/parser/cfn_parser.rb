@@ -27,7 +27,7 @@ class CfnParser
     { 'Fn::GetAtt' => val }
   end
 
-  %w(Join Base64 Sub Split Select ImportValue GetAZs FindInMap And Or If Not).each do |function_name|
+  %w[Join Base64 Sub Split Select ImportValue GetAZs FindInMap And Or If Not].each do |function_name|
     YAML.add_domain_type('', function_name) { |type, val| { "Fn::#{function_name}" => val } }
   end
 

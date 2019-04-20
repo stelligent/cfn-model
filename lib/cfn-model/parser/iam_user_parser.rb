@@ -9,7 +9,7 @@ class IamUserParser
     iam_user = resource
 
     iam_user.policy_objects = iam_user.policies.map do |policy|
-      next unless policy.has_key? 'PolicyName'
+      next unless policy.key? 'PolicyName'
 
       new_policy = Policy.new
       new_policy.policy_name = policy['PolicyName']

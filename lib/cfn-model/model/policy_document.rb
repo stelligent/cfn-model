@@ -37,7 +37,7 @@ class PolicyDocument
   end
 
   def ==(another_doc)
-    self.version == another_doc.version && @statements == another_doc.statements
+    version == another_doc.version && @statements == another_doc.statements
   end
 
   def to_s
@@ -49,6 +49,3 @@ class PolicyDocument
 END
   end
 end
-
-
-

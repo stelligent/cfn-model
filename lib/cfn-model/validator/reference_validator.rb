@@ -36,7 +36,7 @@ class ReferenceValidator
 
           if sub_hash.size == 1 && !sub_hash['Ref'].nil?
             unless sub_hash['Ref'].is_a? String
-              raise ParserError.new("Ref target must be string literal: #{sub_hash}")
+              raise ParserError, "Ref target must be string literal: #{sub_hash}"
             end
 
             unless pseudo_reference?(sub_hash['Ref'])

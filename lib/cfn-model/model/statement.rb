@@ -29,12 +29,23 @@ class Statement
 
   def ==(another_statement)
     @effect == another_statement.effect &&
-      @actions == another_statement.actions &&
-      @not_actions == another_statement.not_actions &&
-      @resources == another_statement.resources &&
-      @not_resources == another_statement.not_resources &&
-      @principal == another_statement.principal &&
-      @not_principal == another_statement.not_principal &&
+      actions_equal?(another_statement) &&
+      resource_equals?(another_statement) &&
+      principal_equals?(another_statement) &&
       @condition == another_statement.condition
+  end
+
+  private
+
+  def actions_equal?(another_statement)
+    @actions == another_statement.actions && @not_actions == another_statement.not_actions
+  end
+
+  def resource_equals?(another_statement)
+    @resources == another_statement.resources && @not_resources == another_statement.not_resources
+  end
+
+  def principal_equals?(another_statement)
+    @principal == another_statement.principal && @not_principal == another_statement.not_principal
   end
 end

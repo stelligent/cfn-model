@@ -3,15 +3,13 @@
 class LambdaPrincipal
   def self.wildcard?(principal)
     if principal.is_a? String
-      return has_asterisk principal
+      asterisk? principal
     else
       false
     end
   end
 
-  private
-
-  def self.has_asterisk(string)
+  private_class_method def self.asterisk?(string)
     !(string =~ /\*/).nil?
   end
 end

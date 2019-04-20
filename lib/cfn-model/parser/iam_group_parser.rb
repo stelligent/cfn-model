@@ -9,7 +9,7 @@ class IamGroupParser
     iam_group = resource
 
     iam_group.policy_objects = iam_group.policies.map do |policy|
-      next unless policy.has_key? 'PolicyName'
+      next unless policy.key? 'PolicyName'
 
       new_policy = Policy.new
       new_policy.policy_name = policy['PolicyName']

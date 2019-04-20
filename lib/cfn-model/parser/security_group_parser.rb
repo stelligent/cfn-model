@@ -22,10 +22,8 @@ class SecurityGroupParser
   private
 
   def silently_fail
-    begin
       yield
-    rescue
-    end
+  rescue
   end
 
   def objectify_ingress(cfn_model, security_group)
@@ -38,11 +36,10 @@ class SecurityGroupParser
       ingress_object = AWS::EC2::SecurityGroupIngress.new cfn_model
       ingress.each do |k,v|
         silently_fail do
-          ingress_object.send("#{initialLower(k)}=", v)
+          ingress_object.send("#{initial_lower(k)}=", v)
           mapped_at_least_one_attribute = true
         end
       end
-      #ingress_object.valid?
       mapped_at_least_one_attribute ? ingress_object : nil
     end.reject { |ingress| ingress.nil? }
   end
@@ -56,21 +53,20 @@ class SecurityGroupParser
       mapped_at_least_one_attribute = false
 
       egress_object = AWS::EC2::SecurityGroupEgress.new cfn_model
-      egress.each do |k,v|
+      egress.each do |k, v|
         next if k.match /::/
+
         silently_fail do
-          egress_object.send("#{initialLower(k)}=", v)
+          egress_object.send("#{initial_lower(k)}=", v)
           mapped_at_least_one_attribute = true
         end
 
       end.reject { |ingress| ingress.nil? }
-      #egress_object.valid?
-      egress_object
       mapped_at_least_one_attribute ? egress_object : nil
     end
   end
 
-  def initialLower(str)
+  def initial_lower(str)
     str.slice(0).downcase + str[1..(str.length)]
   end
 
