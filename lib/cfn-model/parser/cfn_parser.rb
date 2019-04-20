@@ -17,9 +17,9 @@ Dir["#{__dir__}/../model/*.rb"].each { |model| require "cfn-model/model/#{File.b
 #
 class CfnParser
   # this will convert any !Ref or !GetAtt into tranditional hash like in json
-  YAML.add_domain_type('', 'Ref') { |type, val| { 'Ref' => val } }
+  YAML.add_domain_type('', 'Ref') { |_, val| { 'Ref' => val } }
 
-  YAML.add_domain_type('', 'GetAtt') do |type, val|
+  YAML.add_domain_type('', 'GetAtt') do |_, val|
     if val.is_a? String
       val = val.split('.')
     end
@@ -28,7 +28,7 @@ class CfnParser
   end
 
   %w[Join Base64 Sub Split Select ImportValue GetAZs FindInMap And Or If Not].each do |function_name|
-    YAML.add_domain_type('', function_name) { |type, val| { "Fn::#{function_name}" => val } }
+    YAML.add_domain_type('', function_name) { |_, val| { "Fn::#{function_name}" => val } }
   end
 
   ##
@@ -147,7 +147,7 @@ class CfnParser
 
   def class_from_type_name(type_name)
     begin
-      resource_class = Object.const_get type_name, inherit=false
+      resource_class = Object.const_get type_name, inherit = false
     rescue NameError
       # puts "Never seen class: #{type_name} so going dynamic"
       resource_class = generate_resource_class_from_type type_name
@@ -156,7 +156,7 @@ class CfnParser
   end
 
   def map_property_name_to_attribute(str)
-    (str.slice(0).downcase + str[1..(str.length)]).gsub /-/, '_'
+    (str.slice(0).downcase + str[1..(str.length)]).tr '-', '_'
   end
 
   def generate_resource_class_from_type(type_name)

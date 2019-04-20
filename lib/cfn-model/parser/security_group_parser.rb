@@ -6,23 +6,22 @@ require 'cfn-model/model/security_group_ingress'
 require 'cfn-model/model/references'
 
 class SecurityGroupParser
-
   def parse(cfn_model:, resource:)
-     security_group = resource
+    security_group = resource
 
-     objectify_egress cfn_model, security_group
+    objectify_egress cfn_model, security_group
 
-     objectify_ingress cfn_model, security_group
+    objectify_ingress cfn_model, security_group
 
-     wire_ingress_rules_to_security_group(cfn_model: cfn_model, security_group: security_group)
-     wire_egress_rules_to_security_group(cfn_model: cfn_model, security_group: security_group)
-     security_group
+    wire_ingress_rules_to_security_group(cfn_model: cfn_model, security_group: security_group)
+    wire_egress_rules_to_security_group(cfn_model: cfn_model, security_group: security_group)
+    security_group
   end
 
   private
 
   def silently_fail
-      yield
+    yield
   rescue
   end
 
@@ -34,7 +33,7 @@ class SecurityGroupParser
     security_group.ingresses = security_group.securityGroupIngress.map do |ingress|
       mapped_at_least_one_attribute = false
       ingress_object = AWS::EC2::SecurityGroupIngress.new cfn_model
-      ingress.each do |k,v|
+      ingress.each do |k, v|
         silently_fail do
           ingress_object.send("#{initial_lower(k)}=", v)
           mapped_at_least_one_attribute = true
@@ -60,7 +59,6 @@ class SecurityGroupParser
           egress_object.send("#{initial_lower(k)}=", v)
           mapped_at_least_one_attribute = true
         end
-
       end.reject { |ingress| ingress.nil? }
       mapped_at_least_one_attribute ? egress_object : nil
     end

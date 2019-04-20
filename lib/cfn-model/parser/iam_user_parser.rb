@@ -22,7 +22,7 @@ class IamUserParser
     user_to_group_additions = cfn_model.resources_by_type 'AWS::IAM::UserToGroupAddition'
     user_to_group_additions.each do |user_to_group_addition|
 
-      if user_to_group_addition_has_username(user_to_group_addition.users,iam_user)
+      if user_to_group_addition_has_username(user_to_group_addition.users, iam_user)
         iam_user.group_names << user_to_group_addition.groupName
 
         # we need to figure out the story on resolving Refs i think for this to be real
@@ -48,15 +48,4 @@ class IamUserParser
     end
     false
   end
-
-  # def resolve_user_logical_resource_id(user)
-  #   if not user['Ref'].nil?
-  #     user['Ref']
-  #   elsif not user['Fn::GetAtt'].nil?
-  #     fail 'Arn not legal for user to group addition'
-  #   else
-  #     @dangler
-  #   end
-  # end
-
 end

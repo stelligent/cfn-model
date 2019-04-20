@@ -9,10 +9,10 @@
 module References
   def self.resolve_value(cfn_model, value)
     if value.is_a? Hash
-      if value.has_key?('Ref')
+      if value.key?('Ref')
         ref_id = value['Ref']
         if ref_id.is_a? String
-          if cfn_model.parameters.has_key?(ref_id)
+          if cfn_model.parameters.key?(ref_id)
             return value if cfn_model.parameters[ref_id].synthesized_value.nil?
             cfn_model.parameters[ref_id].synthesized_value
           else
