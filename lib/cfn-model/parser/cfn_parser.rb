@@ -131,7 +131,7 @@ class CfnParser
       resource_object = resource_class.new(cfn_model)
       resource_object.logical_resource_id = { name: resource_name, line: resource['Type']['line'] }
       resource_object.resource_type = resource['Type']['value']
-      resource_object.metadata = resource['Metadata']['value'] if resource.key?('Metadata')
+      resource_object.metadata = resource['Metadata']
 
       assign_fields_based_upon_properties resource_object, resource
 

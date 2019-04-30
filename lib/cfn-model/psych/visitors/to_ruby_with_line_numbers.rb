@@ -6,7 +6,7 @@ class ToRubyWithLineNumbers < Psych::Visitors::ToRuby
 
       # This is the important bit. If the value is a scalar,
       # we replace it with the desired hash.
-      if v.is_a?(::Psych::Nodes::Scalar)
+      if v.is_a?(::Psych::Nodes::Scalar) && key == 'Type'
         val = { "value" => val, "line" => v.start_line + 1} # line is 0 based, so + 1
       end
 
