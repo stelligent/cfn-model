@@ -52,7 +52,7 @@ class CfnParser
     ToRubyWithLineNumbers.create.accept(handler.root).first
   end
 
-  def parse_without_parameters(cloudformation_yml, with_line_numbers)
+  def parse_without_parameters(cloudformation_yml, with_line_numbers=false)
     pre_validate_model cloudformation_yml
 
     cfn_hash =
