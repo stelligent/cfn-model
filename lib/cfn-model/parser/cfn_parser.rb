@@ -129,13 +129,14 @@ class CfnParser
       resource_class = class_from_type_name resource['Type']['value']
 
       resource_object = resource_class.new(cfn_model)
-      resource_object.logical_resource_id = { name: resource_name, line: resource['Type']['line'] }
+      resource_object.logical_resource_id = resource_name
       resource_object.resource_type = resource['Type']['value']
       resource_object.metadata = resource['Metadata']
 
       assign_fields_based_upon_properties resource_object, resource
 
       cfn_model.resources[resource_name] = resource_object
+      cfn_model.line_numbers[resource_name] = resource['Type']['line']
     end
     cfn_model
   end
