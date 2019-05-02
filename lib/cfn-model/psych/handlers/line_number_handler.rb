@@ -11,8 +11,8 @@ class LineNumberHandler < Psych::TreeBuilder
   # to the node.
   def scalar value, anchor, tag, plain, quoted, style
     mark = parser.mark
-    s = super
-    s.line = mark.line
-    s
+    node = super
+    node.line = mark.line
+    node
   end
 end
