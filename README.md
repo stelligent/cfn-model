@@ -40,7 +40,7 @@ The raw Hash output of `YAML.load` is also available from `CfnModel`.
        # interrogate the iam_user
     end
 
-## With Line Numbers
+## With Line Number Tracking
 
     require 'cfn-model'
 
