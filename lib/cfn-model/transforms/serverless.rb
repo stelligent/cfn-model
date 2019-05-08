@@ -49,7 +49,6 @@ class CfnModel
       # i question whether we need to carry out the transform this far given cfn_nag
       # likely won't ever opine on bucket names or object keys
       def transform_code_uri(lambda_fn_params, code_uri)
-        puts code_uri
         if s3_uri? code_uri
           lambda_fn_params[:code_bucket] = bucket_from_uri code_uri
           lambda_fn_params[:code_key] = object_key_from_uri code_uri
