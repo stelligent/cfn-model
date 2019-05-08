@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 require_relative 'model_element'
 
 class AWS::EC2::SecurityGroup < ModelElement

@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 require 'cfn-model/model/policy_document'
 require 'cfn-model/model/policy'
 require_relative 'policy_document_parser'
@@ -9,7 +7,7 @@ class IamUserParser
     iam_user = resource
 
     iam_user.policy_objects = iam_user.policies.map do |policy|
-      next unless policy.key? 'PolicyName'
+      next unless policy.has_key? 'PolicyName'
 
       new_policy = Policy.new
       new_policy.policy_name = policy['PolicyName']
@@ -22,7 +20,7 @@ class IamUserParser
     user_to_group_additions = cfn_model.resources_by_type 'AWS::IAM::UserToGroupAddition'
     user_to_group_additions.each do |user_to_group_addition|
 
-      if user_to_group_addition_has_username(user_to_group_addition.users, iam_user)
+      if user_to_group_addition_has_username(user_to_group_addition.users,iam_user)
         iam_user.group_names << user_to_group_addition.groupName
 
         # we need to figure out the story on resolving Refs i think for this to be real
@@ -39,7 +37,7 @@ class IamUserParser
       end
 
       if addition_user_name.is_a? Hash
-        unless addition_user_name['Ref'].nil?
+        if !addition_user_name['Ref'].nil?
           if addition_user_name['Ref'] == user_to_find.logical_resource_id
             return true
           end
@@ -48,4 +46,15 @@ class IamUserParser
     end
     false
   end
+
+  # def resolve_user_logical_resource_id(user)
+  #   if not user['Ref'].nil?
+  #     user['Ref']
+  #   elsif not user['Fn::GetAtt'].nil?
+  #     fail 'Arn not legal for user to group addition'
+  #   else
+  #     @dangler
+  #   end
+  # end
+
 end

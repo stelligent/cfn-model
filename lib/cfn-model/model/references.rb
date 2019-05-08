@@ -1,4 +1,3 @@
-# frozen_string_literal: true
 
 ##
 # this is a placeholder for anything related to resolving references
@@ -9,27 +8,27 @@
 module References
   def self.resolve_value(cfn_model, value)
     if value.is_a? Hash
-      if value.key?('Ref')
+      if value.has_key?('Ref')
         ref_id = value['Ref']
         if ref_id.is_a? String
-          if cfn_model.parameters.key?(ref_id)
+          if cfn_model.parameters.has_key?(ref_id)
             return value if cfn_model.parameters[ref_id].synthesized_value.nil?
-            cfn_model.parameters[ref_id].synthesized_value
+            return cfn_model.parameters[ref_id].synthesized_value
           else
-            value
+            return value
           end
         else
-          value
+          return value
         end
       else
-        value
+        return value
       end
     else
-      value
+      return value
     end
   end
 
-  def self.security_group_id_external?(group_id)
+  def self.is_security_group_id_external(group_id)
     resolve_security_group_id(group_id).nil?
   end
 
@@ -47,26 +46,28 @@ module References
       # anything else will be string manipulation functions
       # which again leads us back to a string which must be an external security group known out of band
       # so don't/can't link it up to a security group
-      nil
+      return nil
     end
   end
 
-  private_class_method def self.logical_resource_id_from_get_att(attribute_spec)
+  private
+
+  def self.logical_resource_id_from_get_att(attribute_spec)
     if attribute_spec.is_a? Array
       if attribute_spec[1] == 'GroupId'
-        attribute_spec.first
+        return attribute_spec.first
       else
         # this could be a reference to a nested stack output so treat it as external
         # and presume the ingress is freestanding.
-        nil
+        return nil
       end
     elsif attribute_spec.is_a? String
       if attribute_spec.split('.')[1] == 'GroupId'
-        attribute_spec.split('.').first
+        return attribute_spec.split('.').first
       else
         # this could be a reference to a nested stack output so treat it as external
         # and presume the ingress is freestanding.
-        nil
+        return nil
       end
     end
   end

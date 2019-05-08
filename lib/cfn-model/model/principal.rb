@@ -1,9 +1,7 @@
-# frozen_string_literal: true
-
 class Principal
   def self.wildcard?(principal)
     if principal.is_a? String
-      asterisk? principal
+      return has_asterisk principal
     elsif principal.is_a? Hash
       # if new principal types arrive, let's not tie ourselves down - the * is still likely the thing to look for
       # unless %w(AWS FederatedUser CanonicalUser Service).include?(principal.keys.first)
@@ -13,7 +11,7 @@ class Principal
       has_wildcard = false
       principal.values.each do |principal_value|
         if principal_value.is_a? String
-          has_wildcard ||= asterisk? principal_value
+          has_wildcard ||= has_asterisk principal_value
         elsif principal_value.is_a? Array
           wildcard_principal = principal_value.find { |principal_iter| principal_iter =~ /\*/ }
           has_wildcard ||= !wildcard_principal.nil?
@@ -28,7 +26,9 @@ class Principal
     end
   end
 
-  private_class_method def self.asterisk?(string)
+  private
+
+  def self.has_asterisk(string)
     !(string =~ /\*/).nil?
   end
 end

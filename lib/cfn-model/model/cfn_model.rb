@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 require_relative 'references'
 
 class CfnModel
@@ -24,7 +22,7 @@ class CfnModel
   # the Hash is a clone
   def copy
     new_cfn_model = CfnModel.new
-    @parameters.each do |k, v|
+    @parameters.each do |k,v|
       new_cfn_model.parameters[k] = v
     end
     @resources.each do |k, v|
@@ -45,14 +43,14 @@ class CfnModel
   def standalone_ingress
     security_group_ingresses = resources_by_type 'AWS::EC2::SecurityGroupIngress'
     security_group_ingresses.select do |security_group_ingress|
-      References.security_group_id_external?(security_group_ingress.groupId)
+      References.is_security_group_id_external(security_group_ingress.groupId)
     end
   end
 
   def standalone_egress
     security_group_egresses = resources_by_type 'AWS::EC2::SecurityGroupEgress'
     security_group_egresses.select do |security_group_egress|
-      References.security_group_id_external?(security_group_egress.groupId)
+      References.is_security_group_id_external(security_group_egress.groupId)
     end
   end
 

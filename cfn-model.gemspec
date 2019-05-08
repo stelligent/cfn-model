@@ -1,21 +1,19 @@
-# frozen_string_literal: true
-
 require 'rake'
 
 Gem::Specification.new do |s|
   s.name          = 'cfn-model'
   s.license       = 'MIT'
   s.version       = '9.9.9'
-  s.executables   = %w[cfn_parse]
+  s.executables   = %w(cfn_parse)
   s.authors       = ['Eric Kascic']
   s.summary       = 'cfn-model'
   s.description   = 'An object model for CloudFormation templates'
   s.homepage      = 'https://github.com/stelligent/cfn-model'
-  s.files         = Dir.glob('lib/**/*.rb', 'lib/**/*.yml', 'lib/**/*.erb')
+  s.files         = FileList[ 'lib/**/*.rb', 'lib/**/*.yml', 'lib/**/*.erb']
 
   s.require_paths << 'lib'
 
-  s.required_ruby_version = '>= 2.2'
+  s.required_ruby_version = '~> 2.2'
 
   s.add_development_dependency 'rubocop'
 

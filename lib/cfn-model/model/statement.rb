@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 require_relative 'principal'
 
 class Statement
@@ -27,25 +25,14 @@ class Statement
     @resources.select { |action| action.to_s =~ /\*/ }
   end
 
-  def ==(other)
-    @effect == other.effect &&
-      actions_equal?(other) &&
-      resource_equals?(other) &&
-      principal_equals?(other) &&
-      @condition == other.condition
-  end
-
-  private
-
-  def actions_equal?(another_statement)
-    @actions == another_statement.actions && @not_actions == another_statement.not_actions
-  end
-
-  def resource_equals?(another_statement)
-    @resources == another_statement.resources && @not_resources == another_statement.not_resources
-  end
-
-  def principal_equals?(another_statement)
-    @principal == another_statement.principal && @not_principal == another_statement.not_principal
+  def ==(another_statement)
+    @effect == another_statement.effect &&
+      @actions == another_statement.actions &&
+      @not_actions == another_statement.not_actions &&
+      @resources == another_statement.resources &&
+      @not_resources == another_statement.not_resources &&
+      @principal == another_statement.principal &&
+      @not_principal == another_statement.not_principal &&
+      @condition == another_statement.condition
   end
 end

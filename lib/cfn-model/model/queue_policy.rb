@@ -1,8 +1,6 @@
-# frozen_string_literal: true
-
 require_relative 'model_element'
 
-class AWS::SQS::QueuePolicy < ModelElement
+class AWS::SQS::QueuePolicy  < ModelElement
   # PolicyDocument - objectified policyDocument
   attr_accessor :policy_document
 

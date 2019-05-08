@@ -1,20 +1,19 @@
-# frozen_string_literal: true
-
+#copy-paste alert with ModelElement which should instead be Resource anyway
 class Parameter
   attr_accessor :id, :type
 
   attr_accessor :synthesized_value
 
   def is_no_echo?
-    !@noEcho.nil? && @noEcho.to_s.casecmp('true').zero?
+    !@noEcho.nil? && @noEcho.to_s.downcase == 'true'
   end
 
   def to_s
-    <<INSTANCE_VARS
+    <<END
 {
 #{emit_instance_vars}
 }
-INSTANCE_VARS
+END
   end
 
   ##
@@ -32,7 +31,7 @@ INSTANCE_VARS
 
   def emit_instance_vars
     instance_vars_str = ''
-    instance_variables.each do |instance_variable|
+    self.instance_variables.each do |instance_variable|
       instance_vars_str += "  #{instance_variable}=#{instance_variable_get(instance_variable)}\n"
     end
     instance_vars_str

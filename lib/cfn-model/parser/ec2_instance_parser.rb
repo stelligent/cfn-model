@@ -1,5 +1,4 @@
-# frozen_string_literal: true
-
+# Parser for EC2 instances
 class Ec2InstanceParser
   def parse(cfn_model:, resource:)
     ec2_instance = resource

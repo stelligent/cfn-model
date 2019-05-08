@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 require_relative 'schema_generator'
 require 'kwalify'
 
@@ -9,6 +7,6 @@ class CloudFormationValidator
 
     validator = Kwalify::Validator.new(schema)
 
-    validator.validate(YAML.safe_load(cloudformation_string))
+    validator.validate(YAML.load(cloudformation_string))
   end
 end

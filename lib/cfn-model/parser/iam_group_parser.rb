@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 require 'cfn-model/model/iam_role'
 require 'cfn-model/model/policy'
 require_relative 'policy_document_parser'
@@ -9,7 +7,7 @@ class IamGroupParser
     iam_group = resource
 
     iam_group.policy_objects = iam_group.policies.map do |policy|
-      next unless policy.key? 'PolicyName'
+      next unless policy.has_key? 'PolicyName'
 
       new_policy = Policy.new
       new_policy.policy_name = policy['PolicyName']

@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 require_relative 'model_element'
 
 # this could have been inline or freestanding
