@@ -69,6 +69,29 @@ describe CfnModel::Transforms::Serverless do
         eq 'AWS::IAM::Role'
       )
     end
+
+    context 'Template with serverless transform and Globals' do
+      it 'blows chunks' do
+        cloudformation_template_yml = yaml_test_template('sam/globals')
+        actual_cfn_model = @cfn_parser.parse cloudformation_template_yml
+
+        expected_bucket = {
+          'Fn::Sub' => 'bucket.lambda.${Site}'
+        }
+        expected_key = {
+          'Fn::Sub' => 'lambda/code/${Site}/jar-with-dependencies.jar'
+        }
+        expected_runtime = 'java8'
+
+        actual_bucket = actual_cfn_model.raw_model['Resources']['SomeFunction']['Properties']['Code']['S3Bucket']
+        actual_key = actual_cfn_model.raw_model['Resources']['SomeFunction']['Properties']['Code']['S3Key']
+        actual_runtime = actual_cfn_model.raw_model['Resources']['SomeFunction']['Properties']['Runtime']
+
+        expect(actual_bucket).to eq expected_bucket
+        expect(actual_key).to eq expected_key
+        expect(actual_runtime).to eq expected_runtime
+      end
+    end
   end
 
   context 'Template with serverless transform without URI' do

@@ -29,35 +29,75 @@ class CfnModel
         uri.split('/')[3..-1].join('/')
       end
 
-      # Is a URL a S3 URL
-      def is_s3_uri?(uri)
-        uri[0..4].eql? 's3://'
+      def s3_uri?(uri)
+        if uri.is_a? String
+          uri[0..4].eql? 's3://'
+        else
+          false
+        end
       end
 
-      # rubocop:disable Metrics/AbcSize
-      # rubocop:disable Metrics/MethodLength
+      def resolve_globals_function_property(cfn_hash, property_name)
+        cfn_hash['Globals']['Function'][property_name]
+      end
 
-      def replace_serverless_function(cfn_hash, resource_name)
-        resource = cfn_hash['Resources'][resource_name]
-        code_uri = resource['Properties']['CodeUri']
+      def serverless_function_property(serverless_function, cfn_hash, property_name)
+        serverless_function['Properties'][property_name] || \
+          resolve_globals_function_property(cfn_hash, property_name)
+      end
 
-        lambda_fn_params = {
-          handler: resource['Properties']['Handler'],
-          runtime: resource['Properties']['Runtime']
-        }
-        if is_s3_uri? code_uri
+      # i question whether we need to carry out the transform this far given cfn_nag
+      # likely won't ever opine on bucket names or object keys
+      def transform_code_uri(lambda_fn_params, code_uri)
+        puts code_uri
+        if s3_uri? code_uri
           lambda_fn_params[:code_bucket] = bucket_from_uri code_uri
           lambda_fn_params[:code_key] = object_key_from_uri code_uri
+        elsif code_uri.is_a? Hash
+          lambda_fn_params[:code_bucket] = code_uri['Bucket']
+          lambda_fn_params[:code_key] = code_uri['Key']
         end
-        cfn_hash['Resources'][resource_name] = \
-          lambda_function lambda_fn_params
+        lambda_fn_params
+      end
+
+      def serverless_function_properties(cfn_hash, serverless_function)
+        code_uri = serverless_function_property(serverless_function, cfn_hash, 'CodeUri')
+
+        lambda_fn_params = {
+          handler: serverless_function_property(serverless_function, cfn_hash, 'Handler'),
+          runtime: serverless_function_property(serverless_function, cfn_hash, 'Runtime')
+        }
+
+        lambda_fn_params = transform_code_uri(
+          lambda_fn_params,
+          code_uri
+        )
+
+        lambda_fn_params
+      end
+
+      def replace_serverless_function(cfn_hash, resource_name)
+        serverless_function = cfn_hash['Resources'][resource_name]
+
+        lambda_fn_params = serverless_function_properties(cfn_hash, serverless_function)
+
+        cfn_hash['Resources'][resource_name] = lambda_function lambda_fn_params
 
         cfn_hash['Resources']['FunctionNameRole'] = function_name_role
       end
-      # rubocop:enable Metrics/AbcSize
-      # rubocop:enable Metrics/MethodLength
 
-      # rubocop:disable Metrics/MethodLength
+      def lambda_service_can_assume_role
+        {
+          'Version' => '2012-10-17',
+          'Statement' => [
+            {
+              'Action' => ['sts:AssumeRole'],
+              'Effect' => 'Allow',
+              'Principal' => { 'Service' => ['lambda.amazonaws.com'] }
+            }
+          ]
+        }
+      end
 
       # Return the hash structure of the 'FunctionNameRole'
       # AWS::IAM::Role resource as created by Serverless transform
@@ -65,34 +105,15 @@ class CfnModel
         {
           'Type' => 'AWS::IAM::Role',
           'Properties' => {
-            'ManagedPolicyArns' =>
-            ['arn:aws:iam::aws:policy/service-role/' \
-              'AWSLambdaBasicExecutionRole'],
-            'AssumeRolePolicyDocument' => {
-              'Version' => '2012-10-17',
-              'Statement' => [{
-                'Action' => ['sts:AssumeRole'], 'Effect' => 'Allow',
-                'Principal' => { 'Service' => ['lambda.amazonaws.com'] }
-              }]
-            }
+            'ManagedPolicyArns' => [
+              'arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole'
+            ],
+            'AssumeRolePolicyDocument' => lambda_service_can_assume_role
           }
         }
       end
-      # rubocop:enable Metrics/MethodLength
 
-      # Return the hash structure of a AWS::Lambda::Function as created
-      # by Serverless transform
-      def lambda_function(handler:,
-                          code_bucket: nil,
-                          code_key: nil,
-                          runtime:)
-        fn_resource = \
-        { 'Type' => 'AWS::Lambda::Function',
-          'Properties' => {
-            'Handler' => handler,
-            'Role' => { 'Fn::GetAtt' => %w[FunctionNameRole Arn] },
-            'Runtime' => runtime
-          } }
+      def lambda_function_code(fn_resource, code_bucket, code_key)
         if code_bucket && code_key
           fn_resource['Properties']['Code'] = {
             'S3Bucket' => code_bucket,
@@ -100,6 +121,23 @@ class CfnModel
           }
         end
         fn_resource
+      end
+
+      # Return the hash structure of a AWS::Lambda::Function as created
+      # by Serverless transform
+      def lambda_function(handler:,
+                          code_bucket: nil,
+                          code_key: nil,
+                          runtime:)
+        fn_resource = {
+          'Type' => 'AWS::Lambda::Function',
+          'Properties' => {
+            'Handler' => handler,
+            'Role' => { 'Fn::GetAtt' => %w[FunctionNameRole Arn] },
+            'Runtime' => runtime
+          }
+        }
+        lambda_function_code(fn_resource, code_bucket, code_key)
       end
     end
   end
