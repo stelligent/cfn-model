@@ -9,11 +9,25 @@ class ReferenceValidator
     end
 
     resource_keys = cloudformation_hash['Resources'].keys
-    missing_refs = all_references(cloudformation_hash) - Set.new(parameter_keys + resource_keys)
-    missing_refs
+
+    legal_identifiers = Set.new(parameter_keys + resource_keys)
+    missing_refs = all_references(cloudformation_hash) - legal_identifiers
+    post_process_special_refs(missing_refs, legal_identifiers)
   end
 
   private
+
+  SPECIAL_REF_REGEXP = /(.+)\..+/
+
+  def post_process_special_refs(missing_refs, legal_identifiers)
+    missing_refs.delete_if do |missing_ref|
+      match_data = missing_ref.match SPECIAL_REF_REGEXP
+      if match_data
+        resource_id = match_data[1]
+        legal_identifiers.member?(resource_id)
+      end
+    end
+  end
 
   def all_references(cloudformation_hash)
     result = Set.new

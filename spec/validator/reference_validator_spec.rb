@@ -148,4 +148,56 @@ END
       expect(unresolved_references).to eq Set.new(%w(dino2))
     end
   end
+
+  context '.Alias and .Version pseudorefs to legit resources' do
+    it 'ignores them' do
+      cfn_yaml_with_pseudo_refs = <<END
+---
+Parameters:
+  someParameter:
+    Type: String
+
+Resources:
+  someResource:
+    Properties:
+      Fred: wilma
+
+  someResource2:
+    Properties:
+      Barney: 
+        Genus: foo
+      JimBob: !Ref someResource.Alias
+      Ricky: !Ref someResource.Version
+END
+
+      unresolved_references = ReferenceValidator.new.unresolved_references YAML.load(cfn_yaml_with_pseudo_refs)
+      expect(unresolved_references).to eq Set.new(%w())
+    end
+  end
+
+  context '.Alias and .Version pseudorefs to missing resources' do
+    it 'ignores them' do
+      cfn_yaml_with_pseudo_refs = <<END
+---
+Parameters:
+  someParameter:
+    Type: String
+
+Resources:
+  someResource:
+    Properties:
+      Fred: wilma
+
+  someResource2:
+    Properties:
+      Barney: 
+        Genus: foo
+      JimBob: !Ref someResource.Alias
+      Ricky: !Ref bogus.Version
+END
+
+      unresolved_references = ReferenceValidator.new.unresolved_references YAML.load(cfn_yaml_with_pseudo_refs)
+      expect(unresolved_references).to eq Set.new(%w(bogus.Version))
+    end
+  end
 end
