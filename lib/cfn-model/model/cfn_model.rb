@@ -3,7 +3,7 @@
 require_relative 'references'
 
 class CfnModel
-  attr_reader :resources, :parameters
+  attr_reader :resources, :parameters, :line_numbers
 
   ##
   # if you really want it, here it is - the raw Hash from YAML.load.  you'll have to mess with structural nits of
@@ -15,6 +15,7 @@ class CfnModel
     @parameters = {}
     @resources = {}
     @raw_model = nil
+    @line_numbers = {}
   end
 
   ##
