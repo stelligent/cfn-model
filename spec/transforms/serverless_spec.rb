@@ -83,4 +83,19 @@ describe CfnModel::Transforms::Serverless do
       )
     end
   end
+
+  context 'Template with serverless transform with global URI' do
+    it 'Transforms without error' do
+      cloudformation_template_yml = \
+        yaml_test_template('sam/sam_with_global_uri')
+      actual_cfn_model = @cfn_parser.parse cloudformation_template_yml
+      expect(
+        actual_cfn_model.raw_model['Resources']['MyServerlessFunctionLogicalID']['Type']
+      ).not_to(
+        eq 'AWS::Serverless::Function'
+      )
+    end
+  end
+
+
 end

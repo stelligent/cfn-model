@@ -1,0 +1,17 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: 'AWS::Serverless-2016-10-31'
+Parameters:
+  Site:
+    Type: String
+Globals:
+  Function:
+    Runtime: java8
+    CodeUri:
+      Bucket: !Sub "bucket.lambda.${Site}"
+      Key: !Sub "lambda/code/${Site}/jar-with-dependencies.jar"
+Resources:
+  SomeFunction:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      FunctionName: !Sub "${Site}-Function"
+      Handler: "com.test.Function::handleRequest"

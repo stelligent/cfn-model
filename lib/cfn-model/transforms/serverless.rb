@@ -31,7 +31,7 @@ class CfnModel
 
       # Is a URL a S3 URL
       def is_s3_uri?(uri)
-        uri[0..4].eql? 's3://'
+        !uri.nil? and uri[0..4].eql? 's3://'
       end
 
       # rubocop:disable Metrics/AbcSize
