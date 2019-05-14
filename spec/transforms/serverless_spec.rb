@@ -106,4 +106,16 @@ describe CfnModel::Transforms::Serverless do
       )
     end
   end
+
+  context 'Template with serverless transform without codeuri and without inline (mangled even!)' do
+    it 'Transforms without error' do
+      cloudformation_template_yml = \
+        yaml_test_template('sam/function_without_codeuri_or_inline')
+      actual_cfn_model = @cfn_parser.parse cloudformation_template_yml
+      expect(
+        actual_cfn_model.raw_model['Resources']['HelloWorldFunction']['Code']
+      ).to be_nil
+
+    end
+  end
 end

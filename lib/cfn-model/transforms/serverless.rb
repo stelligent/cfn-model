@@ -38,7 +38,7 @@ class CfnModel
       end
 
       def resolve_globals_function_property(cfn_hash, property_name)
-        cfn_hash['Globals']['Function'][property_name]
+        cfn_hash['Globals'] && cfn_hash['Globals']['Function'] && cfn_hash['Globals']['Function'][property_name]
       end
 
       def serverless_function_property(serverless_function, cfn_hash, property_name)
