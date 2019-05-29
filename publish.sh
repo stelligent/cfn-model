@@ -1,5 +1,5 @@
 #!/bin/bash -ex
-export minor_version="0.3"
+export minor_version="0.4"
 set -o pipefail
 
 gem_name=cfn-model
@@ -21,8 +21,8 @@ echo :rubygems_api_key: ${rubygems_api_key} > ~/.gem/credentials
 set -ex
 chmod 0600 ~/.gem/credentials
 
-current_version=$(ruby -e 'tags=`git tag -l v0\.1\.*`' \
-                       -e 'p tags.lines.map { |tag| tag.sub(/v0.1./, "").chomp.to_i }.max')
+current_version=$(ruby -e 'tags=`git tag -l v#{ENV["minor_version"]}.*`' \
+                       -e 'p tags.lines.map { |tag| tag.sub(/v#{ENV["minor_version"]}./, "").chomp.to_i }.max')
 
 if [[ ${current_version} == nil ]];
 then
