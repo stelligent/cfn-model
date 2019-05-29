@@ -16,7 +16,7 @@ describe CfnParser do
         "addition1" => 14,
         "addition2" => 24
       }
-      # expect(actual_cfn_model.line_numbers).to eq expected_line_numbers
+      expect(actual_cfn_model.line_numbers).to eq expected_line_numbers
     end
   end
 end
