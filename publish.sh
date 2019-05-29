@@ -1,4 +1,5 @@
 #!/bin/bash -ex
+export minor_version="0.3"
 set -o pipefail
 
 gem_name=cfn-model
@@ -25,9 +26,9 @@ current_version=$(ruby -e 'tags=`git tag -l v0\.1\.*`' \
 
 if [[ ${current_version} == nil ]];
 then
-  new_version='0.2.0'
+  new_version="${minor_version}.0"
 else
-  new_version=0.2.$((current_version+1))
+  new_version="${minor_version}.$((current_version+1))"
 fi
 
 sed -i "s/9\.9\.9/${new_version}/g" ${gem_name}.gemspec
