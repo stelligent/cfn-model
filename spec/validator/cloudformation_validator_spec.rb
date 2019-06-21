@@ -92,4 +92,47 @@ TEMPLATE
       expect(CloudFormationValidator.new.validate(valid_json)).to eq []
     end
   end
+
+  context 'YAML template' do
+    it 'does not raise an error when template is YAML' do
+      valid_yaml = <<-TEMPLATE
+---
+Resources:
+  iamUserWithNoGroups:
+    Type: "AWS::IAM::User"
+TEMPLATE
+
+      expect(CloudFormationValidator.new.validate(valid_yaml)).to eq []
+    end
+
+    it 'does not raise an error when template is YAML with embedded JSON' do
+      valid_yaml = <<-TEMPLATE
+---
+Resources:
+  TriggerPipelineRule:
+    Type: AWS::Events::Rule
+    Properties:
+      Description: 'Triggers something'
+      Name: SomethingTrigger
+      ScheduleExpression: cron(0 12 ? * SAT *)
+      State: ENABLED
+      Targets:
+        -
+          Arn: DoesntMatter
+          RoleArn: DoesntMatter
+          Id: codebuild-something
+          Input: >-
+            {
+              "environmentVariablesOverride": [
+                {
+                  "name": "NO_DRY_RUN",
+                  "value": "true"
+                }
+              ]
+            }
+TEMPLATE
+
+      expect(CloudFormationValidator.new.validate(valid_yaml)).to eq []
+    end
+  end
 end
