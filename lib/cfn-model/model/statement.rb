@@ -14,11 +14,6 @@ class Statement
   end
 
   def wildcard_actions
-    @actions.select { |action| action.to_s =~ /\*/ }
-  end
-
-
-  def full_wildcard_actions
     @actions.select { |action| action.to_s == '*' }
   end
 
@@ -27,10 +22,6 @@ class Statement
   end
 
   def wildcard_resources
-    @resources.select { |resource| resource.to_s =~ /\*/ }
-  end
-
-  def full_wildcard_resources
     @resources.select { |resource| resource.to_s == '*' }
   end
 
