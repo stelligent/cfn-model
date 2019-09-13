@@ -17,12 +17,21 @@ class Statement
     @actions.select { |action| action.to_s =~ /\*/ }
   end
 
+
+  def full_wildcard_actions
+    @actions.select { |action| action.to_s == '*' }
+  end
+
   def wildcard_principal?
     Principal.wildcard? @principal
   end
 
   def wildcard_resources
-    @resources.select { |action| action.to_s =~ /\*/ }
+    @resources.select { |resource| resource.to_s =~ /\*/ }
+  end
+
+  def full_wildcard_resources
+    @resources.select { |resource| resource.to_s == '*' }
   end
 
   def ==(another_statement)
