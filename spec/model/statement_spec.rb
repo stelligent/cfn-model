@@ -18,7 +18,7 @@ describe Statement do
         statement.actions << 'sts:Assume*'
         statement.actions << 'ec2:DescribeInstances'
         statement.actions << 'ec2:*'
-        expect(statement.wildcard_actions).to eq %w(sts:Assume* ec2:*)
+        expect(statement.wildcard_actions).to eq %w(ec2:*)
       end
     end
   end
@@ -38,7 +38,8 @@ describe Statement do
         statement = Statement.new
         statement.resources << 'arn:aws:iam::123456789012:user/David'
         statement.resources << 'arn:aws:s3:::*'
-        expect(statement.wildcard_resources).to eq %w(arn:aws:s3:::*)
+        statement.resources << '*'
+        expect(statement.wildcard_resources).to eq %w(*)
       end
     end
   end

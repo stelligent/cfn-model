@@ -14,7 +14,7 @@ class Statement
   end
 
   def wildcard_actions
-    @actions.select { |action| action.to_s == '*' }
+    @actions.select { |action| action.to_s == '*' || action.to_s =~ /^.+:\*$/ }
   end
 
   def wildcard_principal?
