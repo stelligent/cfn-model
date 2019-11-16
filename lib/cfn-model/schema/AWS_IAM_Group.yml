@@ -9,8 +9,8 @@ mapping:
     required: no
     mapping:
       ManagedPolicyArns:
-        =:
-          type: any
+        type: any
+        required: no
       Policies:
         type:   seq
         required: no
