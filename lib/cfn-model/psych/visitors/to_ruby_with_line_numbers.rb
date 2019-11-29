@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class ToRubyWithLineNumbers < Psych::Visitors::ToRuby
   def revive_hash hash, o
     o.children.each_slice(2) { |k,v|
@@ -10,7 +12,7 @@ class ToRubyWithLineNumbers < Psych::Visitors::ToRuby
       # This is the important bit. If the value is a scalar,
       # we replace it with the desired hash.
       if v.is_a?(::Psych::Nodes::Scalar) && key == 'Type'
-        val = { "value" => val, "line" => line}
+        val = { "value" => val, "line" => line }
       end
 
       hash[key] = val

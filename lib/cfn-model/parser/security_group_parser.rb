@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative 'parser_error'
 require 'cfn-model/model/security_group_egress'
 require 'cfn-model/model/security_group_ingress'
@@ -34,7 +36,7 @@ class SecurityGroupParser
     security_group.ingresses = security_group.securityGroupIngress.map do |ingress|
       mapped_at_least_one_attribute = false
       ingress_object = AWS::EC2::SecurityGroupIngress.new cfn_model
-      ingress.each do |k,v|
+      ingress.each do |k, v|
         silently_fail do
           ingress_object.send("#{initialLower(k)}=", v)
           mapped_at_least_one_attribute = true
@@ -54,7 +56,7 @@ class SecurityGroupParser
       mapped_at_least_one_attribute = false
 
       egress_object = AWS::EC2::SecurityGroupEgress.new cfn_model
-      egress.each do |k,v|
+      egress.each do |k, v|
         next if k.match /::/
         silently_fail do
           egress_object.send("#{initialLower(k)}=", v)

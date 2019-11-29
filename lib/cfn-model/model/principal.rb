@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Principal
   def self.wildcard?(principal)
     if principal.is_a? String

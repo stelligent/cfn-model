@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Ec2NetworkInterfaceParser
   def parse(cfn_model:, resource:)
     network_interface = resource

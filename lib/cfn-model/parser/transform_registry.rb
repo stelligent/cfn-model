@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 Dir["#{__dir__}/../transforms/*.rb"].each do |transform|
   require "cfn-model/transforms/#{File.basename(transform, '.rb')}"
 end

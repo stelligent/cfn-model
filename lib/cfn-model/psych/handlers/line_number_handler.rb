@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # We need to provide a handler that will add the line to the node
 # as it is parsed. TreeBuilder is the "usual" handler, that
 # creates the AST.

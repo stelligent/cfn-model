@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class CfnModel
   class Transforms
     # Handle transformation of model elements performed by the

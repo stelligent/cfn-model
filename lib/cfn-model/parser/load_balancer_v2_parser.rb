@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class LoadBalancerV2Parser
   def parse(cfn_model:, resource:)
     load_balancer = resource

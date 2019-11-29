@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative 'schema_generator'
 require 'kwalify'
 require 'json'
@@ -10,7 +12,7 @@ class CloudFormationValidator
 
     schema = SchemaGenerator.new.generate cloudformation_string
     validator = Kwalify::Validator.new(schema)
-    validator.validate(YAML.load(cloudformation_string))
+    validator.validate(YAML.safe_load(cloudformation_string))
   end
 
   private
@@ -23,8 +25,8 @@ class CloudFormationValidator
 
   def valid_json?(cloudformation_string)
       JSON.parse(cloudformation_string)
-      return true
+      true
   rescue JSON::ParserError => error
-    return false
+    false
   end
 end

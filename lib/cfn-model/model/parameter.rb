@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 #copy-paste alert with ModelElement which should instead be Resource anyway
 class Parameter
   attr_accessor :id, :type

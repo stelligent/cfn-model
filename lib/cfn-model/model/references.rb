@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 
 ##
 # this is a placeholder for anything related to resolving references

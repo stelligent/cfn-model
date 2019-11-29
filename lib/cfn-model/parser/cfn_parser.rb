@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'yaml'
 require 'psych'
 require 'json'
@@ -142,7 +144,7 @@ class CfnParser
   end
 
   def transform_hash_into_parameters(cfn_hash, cfn_model)
-    return cfn_model unless cfn_hash.has_key?('Parameters')
+    return cfn_model unless cfn_hash.key?('Parameters')
 
     cfn_hash['Parameters'].each do |parameter_name, parameter_hash|
       parameter = Parameter.new
