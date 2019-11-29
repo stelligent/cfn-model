@@ -189,4 +189,28 @@ END
       }.to raise_error JSON::ParserError
     end
   end
+
+  context 'a template with Fn::Transform under Properties' do
+    it 'ignores' do
+      cloudformation_yml = <<END
+---
+Resources:
+  newResource:
+    Type: "AWS::TimeTravel::Machine"
+    Properties:
+      'Fn::Transform':
+        Name: 'AWS::Include'
+        Parameters:
+          Location: include.yml
+      Fuel: dilithium
+END
+      cfn_model = @cfn_parser.parse cloudformation_yml
+
+      expect(cfn_model.resources.size).to eq 1
+
+      time_travel_machine = cfn_model.resources_by_type('AWS::TimeTravel::Machine').first
+      expect(time_travel_machine.is_a?(ModelElement)).to eq true
+      expect(time_travel_machine.fuel).to eq 'dilithium'
+    end
+  end
 end
