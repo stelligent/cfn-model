@@ -12,7 +12,7 @@ class CloudFormationValidator
 
     schema = SchemaGenerator.new.generate cloudformation_string
     validator = Kwalify::Validator.new(schema)
-    validator.validate(YAML.safe_load(cloudformation_string))
+    validator.validate(YAML.load(cloudformation_string))
   end
 
   private
