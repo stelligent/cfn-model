@@ -92,6 +92,50 @@ END
       end
     end
 
+    context 'a template with alexa resource type' do
+      it 'returns model with parameters' do
+        cloudformation_yml = <<END
+---
+Resources:
+  alexaResource:
+    Type: "Alexa::ASK::Skill"
+    Properties:
+      SkillPackage:
+        S3Bucket: foo-bucket
+        S3Key: bar.zip
+      VendorId: foobar
+END
+        cfn_model = @cfn_parser.parse cloudformation_yml
+        alexa_ask_skill = cfn_model.resources_by_type('Alexa::ASK::Skill').first
+
+        expect(cfn_model.resources.size).to eq 1
+        expect(alexa_ask_skill.is_a?(ModelElement)).to eq true
+        expect(alexa_ask_skill.logical_resource_id).to eq 'alexaResource'
+        expect(alexa_ask_skill.resource_type).to eq 'Alexa::ASK::Skill'
+        expect(alexa_ask_skill.skillPackage['S3Bucket']).to eq 'foo-bucket'
+        expect(alexa_ask_skill.skillPackage['S3Key']).to eq 'bar.zip'
+        expect(alexa_ask_skill.vendorId).to eq 'foobar'
+      end
+    end
+
+    context 'a template with invalid foo resource type' do
+      it 'returns runtime error' do
+        cloudformation_yml = <<END
+---
+Resources:
+  fooResource:
+    Type: "Foo::Bar::Baz"
+    Properties:
+      foo:
+        bar: baz
+END
+
+        expect {
+          @cfn_parser.parse cloudformation_yml
+        }.to raise_error RuntimeError
+      end
+    end
+
     context 'a template with empty Resources' do
       it 'returns a parse error' do
         expect {

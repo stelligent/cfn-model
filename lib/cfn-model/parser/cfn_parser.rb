@@ -202,7 +202,7 @@ class CfnParser
     resource_class = Class.new(ModelElement)
 
     module_names = type_name.split('::')
-    if module_names.first == 'Custom'
+    if %w[Alexa Custom].include?(module_names.first)
       custom_resource_class_name = initial_upper(module_names[1])
       begin
         resource_class = Object.const_get custom_resource_class_name
