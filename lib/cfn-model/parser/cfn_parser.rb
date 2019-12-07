@@ -198,18 +198,32 @@ class CfnParser
     (str.slice(0).downcase + str[1..(str.length)]).gsub /-/, '_'
   end
 
+  ##
+  # strip any characters that are legal in a resource name that
+  # are going to make for a legal character in a ruby class name
+  def clean_module_name(module_name)
+    module_name.gsub /[\-@]/, ''
+  end
+
+  def map_non_aws_resource_name_to_class_name(module_names)
+    # this is a little hacky.  we've been ignoring Custom so more for
+    # backward compat.  for Alexa and other transformed resources just jam the whole
+    # thing together
+    if module_names.first == 'Custom'
+      first_module_index = 1
+    else
+      first_module_index = 0
+    end
+    module_names[first_module_index..-1].reduce('') do |class_name, module_name|
+      class_name + initial_upper(clean_module_name(module_name))
+    end
+  end
+
   def generate_resource_class_from_type(type_name)
     resource_class = Class.new(ModelElement)
 
     module_names = type_name.split('::')
-    if module_names.first == 'Custom'
-      custom_resource_class_name = initial_upper(module_names[1])
-      begin
-        resource_class = Object.const_get custom_resource_class_name
-      rescue NameError
-        Object.const_set(custom_resource_class_name, resource_class)
-      end
-    elsif module_names.first == 'AWS'
+    if module_names.first == 'AWS'
       begin
         module_constant = AWS.const_get(module_names[1])
       rescue NameError
@@ -218,7 +232,12 @@ class CfnParser
       end
       module_constant.const_set(module_names[2], resource_class)
     else
-      raise "Unknown namespace in resource type: #{module_names.first}"
+      custom_resource_class_name = map_non_aws_resource_name_to_class_name(module_names)
+      begin
+        resource_class = Object.const_get custom_resource_class_name
+      rescue NameError
+        Object.const_set(custom_resource_class_name, resource_class)
+      end
     end
     resource_class
   end
