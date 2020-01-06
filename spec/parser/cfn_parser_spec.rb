@@ -260,4 +260,44 @@ END
       expect(foo_bar_baz.foo).to eq({'bar' => 'baz'})
     end
   end
+
+  context 'a template with fn:if for whole of Properties' do
+    it 'returns model without properties for that resource and doesnt throw exception' do
+      cloudformation_yml = <<END
+---
+AWSTemplateFormatVersion: 2010-09-09
+Parameters:
+  RestoreSecretString:
+    Type: String
+    NoEcho: true
+    Default: none
+Conditions:
+  IsNone: !Or
+    - !Equals
+      - !Ref RestoreSecretString
+      - none
+    - !Equals
+      - !Ref RestoreSecretString
+      - ""
+Resources:
+  AppDbSecret:
+    Type: AWS::SecretsManager::Secret
+    DeletionPolicy: Retain
+    Properties: !If
+      - IsNone
+      - Description: 'New'
+        GenerateSecretString:
+          SecretStringTemplate: '{"username": "test-user"}'
+          GenerateStringKey: "password"
+          PasswordLength: 30
+          ExcludeCharacters: '"@/\'
+      - Description: 'Restore'
+        SecretString: !Ref 'RestoreSecretString'
+END
+
+      cfn_model = @cfn_parser.parse cloudformation_yml
+      secret = cfn_model.resources_by_type('AWS::SecretsManager::Secret').first
+      expect(secret.description).to eq nil
+    end
+  end
 end

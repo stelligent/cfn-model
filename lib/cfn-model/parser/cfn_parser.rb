@@ -178,7 +178,7 @@ class CfnParser
   def assign_fields_based_upon_properties(resource_object, resource)
     unless resource['Properties'].nil?
       resource['Properties'].each do |property_name, property_value|
-        next if %w(Fn::Transform).include? property_name
+        next if %w(Fn::Transform Fn::If).include? property_name
         resource_object.send("#{map_property_name_to_attribute(property_name)}=", property_value)
       end
     end
