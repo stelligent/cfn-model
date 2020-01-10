@@ -5,14 +5,14 @@
       "Type": "AWS::KMS::Key",
       "Properties": {
         "KeyPolicy": {
-					"Version" : "2012-10-17",
-					"Statement": {
-						"Effect": "Allow",
-						"Action": "kms:*",
-						"Principal": {"AWS": "arn:aws:iam::123456789012:user/Test"},
-						"Resource": "*"
-					}
-				}
+          "Version" : "2012-10-17",
+          "Statement": {
+            "Effect": "Allow",
+            "Action": "kms:*",
+            "Principal": {"AWS": "arn:aws:iam::123456789012:user/Test"},
+            "Resource": "*"
+          }
+        }
       }
     }
   }

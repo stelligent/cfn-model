@@ -4,7 +4,7 @@
     "RootKey": {
       "Type": "AWS::KMS::Key",
       "Properties": {
-				"EnableKeyRotation": "true"
+        "EnableKeyRotation": "true"
       }
     }
   }
