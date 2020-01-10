@@ -23,6 +23,10 @@ module AWS
 
   end
 
+  module KMS
+
+  end
+
   module S3
 
   end
