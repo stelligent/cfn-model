@@ -17,6 +17,7 @@ class ParserRegistry
       'AWS::IAM::Role' => IamRoleParser,
       'AWS::IAM::Policy' => WithPolicyDocumentParser,
       'AWS::IAM::ManagedPolicy' => WithPolicyDocumentParser,
+      'AWS::KMS::Key' => KmsKeyParser,
       'AWS::S3::BucketPolicy' => WithPolicyDocumentParser,
       'AWS::SNS::TopicPolicy' => WithPolicyDocumentParser,
       'AWS::SQS::QueuePolicy' => WithPolicyDocumentParser
