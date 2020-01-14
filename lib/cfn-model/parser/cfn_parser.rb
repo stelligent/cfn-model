@@ -12,6 +12,7 @@ require 'cfn-model/monkey_patches/psych/nodes/node'
 require_relative 'parser_registry'
 require_relative 'parameter_substitution'
 require_relative 'parser_error'
+require_relative 'expression_evaluator'
 Dir["#{__dir__}/../model/*.rb"].each { |model| require "cfn-model/model/#{File.basename(model, '.rb')}" }
 
 ##
