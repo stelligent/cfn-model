@@ -11,9 +11,7 @@ describe CfnParser do
       yaml_test_templates('sns_topic/topic_with_if').each do |test_template|
         cfn_model = @cfn_parser.parse IO.read(test_template)
 
-        expect(cfn_model.resources_by_type('AWS::SNS::Topic').first.topicName).to eq({
-                                                                                                   'Fn::If' => %w(cond1 bif zane)
-                                                                                                 })
+        expect(cfn_model.resources_by_type('AWS::SNS::Topic').first.topicName).to eq('bif')
       end
     end
   end

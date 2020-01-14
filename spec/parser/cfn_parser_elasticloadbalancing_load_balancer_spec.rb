@@ -23,13 +23,9 @@ describe CfnParser, :elb do
       json_test_templates('elasticloadbalancing_loadbalancer/load_balancer_with_conditional_policy_names').each do |test_template|
         cfn_model = @cfn_parser.parse IO.read(test_template)
 
-        expect(cfn_model.resources_by_type('AWS::ElasticLoadBalancing::LoadBalancer').first.appCookieStickinessPolicy).to eq({
-          'Fn::If' => [
-            'EnableAppCookie',
-            [ {'PolicyName' => 'AppStickiness', 'CookieName' => 'unclefreddie'} ],
-            { 'Ref' => 'AWS::NoValue'}
-          ]
-        })
+        expect(cfn_model.resources_by_type('AWS::ElasticLoadBalancing::LoadBalancer').first.appCookieStickinessPolicy).to eq(
+            [ {'PolicyName' => 'AppStickiness', 'CookieName' => 'unclefreddie'} ]
+        )
       end
     end
   end

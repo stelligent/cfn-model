@@ -38,8 +38,8 @@ class CfnParser
   ##
   # Given raw json/yml CloudFormation template, returns a CfnModel object
   # or raise ParserErrors if something is amiss with the format
-  def parse(cloudformation_yml, parameter_values_json=nil, with_line_numbers=false)
-    cfn_model = parse_without_parameters(cloudformation_yml, with_line_numbers)
+  def parse(cloudformation_yml, parameter_values_json=nil, with_line_numbers=false, condition_values_json=nil)
+    cfn_model = parse_without_parameters(cloudformation_yml, with_line_numbers, condition_values_json)
 
     apply_parameter_values(cfn_model, parameter_values_json)
 
@@ -54,7 +54,7 @@ class CfnParser
     ToRubyWithLineNumbers.create.accept(handler.root).first
   end
 
-  def parse_without_parameters(cloudformation_yml, with_line_numbers=false)
+  def parse_without_parameters(cloudformation_yml, with_line_numbers=false, condition_values_json=nil)
     pre_validate_model cloudformation_yml
 
     cfn_hash =
@@ -73,6 +73,8 @@ class CfnParser
     cfn_model = CfnModel.new
     cfn_model.raw_model = cfn_hash
 
+    process_conditions cfn_hash, cfn_model, condition_values_json
+
     # pass 1: wire properties into ModelElement objects
     if with_line_numbers
       transform_hash_into_model_elements_with_numbers cfn_hash, cfn_model
@@ -88,6 +90,24 @@ class CfnParser
   end
 
   private
+
+  def process_conditions(cfn_hash, cfn_model, condition_values_json)
+    if cfn_hash.key?('Conditions')
+      if condition_values_json.nil?
+        condition_values = {}
+      else
+        condition_values = JSON.load condition_values_json
+      end
+
+      cfn_hash['Conditions'].each do |condition_key, _|
+        if condition_values.key?(condition_key) && [true, false].include?(condition_values[condition_key])
+          cfn_model.conditions[condition_key] = condition_values[condition_key]
+        else
+          cfn_model.conditions[condition_key] = true
+        end
+      end
+    end
+  end
 
   def apply_parameter_values(cfn_model, parameter_values_json)
     ParameterSubstitution.new.apply_parameter_values(
@@ -119,7 +139,7 @@ class CfnParser
       resource_object.resource_type = resource['Type']
       resource_object.metadata = resource['Metadata']
 
-      assign_fields_based_upon_properties resource_object, resource
+      assign_fields_based_upon_properties resource_object, resource, cfn_model
 
       cfn_model.resources[resource_name] = resource_object
     end
@@ -135,7 +155,7 @@ class CfnParser
       resource_object.resource_type = resource['Type']['value']
       resource_object.metadata = resource['Metadata']
 
-      assign_fields_based_upon_properties resource_object, resource
+      assign_fields_based_upon_properties resource_object, resource, cfn_model
 
       cfn_model.resources[resource_name] = resource_object
       cfn_model.line_numbers[resource_name] = resource['Type']['line']
@@ -175,11 +195,31 @@ class CfnParser
     end
   end
 
-  def assign_fields_based_upon_properties(resource_object, resource)
+  def deal_with_conditional_property_definitions(resource, cfn_model)
+    all_extra_concrete_properties = []
+    resource['Properties'].each do |property_name, property_value|
+      next if %w(Fn::Transform).include? property_name
+      if property_name == 'Fn::If'
+        concrete_properties = ExpressionEvaluator.new.evaluate(
+          {'Fn::If'=>property_value},
+          cfn_model.conditions
+        )
+        all_extra_concrete_properties << concrete_properties
+      end
+    end
+    all_extra_concrete_properties.each do |extra_concrete_properties|
+      resource['Properties'].merge!(extra_concrete_properties)
+    end
+    resource['Properties'].delete('Fn::If')
+  end
+
+  def assign_fields_based_upon_properties(resource_object, resource, cfn_model)
     unless resource['Properties'].nil?
+      deal_with_conditional_property_definitions(resource, cfn_model)
+
       resource['Properties'].each do |property_name, property_value|
-        next if %w(Fn::Transform Fn::If).include? property_name
-        resource_object.send("#{map_property_name_to_attribute(property_name)}=", property_value)
+        next if %w(Fn::Transform).include? property_name
+        resource_object.send("#{map_property_name_to_attribute(property_name)}=", map_property_value(property_value, cfn_model))
       end
     end
   end
@@ -192,6 +232,10 @@ class CfnParser
       resource_class = generate_resource_class_from_type type_name
     end
     resource_class
+  end
+
+  def map_property_value(property_value, cfn_model)
+    ExpressionEvaluator.new.evaluate(property_value, cfn_model.conditions)
   end
 
   def map_property_name_to_attribute(str)

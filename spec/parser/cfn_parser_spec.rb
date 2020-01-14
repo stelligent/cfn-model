@@ -297,7 +297,24 @@ END
 
       cfn_model = @cfn_parser.parse cloudformation_yml
       secret = cfn_model.resources_by_type('AWS::SecretsManager::Secret').first
-      expect(secret.description).to eq nil
+      expected_description = 'New'
+      expected_generate_secret_string = {
+          'SecretStringTemplate' => '{"username": "test-user"}',
+          'GenerateStringKey' => "password",
+          'PasswordLength' => 30,
+          'ExcludeCharacters' => '"@/'
+      }
+      expect(secret.description).to eq expected_description
+      expect(secret.generateSecretString).to eq expected_generate_secret_string
+
+      cfn_model = @cfn_parser.parse cloudformation_yml, nil, false,'{"IsNone": false}'
+      secret = cfn_model.resources_by_type('AWS::SecretsManager::Secret').first
+      expected_description = 'Restore'
+      expected_secret_string = {
+        'Ref' => 'RestoreSecretString'
+      }
+      expect(secret.description).to eq expected_description
+      expect(secret.secretString).to eq expected_secret_string
     end
   end
 end
