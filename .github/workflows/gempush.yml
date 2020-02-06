@@ -15,7 +15,7 @@ jobs:
     - name: Set up Ruby 2.5
       uses: actions/setup-ruby@v1
       with:
-        version: 2.5.x
+        ruby-version: 2.5.x
     - name: Install Bundler
       run: gem install bundler
     - name: Which bundler?
@@ -40,7 +40,7 @@ jobs:
       - name: Set up Ruby 2.5
         uses: actions/setup-ruby@v1
         with:
-          version: 2.5.x
+          ruby-version: 2.5.x
       - name: Publish to RubyGems
         run: bash ./publish.sh
         env:
