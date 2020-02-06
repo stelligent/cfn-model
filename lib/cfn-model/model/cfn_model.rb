@@ -60,6 +60,10 @@ class CfnModel
     end
   end
 
+  def resources_by_id(resource_id)
+    @resources.values.select { |resource| resource.logical_resource_id == resource_id }
+  end
+
   def resources_by_type(resource_type)
     @resources.values.select { |resource| resource.resource_type == resource_type }
   end

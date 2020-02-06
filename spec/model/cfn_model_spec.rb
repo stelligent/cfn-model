@@ -50,4 +50,19 @@ describe CfnModel, :model do
       end
     end
   end
+
+  describe '#resources_by_id' do
+    context 'when resources are searched by ID' do
+      it 'the matching resource object is returned' do
+        managed_policy_arn = 'arn:aws:iam::123456789012:policy/TestManagedPolicy'
+
+        @cfn_model.resources['TestRole'] = AWS::IAM::Role.new @cfn_model
+        @cfn_model.resources['TestRole'].logical_resource_id = 'TestRole'
+        @cfn_model.resources['TestRole'].managedPolicyArns << managed_policy_arn
+
+        resources = @cfn_model.resources_by_id('TestRole')
+        expect(resources[0].managedPolicyArns[0]).to eq managed_policy_arn
+      end
+    end
+  end
 end
