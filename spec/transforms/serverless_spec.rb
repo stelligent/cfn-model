@@ -71,25 +71,30 @@ describe CfnModel::Transforms::Serverless do
     end
 
     context 'Template with serverless transform and Globals' do
-      it 'blows chunks' do
+      it 'Validates globals are used to override function params' do
         cloudformation_template_yml = yaml_test_template('sam/globals')
         actual_cfn_model = @cfn_parser.parse cloudformation_template_yml
 
         expected_bucket = {
           'Fn::Sub' => 'bucket.lambda.${Site}'
         }
+        expected_endpoint_configuration = 'REGIONAL'
         expected_key = {
           'Fn::Sub' => 'lambda/code/${Site}/jar-with-dependencies.jar'
         }
         expected_runtime = 'java8'
 
-        actual_bucket = actual_cfn_model.raw_model['Resources']['SomeFunction']['Properties']['Code']['S3Bucket']
-        actual_key = actual_cfn_model.raw_model['Resources']['SomeFunction']['Properties']['Code']['S3Key']
-        actual_runtime = actual_cfn_model.raw_model['Resources']['SomeFunction']['Properties']['Runtime']
+        actual_bucket = actual_cfn_model.resources['SomeFunction'].code['S3Bucket']
+        actual_key = actual_cfn_model.resources['SomeFunction'].code['S3Key']
+        actual_runtime = actual_cfn_model.resources['SomeFunction'].runtime
+        global_endpoint_configuration = actual_cfn_model.globals['Api'].endpointConfiguration
+        global_runtime = actual_cfn_model.globals['Function'].runtime
 
         expect(actual_bucket).to eq expected_bucket
         expect(actual_key).to eq expected_key
         expect(actual_runtime).to eq expected_runtime
+        expect(global_endpoint_configuration).to eq expected_endpoint_configuration
+        expect(global_runtime).to eq expected_runtime
       end
     end
   end
