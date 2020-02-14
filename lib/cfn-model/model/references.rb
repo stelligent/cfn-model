@@ -29,7 +29,7 @@ module References
     end
   end
 
-  def self.resolve_resource_id(reference, attr='Arn')
+  def self.resolve_resource_id(reference, attr = nil)
     return nil if reference.is_a? String
 
     # an imported value can only yield a literal to an external resource vs. referencing something local

@@ -6,5 +6,5 @@ AllCops:
 Layout/HeredocIndentation:
   Enabled: false
 # A bit longer than default
-Metrics/LineLength:
+Layout/LineLength:
   Max: 100

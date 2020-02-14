@@ -51,7 +51,7 @@ describe CfnModel, :model do
     end
   end
 
-  describe '#resources_by_id' do
+  describe '#resource_by_id' do
     context 'when resources are searched by ID' do
       it 'the matching resource object is returned' do
         managed_policy_arn = 'arn:aws:iam::123456789012:policy/TestManagedPolicy'
@@ -60,8 +60,88 @@ describe CfnModel, :model do
         @cfn_model.resources['TestRole'].logical_resource_id = 'TestRole'
         @cfn_model.resources['TestRole'].managedPolicyArns << managed_policy_arn
 
-        resources = @cfn_model.resources_by_id('TestRole')
-        expect(resources[0].managedPolicyArns[0]).to eq managed_policy_arn
+        matching_resource = @cfn_model.resource_by_id('TestRole')
+        expect(matching_resource.managedPolicyArns[0]).to eq managed_policy_arn
+      end
+    end
+  end
+
+  describe '#resource_by_ref' do
+    context 'when resources are searched by reference' do
+      it 'returns the matching resource object' do
+        managed_policy_arn = 'arn:aws:iam::123456789012:policy/TestManagedPolicy'
+        role_ref = { 'Ref' => 'TestRole' }
+
+        @cfn_model.resources['TestRole'] = AWS::IAM::Role.new @cfn_model
+        @cfn_model.resources['TestRole'].logical_resource_id = 'TestRole'
+        @cfn_model.resources['TestRole'].managedPolicyArns << managed_policy_arn
+
+        matching_resource = @cfn_model.resource_by_ref(role_ref)
+        expect(matching_resource.managedPolicyArns[0]).to eq managed_policy_arn
+      end
+
+      it 'returns nil when no resources are matched' do
+        managed_policy_arn = 'arn:aws:iam::123456789012:policy/TestManagedPolicy'
+        role_ref = { 'Ref' => 'MissingRole' }
+
+        @cfn_model.resources['TestRole'] = AWS::IAM::Role.new @cfn_model
+        @cfn_model.resources['TestRole'].logical_resource_id = 'TestRole'
+        @cfn_model.resources['TestRole'].managedPolicyArns << managed_policy_arn
+
+        matching_resource = @cfn_model.resource_by_ref(role_ref)
+        expect(matching_resource).to be_nil
+      end
+    end
+
+    context 'when resources are searched by string' do
+      it 'returns the matching resource object' do
+        managed_policy_arn = 'arn:aws:iam::123456789012:policy/TestManagedPolicy'
+        role_ref = 'TestRole'
+
+        @cfn_model.resources['TestRole'] = AWS::IAM::Role.new @cfn_model
+        @cfn_model.resources['TestRole'].logical_resource_id = 'TestRole'
+        @cfn_model.resources['TestRole'].managedPolicyArns << managed_policy_arn
+
+        matching_resource = @cfn_model.resource_by_ref(role_ref)
+        expect(matching_resource.managedPolicyArns[0]).to eq managed_policy_arn
+      end
+
+      it 'returns nil when no resources are matched' do
+        managed_policy_arn = 'arn:aws:iam::123456789012:policy/TestManagedPolicy'
+        role_ref = 'MissingRole'
+
+        @cfn_model.resources['TestRole'] = AWS::IAM::Role.new @cfn_model
+        @cfn_model.resources['TestRole'].logical_resource_id = 'TestRole'
+        @cfn_model.resources['TestRole'].managedPolicyArns << managed_policy_arn
+
+        matching_resource = @cfn_model.resource_by_ref(role_ref)
+        expect(matching_resource).to be_nil
+      end
+    end
+
+    context 'when resources are searched by ARN' do
+      it 'returns the matching resource object' do
+        managed_policy_arn = 'arn:aws:iam::123456789012:policy/TestManagedPolicy'
+        role_ref = 'arn:aws:iam::123456789012:role/TestRole'
+
+        @cfn_model.resources['TestRole'] = AWS::IAM::Role.new @cfn_model
+        @cfn_model.resources['TestRole'].logical_resource_id = 'TestRole'
+        @cfn_model.resources['TestRole'].managedPolicyArns << managed_policy_arn
+
+        matching_resource = @cfn_model.resource_by_ref(role_ref)
+        expect(matching_resource.managedPolicyArns[0]).to eq managed_policy_arn
+      end
+
+      it 'returns nil when no resources are matched' do
+        managed_policy_arn = 'arn:aws:iam::123456789012:policy/TestManagedPolicy'
+        role_ref = 'arn:aws:iam::123456789012:role/MissingRole'
+
+        @cfn_model.resources['TestRole'] = AWS::IAM::Role.new @cfn_model
+        @cfn_model.resources['TestRole'].logical_resource_id = 'TestRole'
+        @cfn_model.resources['TestRole'].managedPolicyArns << managed_policy_arn
+
+        matching_resource = @cfn_model.resource_by_ref(role_ref)
+        expect(matching_resource).to be_nil
       end
     end
   end

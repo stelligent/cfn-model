@@ -22,11 +22,11 @@ end
 
 private
 
-def wildcard_back(input_string, results = [], prepend: '')
+def wildcard_back(input_string, results = [], prepend = '')
   return results if input_string.empty?
 
   results << "#{prepend}#{input_string}*"
-  wildcard_back(input_string.chop, results, prepend: prepend)
+  wildcard_back(input_string.chop, results, prepend)
 end
 
 def wildcard_front(input_string, results = [])
@@ -39,6 +39,6 @@ end
 def wildcard_front_back(input_string, results = [])
   return results if input_string.empty?
 
-  results += wildcard_back(input_string, prepend: '*')
+  results += wildcard_back(input_string, [], '*')
   wildcard_front_back(input_string[1..-1], results)
 end
