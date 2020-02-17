@@ -7,6 +7,10 @@ module AWS
 
   end
 
+  module CloudFront
+
+  end
+
   module EC2
 
   end
@@ -27,6 +31,10 @@ module AWS
 
   end
 
+  module Lambda
+
+  end
+
   module S3
 
   end
@@ -36,14 +44,6 @@ module AWS
   end
 
   module SQS
-
-  end
-
-  module Lambda
-
-  end
-
-  module CloudFront
 
   end
 end

@@ -60,8 +60,25 @@ class CfnModel
     end
   end
 
+  def resource_by_id(resource_id)
+    @resources.values.find { |resource| resource.logical_resource_id == resource_id }
+  end
+
   def resources_by_type(resource_type)
     @resources.values.select { |resource| resource.resource_type == resource_type }
+  end
+
+  def resource_by_ref(reference, attr = nil)
+    # If reference is a String, look for a matching object as is (best effort)
+    # Although, the caller could just use resource_by_id on this value, since it
+    # would be the logical_resource_id.
+    logical_resource_id = reference if reference.is_a? String
+
+    # Otherwise, obtain logical_resource_id from References class
+    logical_resource_id ||= References.resolve_resource_id reference, attr
+
+    # Search resources for a matching ID
+    resource_by_id logical_resource_id
   end
 
   def find_security_group_by_group_id(security_group_reference)

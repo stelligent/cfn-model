@@ -29,33 +29,35 @@ module References
     end
   end
 
-  def self.is_security_group_id_external(group_id)
-    resolve_security_group_id(group_id).nil?
-  end
+  def self.resolve_resource_id(reference, attr = nil)
+    return nil if reference.is_a? String
 
-  ##
-  # Return nil if
-  def self.resolve_security_group_id(group_id)
-    return nil if group_id.is_a? String
-
-    # an imported value can only yield a literal to an external sg vs. referencing something local
-    if !group_id['Ref'].nil?
-      group_id['Ref']
-    elsif !group_id['Fn::GetAtt'].nil?
-      logical_resource_id_from_get_att group_id['Fn::GetAtt']
-    else # !group_id['Fn::ImportValue'].nil?
+    # an imported value can only yield a literal to an external resource vs. referencing something local
+    if !reference['Ref'].nil?
+      reference['Ref']
+    elsif !reference['Fn::GetAtt'].nil?
+      logical_resource_id_from_get_att reference['Fn::GetAtt'], attr
+    else
       # anything else will be string manipulation functions
-      # which again leads us back to a string which must be an external security group known out of band
-      # so don't/can't link it up to a security group
+      # which again leads us back to a string which must be an external resource known out of band
+      # so don't/can't link it up
       return nil
     end
   end
 
+  def self.is_security_group_id_external(group_id)
+    resolve_security_group_id(group_id).nil?
+  end
+
+  def self.resolve_security_group_id(group_id)
+    resolve_resource_id group_id, 'GroupId'
+  end
+
   private
 
-  def self.logical_resource_id_from_get_att(attribute_spec)
+  def self.logical_resource_id_from_get_att(attribute_spec, attr_to_retrieve=nil)
     if attribute_spec.is_a? Array
-      if attribute_spec[1] == 'GroupId'
+      if !attr_to_retrieve || attribute_spec[1] == attr_to_retrieve
         return attribute_spec.first
       else
         # this could be a reference to a nested stack output so treat it as external
@@ -63,7 +65,7 @@ module References
         return nil
       end
     elsif attribute_spec.is_a? String
-      if attribute_spec.split('.')[1] == 'GroupId'
+      if !attr_to_retrieve || attribute_spec.split('.')[1] == attr_to_retrieve
         return attribute_spec.split('.').first
       else
         # this could be a reference to a nested stack output so treat it as external

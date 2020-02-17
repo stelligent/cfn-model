@@ -1,0 +1,27 @@
+---
+type: map
+mapping:
+  Type:
+    type: str
+    required: yes
+    pattern: /AWS::Lambda::Function/
+  Properties:
+    type: map
+    required: yes
+    mapping:
+      Code:
+        type: any
+        required: yes
+      Handler:
+        type: any
+        required: yes
+      Role:
+        type: any
+        required: yes
+      Runtime:
+        type: any
+        required: yes
+      =:
+        type: any
+  =:
+    type: any

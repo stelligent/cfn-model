@@ -1,0 +1,22 @@
+{
+  "Resources" : {
+    "StringRoleFunction": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Handler": "index.handler",
+        "Role": "arn:aws:iam::123456789012:role/LambdaExecutionRole",
+        "Code": {
+          "ZipFile":  { "Fn::Join": ["", [
+            "var response = require('cfn-response');",
+            "exports.handler = function(event, context) {",
+            "   var responseData = {Value: event.ResourceProperties.List};",
+            "   responseData.Value.push(event.ResourceProperties.AppendedItem);",
+            "   response.send(event, context, response.SUCCESS, responseData);",
+            "};"
+          ]]}
+        },
+        "Runtime": "nodejs6.10"
+      }
+    }
+  }
+}

@@ -1,3 +1,5 @@
+![cfn_model](https://github.com/stelligent/cfn-model/workflows/cfn_model/badge.svg)
+
 # Overview
 
 The cfn-model gem attempts to provide an object model to simplify doing rudimentary static analysis on CloudFormation 
