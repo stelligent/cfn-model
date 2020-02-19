@@ -83,6 +83,7 @@ class CfnParser
       transform_hash_into_model_elements cfn_hash, cfn_model
     end
     transform_hash_into_parameters cfn_hash, cfn_model
+    transform_hash_into_globals cfn_hash, cfn_model
 
     # pass 2: tie together separate resources only where necessary to make life easier for rule logic
     post_process_resource_model_elements cfn_model
@@ -178,6 +179,22 @@ class CfnParser
       end
 
       cfn_model.parameters[parameter_name] = parameter
+    end
+    cfn_model
+  end
+
+  def transform_hash_into_globals(cfn_hash, cfn_model)
+    return cfn_model unless cfn_hash.key?('Globals')
+
+    cfn_hash['Globals'].each do |resource, parameter_hash|
+      global = Parameter.new
+      global.id = resource
+
+      parameter_hash.each do |property_name, property_value|
+        global.send("#{map_property_name_to_attribute(property_name)}=", property_value)
+      end
+
+      cfn_model.globals[resource] = global
     end
     cfn_model
   end
