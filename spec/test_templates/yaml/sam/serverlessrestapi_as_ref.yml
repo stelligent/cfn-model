@@ -26,8 +26,8 @@ Resources:
 
   PathMapping:
     Type: AWS::ApiGateway::BasePathMapping
-    Condition: CreateProdResources
     Properties:
+      DomainName: testing.cfn-model.org
       # Next line causes the FATAL FAIL in cfn_nag_scan
       RestApiId: !Ref ServerlessRestApi
 
