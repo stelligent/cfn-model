@@ -142,6 +142,7 @@ describe CfnModel::Transforms::Serverless do
 
       expect(path_map.resource_type).to eq 'AWS::ApiGateway::BasePathMapping'
       expect(serverlessrestapi).to_not be_nil
+      expect(serverlessrestapi.body['paths']['/mars']).to_not be_nil
       expect(serverlessrestapi_deployment).to_not be_nil
       expect(serverlessrestapi_stage).to_not be_nil
     end

@@ -85,7 +85,7 @@ class CfnModel
         cfn_hash['Resources'][resource_name] = lambda_function lambda_fn_params
         cfn_hash['Resources']['FunctionNameRole'] = function_name_role
 
-        transform_function_events(cfn_hash, serverless_function) if \
+        transform_function_events(cfn_hash, serverless_function, resource_name) if \
           serverless_function['Properties']['Events']
       end
 
@@ -145,18 +145,19 @@ class CfnModel
 
       # Return the Event structure of a AWS::Lambda::Function as created
       # by Serverless transform
-      def transform_function_events(cfn_hash, serverless_function)
+      def transform_function_events(cfn_hash, serverless_function, function_name)
         serverless_function['Properties']['Events'].each do |_, event|
-          serverlessrestapi_resources(cfn_hash, event) if event['Type'] == 'Api'
+          serverlessrestapi_resources(cfn_hash, event, function_name) if event['Type'] == 'Api'
         end
       end
 
-      def serverlessrestapi_resources(cfn_hash, event)
+      def serverlessrestapi_resources(cfn_hash, event, func_name)
         # ServerlessRestApi
         cfn_hash['Resources']['ServerlessRestApi'] ||= serverlessrestapi_base
         add_serverlessrestapi_event(
           cfn_hash['Resources']['ServerlessRestApi']['Properties']['Body']['paths'],
-          event
+          event,
+          func_name
         )
 
         # ServerlessRestApiDeployment
@@ -182,15 +183,14 @@ class CfnModel
         }
       end
 
-      def add_serverlessrestapi_event(paths_hash, event)
+      def add_serverlessrestapi_event(paths_hash, event, function_name)
         paths_hash[event['Properties']['Path']] = {
           event['Properties']['Method'] => {
             'responses' => {},
             'x-amazon-apigateway-integration' => {
               'httpMethod' => 'POST',
               'type' => 'aws_proxy',
-              'uri' => { 'Fn::Sub' => 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/
-                                       functions/${HelloWorldFunction.Arn}/invocations' }
+              'uri' => { 'Fn::Sub' => "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${#{function_name}.Arn}/invocations" }
             }
           }
         }
