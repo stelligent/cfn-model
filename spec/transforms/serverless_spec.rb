@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 require 'cfn-model/parser/cfn_parser'
 require 'cfn-model/transforms/serverless'
@@ -152,6 +154,26 @@ describe CfnModel::Transforms::Serverless do
     it 'does not create ServerlessRestApi-related resources' do
       cloudformation_template_yml = yaml_test_template('sam/no_serverlessrestapi')
       actual_cfn_model = @cfn_parser.parse cloudformation_template_yml
+      serverlessrestapi = actual_cfn_model.resources.values.find do |resource|
+        resource.logical_resource_id == 'ServerlessRestApi'
+      end
+      serverlessrestapi_deployment = actual_cfn_model.resources.values.find do |resource|
+        resource.logical_resource_id == 'ServerlessRestApiDeployment'
+      end
+      serverlessrestapi_stage = actual_cfn_model.resources.values.find do |resource|
+        resource.logical_resource_id == 'ServerlessRestApiProdStage'
+      end
+
+      expect(serverlessrestapi).to be_nil
+      expect(serverlessrestapi_deployment).to be_nil
+      expect(serverlessrestapi_stage).to be_nil
+    end
+  end
+
+  context 'Template with Serverless function but no Api Event parsed with line numbers' do
+    it 'does not create ServerlessRestApi-related resources' do
+      cloudformation_template_yml = yaml_test_template('sam/no_serverlessrestapi')
+      actual_cfn_model = @cfn_parser.parse cloudformation_template_yml, nil, true
       serverlessrestapi = actual_cfn_model.resources.values.find do |resource|
         resource.logical_resource_id == 'ServerlessRestApi'
       end
