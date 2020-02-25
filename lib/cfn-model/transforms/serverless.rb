@@ -10,7 +10,7 @@ class CfnModel
         with_line_numbers = false
         resources = cfn_hash['Resources'].clone
         resources.each do |resource_name, resource|
-          next unless validate_resource_type?(resource['Type'], 'AWS::Serverless::Function')
+          next unless matching_resource_type?(resource['Type'], 'AWS::Serverless::Function')
 
           with_line_numbers = true if resource['Type'].is_a? Hash
           replace_serverless_function cfn_hash, resource_name, with_line_numbers
@@ -42,9 +42,17 @@ class CfnModel
         end
       end
 
-      def validate_resource_type?(resource_type, type_to_match)
-        (resource_type.is_a?(String) && resource_type.eql?(type_to_match)) ||
-          (resource_type.is_a?(Hash) && resource_type['value'].eql?(type_to_match))
+      def matching_resource_type?(resource_type, type_to_match)
+        matching_string_resource_type?(resource_type, type_to_match) ||
+          matching_line_number_enriched_resource_type?(resource_type, type_to_match)
+      end
+
+      def matching_string_resource_type?(resource_type, type_to_match)
+        resource_type.is_a?(String) && resource_type.eql?(type_to_match)
+      end
+
+      def matching_line_number_enriched_resource_type?(resource_type, type_to_match)
+        resource_type.is_a?(Hash) && resource_type['value'].eql?(type_to_match)
       end
 
       def format_resource_type(type, line_no, numbers)
@@ -162,7 +170,7 @@ class CfnModel
       def transform_function_events(cfn_hash, serverless_function, function_name, with_line_numbers)
         serverless_function['Properties']['Events'].each do |_, event|
           serverlessrestapi_resources(cfn_hash, event, function_name, with_line_numbers) if \
-            validate_resource_type?(event['Type'], 'Api')
+            matching_resource_type?(event['Type'], 'Api')
         end
       end
 
