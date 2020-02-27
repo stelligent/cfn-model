@@ -68,6 +68,11 @@ class CfnModel
           resolve_globals_function_property(cfn_hash, property_name)
       end
 
+      def format_function_role(serverless_function, function_name)
+        getatt_hash = { 'Fn::GetAtt' => ["#{function_name}Role", 'Arn'] }
+        serverless_function['Properties']['Role'] || getatt_hash
+      end
+
       # i question whether we need to carry out the transform this far given cfn_nag
       # likely won't ever opine on bucket names or object keys
       def transform_code_uri(lambda_fn_params, code_uri)
@@ -81,11 +86,12 @@ class CfnModel
         lambda_fn_params
       end
 
-      def serverless_function_properties(cfn_hash, serverless_function, with_line_numbers)
+      def serverless_function_properties(cfn_hash, serverless_function, fn_name, with_line_numbers)
         code_uri = serverless_function_property(serverless_function, cfn_hash, 'CodeUri')
 
         lambda_fn_params = {
           handler: serverless_function_property(serverless_function, cfn_hash, 'Handler'),
+          role: format_function_role(serverless_function, fn_name),
           runtime: serverless_function_property(serverless_function, cfn_hash, 'Runtime'),
           with_line_numbers: with_line_numbers
         }
@@ -101,10 +107,18 @@ class CfnModel
       def replace_serverless_function(cfn_hash, resource_name, with_line_numbers)
         serverless_function = cfn_hash['Resources'][resource_name]
 
-        lambda_fn_params = serverless_function_properties(cfn_hash, serverless_function, with_line_numbers)
+        lambda_fn_params = serverless_function_properties(cfn_hash,
+                                                          serverless_function,
+                                                          resource_name,
+                                                          with_line_numbers)
 
         cfn_hash['Resources'][resource_name] = lambda_function lambda_fn_params
-        cfn_hash['Resources']['FunctionNameRole'] = function_name_role with_line_numbers
+
+        unless serverless_function['Properties']['Role']
+          cfn_hash['Resources'][resource_name + 'Role'] = function_role(serverless_function,
+                                                                        resource_name,
+                                                                        with_line_numbers)
+        end
 
         transform_function_events(cfn_hash, serverless_function, resource_name, with_line_numbers) if \
           serverless_function['Properties']['Events']
@@ -123,18 +137,58 @@ class CfnModel
         }
       end
 
-      # Return the hash structure of the 'FunctionNameRole'
+      # Return the hash structure of the '<function_name>Role'
       # AWS::IAM::Role resource as created by Serverless transform
-      def function_name_role(with_line_numbers)
-        {
+      def function_role(serverless_function, function_name, with_line_numbers)
+        fn_role = {
           'Type' => format_resource_type('AWS::IAM::Role', -1, with_line_numbers),
           'Properties' => {
-            'ManagedPolicyArns' => [
-              'arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole'
-            ],
+            'ManagedPolicyArns' => function_role_managed_policies(serverless_function['Properties']),
             'AssumeRolePolicyDocument' => lambda_service_can_assume_role
           }
         }
+        function_role_policies(fn_role, serverless_function['Properties'], function_name)
+        fn_role
+      end
+
+      def function_role_managed_policies(function_properties)
+        # Always set AWSLambdaBasicExecutionRole policy
+        base_policies = ['arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole']
+
+        # Return base_policies if no policies assigned to the function
+        return base_policies unless function_properties['Policies']
+
+        # If the SAM function Policies property is a string, append and return
+        return base_policies | ["arn:aws:iam::aws:policy/#{function_properties['Policies']}"] if \
+          function_properties['Policies'].is_a? String
+
+        # Iterate on Policies property and add if String
+        policy_names = function_properties['Policies'].select { |policy| policy.is_a? String }
+        base_policies | policy_names.map { |name| "arn:aws:iam::aws:policy/#{name}" }
+      end
+
+      def function_role_policies(role, function_properties, fn_name)
+        # Return if no policies assigned to the function
+        return unless function_properties['Policies']
+
+        # Process inline policies from SAM function
+        return if function_properties['Policies'].is_a? String
+
+        # Iterate on Policies property and add if Hash
+        policy_hashes = function_properties['Policies'].select do |policy|
+          policy.is_a?(Hash) && policy.keys.first !~ /Policy/
+        end
+        return if policy_hashes.empty?
+
+        # Create policy documents
+        policy_documents = policy_hashes.map.with_index do |policy, index|
+          {
+            'PolicyDocument' => policy,
+            'PolicyName' => "#{fn_name}RolePolicy#{index}"
+          }
+        end
+
+        role['Properties']['Policies'] = policy_documents
       end
 
       def lambda_function_code(fn_resource, code_bucket, code_key)
@@ -152,13 +206,14 @@ class CfnModel
       def lambda_function(handler:,
                           code_bucket: nil,
                           code_key: nil,
+                          role:,
                           runtime:,
                           with_line_numbers: false)
         fn_resource = {
           'Type' => format_resource_type('AWS::Lambda::Function', -1, with_line_numbers),
           'Properties' => {
             'Handler' => handler,
-            'Role' => { 'Fn::GetAtt' => %w[FunctionNameRole Arn] },
+            'Role' => role,
             'Runtime' => runtime
           }
         }
