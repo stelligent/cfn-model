@@ -1,11 +1,11 @@
 # VS Code Remote Development
 
-You can start working on developing with this project with relative ease by using the VS Code Remote Development extension. In this project there is a folder named `.devcontainer` that allows users to open the project in a docker container using the custom built development image. This development image has all the items needed to start working on the cfn_nag project right out of the box. All you need to do is open the project in the VS Code Remote Container to get started.
+You can start working on developing with this project with relative ease by using the VS Code Remote Development extension. In this project there is a folder named `.devcontainer` that allows users to open the project in a docker container using the custom built development image. This development image has all the items needed to start working on the cfn-model project right out of the box. All you need to do is open the project in the VS Code Remote Container to get started.
 
 - Install the VS Code [Remote Development extension pack](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.vscode-remote-extensionpack)
 - Open the repo in VS Code
 - When prompted "`Folder contains a dev container configuration file. Reopen folder to develop in a container`" click the "`Reopen in Container`" button
-- When opening in the future use the "`[Dev Container] cfn_nag Development`" option
+- When opening in the future use the "`[Dev Container] cfn-model Development`" option
 
 ## VS Code Dependencies
 
@@ -20,20 +20,20 @@ There are a couple of dependencies that you need to configure locally before bei
 
 ## Container Image
 
-### Docker Hub: stelligent/vscode-remote-cfn_nag
+### Docker Hub: stelligent/vscode-remote-cfn-model
 
-The main `.devcontainer/Dockerfile` points to the latest `stelligent/vscode-remote-cfn_nag` Docker Hub container image. This image is created and pushed by a separate GitHub Actions Workflow. It will tag the newly created image with the short git sha and `latest`.
+The main `.devcontainer/Dockerfile` points to the latest `stelligent/vscode-remote-cfn-model` Docker Hub container image. This image is created and pushed by a separate GitHub Actions Workflow. It will tag the newly created image with the short git sha and `latest`.
 
 ### Build Dockerfile
 
-The `stelligent/vscode-remote-cfn_nag` container image is build and controlled by the `.devcontainer/build/Dockerfile`
+The `stelligent/vscode-remote-cfn-model` container image is build and controlled by the `.devcontainer/build/Dockerfile`
 
 From within this file we are starting from the official Ruby 2.5 image and then going through and installing and configuring the necessary items for the remote build environment.
 
 Some important items to note here:
 * Installs the `docker` cli so that the `rake` tasks can still run from within the remote development container environment.
 * Installs gems needed for the project and vscode extensions.
-* Creates a non-root user (`cfn_nag_dev`) and provides `sudo` access so that the user can run the `rake` tasks that call the `docker` cli.
+* Creates a non-root user (`cfn-model_dev`) and provides `sudo` access so that the user can run the `rake` tasks that call the `docker` cli.
 * Creates a way for the `bash` command history to be saved between container runs.
 * Sets up the GPG home directory and sets the `tty` so that you can still sign git commits inside the container.
 
