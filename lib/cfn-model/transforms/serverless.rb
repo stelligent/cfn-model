@@ -69,7 +69,7 @@ class CfnModel
       end
 
       def format_function_role(serverless_function, function_name)
-        getatt_hash = { 'Fn::GetAtt' => ["#{function_name}Role", 'Arn'] }
+        getatt_hash = { 'Fn::GetAtt' => %W[#{function_name}Role Arn] }
         serverless_function['Properties']['Role'] || getatt_hash
       end
 
@@ -153,13 +153,13 @@ class CfnModel
 
       def function_role_managed_policies(function_properties)
         # Always set AWSLambdaBasicExecutionRole policy
-        base_policies = ['arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole']
+        base_policies = %w[arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole]
 
         # Return base_policies if no policies assigned to the function
         return base_policies unless function_properties['Policies']
 
         # If the SAM function Policies property is a string, append and return
-        return base_policies | ["arn:aws:iam::aws:policy/#{function_properties['Policies']}"] if \
+        return base_policies | %W[arn:aws:iam::aws:policy/#{function_properties['Policies']}] if \
           function_properties['Policies'].is_a? String
 
         # Iterate on Policies property and add if String
