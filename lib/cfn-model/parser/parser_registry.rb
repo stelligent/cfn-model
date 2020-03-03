@@ -21,7 +21,8 @@ class ParserRegistry
       'AWS::Lambda::Function' => LambdaFunctionParser,
       'AWS::S3::BucketPolicy' => WithPolicyDocumentParser,
       'AWS::SNS::TopicPolicy' => WithPolicyDocumentParser,
-      'AWS::SQS::QueuePolicy' => WithPolicyDocumentParser
+      'AWS::SQS::QueuePolicy' => WithPolicyDocumentParser,
+      'AWS::ApiGateway::Stage' => ApiGatewayStageParser,
     }
   end
 
