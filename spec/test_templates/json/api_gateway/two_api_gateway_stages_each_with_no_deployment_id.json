@@ -1,0 +1,30 @@
+{
+  "Resources": {
+    "ApiGatewayStage1": {
+      "Type": "AWS::ApiGateway::Stage",
+      "Properties": {
+        "RestApiId": "testapi_1"
+      }
+    },
+    "ApiGatewayStage2": {
+      "Type": "AWS::ApiGateway::Stage",
+      "Properties": {
+        "RestApiId": "testapi_2"
+      }
+    },
+    "ApiGatewayDeployment1": {
+      "Type": "AWS::ApiGateway::Deployment",
+      "DependsOn": "ApiGatewayMethod",
+      "Properties": {
+        "Description": "Mock API Deployment"
+      }
+    },
+    "ApiGatewayDeployment2": {
+      "Type": "AWS::ApiGateway::Deployment",
+      "DependsOn": "ApiGatewayMethod",
+      "Properties": {
+        "Description": "Mock API Deployment"
+      }
+    }
+  }
+}
