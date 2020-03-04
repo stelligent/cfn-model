@@ -15,8 +15,8 @@ describe CfnParser do
 
         expect(api_stages.size).to eq 1
         expect(api_stages[0]).to eq expected_api_stage
-        expect(api_stages[0].usage_plans).to eq expected_api_stage.usage_plans
-        expect(api_stages[0].usage_plans).to be_empty
+        expect(api_stages[0].usage_plan).to eq expected_api_stage.usage_plan
+        expect(api_stages[0].usage_plan).to be_empty
       end
     end
   end
@@ -29,8 +29,8 @@ describe CfnParser do
 
         expect(api_stages.size).to eq 1
         expect(api_stages[0]).to eq expected_api_stage
-        expect(api_stages[0].usage_plans).not_to be_empty
-        expect(api_stages[0].usage_plans).to eq expected_api_stage.usage_plans
+        expect(api_stages[0].usage_plan).not_to be_empty
+        expect(api_stages[0].usage_plan).to eq expected_api_stage.usage_plan
       end
     end
   end
@@ -46,8 +46,8 @@ describe CfnParser do
         expect(api_stages.size).to eq 2
         expect(api_stages[0]).to eq expected_api_stage_1
         expect(api_stages[1]).to eq expected_api_stage_2
-        expect(api_stages[0].usage_plans).to eq expected_api_stage_1.usage_plans
-        expect(api_stages[1].usage_plans).to eq expected_api_stage_2.usage_plans
+        expect(api_stages[0].usage_plan).to eq expected_api_stage_1.usage_plan
+        expect(api_stages[1].usage_plan).to eq expected_api_stage_2.usage_plan
       end
     end
   end
@@ -63,8 +63,8 @@ describe CfnParser do
         expect(api_stages.size).to eq 2
         expect(api_stages[0]).to eq expected_api_stage_1
         expect(api_stages[1]).to eq expected_api_stage_2
-        expect(api_stages[0].usage_plans).to eq expected_api_stage_1.usage_plans
-        expect(api_stages[1].usage_plans).to eq expected_api_stage_2.usage_plans
+        expect(api_stages[0].usage_plan).to eq expected_api_stage_1.usage_plan
+        expect(api_stages[1].usage_plan).to eq expected_api_stage_2.usage_plan
       end
     end
   end
