@@ -10,7 +10,7 @@ end
 def api_stage_with_one_usage_plan(cfn_model: CfnModel.new)
   api_stage = AWS::ApiGateway::Stage.new cfn_model
 
-  api_stage.usage_plans << 'ApiGatewayUsagePlan1'
+  api_stage.usage_plan_ids << 'ApiGatewayUsagePlan1'
   api_stage.restApiId = 'testapi'
   api_stage
 end
@@ -22,7 +22,7 @@ def twp_api_stages_with_one_usage_plan(cfn_model: CfnModel.new)
   count = 1
   [api_stage_1, api_stage_2].each do |stage|
     stage.restApiId = "testapi_#{count}"
-    stage.usage_plans << 'ApiGatewayUsagePlan1'
+    stage.usage_plan_ids << 'ApiGatewayUsagePlan1'
     count += 1
   end
   [api_stage_1, api_stage_2]
@@ -32,7 +32,7 @@ def one_api_stage_with_two_usage_plans(cfn_model: CfnModel.new)
   api_stage = AWS::ApiGateway::Stage.new cfn_model
 
   ['ApiGatewayUsagePlan1', 'ApiGatewayUsagePlan2'].each do |usage_plan|
-    api_stage.usage_plans << usage_plan
+    api_stage.usage_plan_ids << usage_plan
   end
   api_stage.restApiId = 'testapi'
   api_stage
@@ -45,7 +45,7 @@ def twp_api_stages_each_with_different_usage_plans(cfn_model: CfnModel.new)
   count = 1
   [api_stage_1, api_stage_2].each do |stage|
     stage.restApiId = "testapi_#{count}"
-    stage.usage_plans << "ApiGatewayUsagePlan#{count}"
+    stage.usage_plan_ids << "ApiGatewayUsagePlan#{count}"
     count += 1
   end
   [api_stage_1, api_stage_2]
@@ -59,7 +59,7 @@ def twp_api_stages_each_with_different_deployment_id(cfn_model: CfnModel.new)
   [api_stage_1, api_stage_2].each do |stage|
     stage.restApiId = "testapi_#{count}"
     stage.deploymentId = {'Ref' => "ApiGatewayDeployment#{count}"}
-    stage.deployment_id = "ApiGatewayDeployment#{count}"
+    stage.deployment = "ApiGatewayDeployment#{count}"
     count += 1
   end
   [api_stage_1, api_stage_2]

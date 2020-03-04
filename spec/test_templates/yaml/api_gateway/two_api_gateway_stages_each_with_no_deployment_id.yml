@@ -12,12 +12,10 @@ Resources:
 
   ApiGatewayDeployment1:
     Type: AWS::ApiGateway::Deployment
-    DependsOn: ApiGatewayMethod
     Properties:
       Description: Mock API Deployment
 
   ApiGatewayDeployment2:
     Type: AWS::ApiGateway::Deployment
-    DependsOn: ApiGatewayMethod
     Properties:
       Description: Mock API Deployment

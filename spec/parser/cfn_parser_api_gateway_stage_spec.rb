@@ -15,8 +15,8 @@ describe CfnParser do
 
         expect(api_stages.size).to eq 1
         expect(api_stages[0]).to eq expected_api_stage
-        expect(api_stages[0].usage_plans).to eq expected_api_stage.usage_plans
-        expect(api_stages[0].usage_plans).to be_empty
+        expect(api_stages[0].usage_plan_ids).to eq expected_api_stage.usage_plan_ids
+        expect(api_stages[0].usage_plan_ids).to be_empty
       end
     end
   end
@@ -29,8 +29,8 @@ describe CfnParser do
 
         expect(api_stages.size).to eq 1
         expect(api_stages[0]).to eq expected_api_stage
-        expect(api_stages[0].usage_plans).not_to be_empty
-        expect(api_stages[0].usage_plans).to eq expected_api_stage.usage_plans
+        expect(api_stages[0].usage_plan_ids).not_to be_empty
+        expect(api_stages[0].usage_plan_ids).to eq expected_api_stage.usage_plan_ids
       end
     end
   end
@@ -44,8 +44,8 @@ describe CfnParser do
 
         expect(api_stages.size).to eq 1
         expect(api_stages[0]).to eq expected_api_stage
-        expect(api_stages[0].usage_plans).not_to be_empty
-        expect(api_stages[0].usage_plans).to eq expected_api_stage.usage_plans
+        expect(api_stages[0].usage_plan_ids).not_to be_empty
+        expect(api_stages[0].usage_plan_ids).to eq expected_api_stage.usage_plan_ids
       end
     end
   end
@@ -59,10 +59,10 @@ describe CfnParser do
         api_stages = cfn_model.resources_by_type 'AWS::ApiGateway::Stage'
 
         expect(api_stages.size).to eq 2
-        expect(api_stages[0]).to eq expected_api_stage_1
-        expect(api_stages[1]).to eq expected_api_stage_2
-        expect(api_stages[0].usage_plans).to eq expected_api_stage_1.usage_plans
-        expect(api_stages[1].usage_plans).to eq expected_api_stage_2.usage_plans
+        expect([api_stages[0],api_stages[1]]).to eq [expected_api_stage_1,
+                                                     expected_api_stage_2]
+        expect([api_stages[0].usage_plan_ids,api_stages[1].usage_plan_ids]).to eq [expected_api_stage_1.usage_plan_ids,
+                                                                             expected_api_stage_2.usage_plan_ids]
       end
     end
   end
@@ -76,10 +76,10 @@ describe CfnParser do
         api_stages = cfn_model.resources_by_type 'AWS::ApiGateway::Stage'
 
         expect(api_stages.size).to eq 2
-        expect(api_stages[0]).to eq expected_api_stage_1
-        expect(api_stages[1]).to eq expected_api_stage_2
-        expect(api_stages[0].usage_plans).to eq expected_api_stage_1.usage_plans
-        expect(api_stages[1].usage_plans).to eq expected_api_stage_2.usage_plans
+        expect([api_stages[0],api_stages[1]]).to eq [expected_api_stage_1,
+                                                     expected_api_stage_2]
+        expect([api_stages[0].usage_plan_ids,api_stages[1].usage_plan_ids]).to eq [expected_api_stage_1.usage_plan_ids,
+                                                                             expected_api_stage_2.usage_plan_ids]
       end
     end
   end
@@ -95,10 +95,10 @@ describe CfnParser do
         api_stages = cfn_model.resources_by_type 'AWS::ApiGateway::Stage'
 
         expect(api_stages.size).to eq 2
-        expect(api_stages[0]).to eq expected_api_stage_1
-        expect(api_stages[1]).to eq expected_api_stage_2
-        expect(api_stages[0].deployment_id).to eq expected_api_stage_1.deployment_id
-        expect(api_stages[1].deployment_id).to eq expected_api_stage_2.deployment_id
+        expect([api_stages[0],api_stages[1]]).to eq [expected_api_stage_1,
+                                                     expected_api_stage_2]
+        expect([api_stages[0].deployment,api_stages[1].deployment]).to eq [expected_api_stage_1.deployment,
+                                                                                 expected_api_stage_2.deployment]
       end
     end
   end
@@ -114,8 +114,8 @@ describe CfnParser do
         expect(api_stages.size).to eq 2
         expect([api_stages[0], api_stages[1]]).to eq [expected_api_stage_1,
                                                       expected_api_stage_2]
-        expect([api_stages[0].deployment_id, api_stages[1].deployment_id]).to eq [expected_api_stage_1.deployment_id,
-                                                                                  expected_api_stage_2.deployment_id]
+        expect([api_stages[0].deployment, api_stages[1].deployment]).to eq [expected_api_stage_1.deployment,
+                                                                                  expected_api_stage_2.deployment]
       end
     end
   end
@@ -130,8 +130,8 @@ describe CfnParser do
 
         expect(api_stages.size).to eq 1
         expect(api_stages[0]).to eq expected_api_stage_1
-        expect(api_stages[0].deployment_id).to eq expected_api_stage_1.deployment_id
-        expect(api_stages[0].deployment_id).to be_empty
+        expect(api_stages[0].deployment).to eq expected_api_stage_1.deployment
+        expect(api_stages[0].deployment).to be_nil
       end
     end
   end

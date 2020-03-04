@@ -21,10 +21,8 @@ class ApiGatewayStageParser
     usage_plans.each do |usage_plan|
       next if usage_plan.apiStages.nil?
       usage_plan.apiStages.each do |up_api_stage|
-        if up_api_stage['Stage'].is_a?(Hash) && up_api_stage['Stage'].key?('Ref')
-          if api_stage.logical_resource_id == up_api_stage['Stage']['Ref']
-            api_stage.usage_plans << usage_plan.logical_resource_id
-          end
+        if References.resolve_resource_id(up_api_stage['Stage']) == api_stage.logical_resource_id
+            api_stage.usage_plan_ids << usage_plan.logical_resource_id
         end
       end
     end
@@ -33,10 +31,9 @@ class ApiGatewayStageParser
   def attach_deployment_id_to_api_stage(cfn_model:, api_stage:)
     api_deployments = cfn_model.resources_by_type 'AWS::ApiGateway::Deployment'
     api_deployments.each do |deployment|
-      if api_stage.deploymentId.is_a?(Hash) && api_stage.deploymentId.key?('Ref')
-        if deployment.logical_resource_id == api_stage.deploymentId['Ref']
-          api_stage.deployment_id = deployment.logical_resource_id
-        end
+      next if api_stage.deploymentId.nil?
+      if References.resolve_resource_id(api_stage.deploymentId) == deployment.logical_resource_id
+        api_stage.deployment = deployment.logical_resource_id
       end
     end
   end
