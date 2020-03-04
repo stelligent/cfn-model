@@ -23,7 +23,7 @@ class ApiGatewayStageParser
       usage_plan.apiStages.each do |up_api_stage|
         if up_api_stage['Stage'].is_a?(Hash) && up_api_stage['Stage'].key?('Ref')
           if api_stage.logical_resource_id == up_api_stage['Stage']['Ref']
-            api_stage.usage_plan << usage_plan.logical_resource_id
+            api_stage.usage_plans << usage_plan.logical_resource_id
           end
         end
       end
@@ -35,7 +35,7 @@ class ApiGatewayStageParser
     api_deployments.each do |deployment|
       if api_stage.deploymentId.is_a?(Hash) && api_stage.deploymentId.key?('Ref')
         if deployment.logical_resource_id == api_stage.deploymentId['Ref']
-          api_stage.deployment_id << deployment.logical_resource_id
+          api_stage.deployment_id = deployment.logical_resource_id
         end
       end
     end
