@@ -1,0 +1,13 @@
+---
+Resources:
+  ApiGatewayStage1:
+    Type: AWS::ApiGateway::Stage
+    Properties:
+      DeploymentId: hardcoded_value
+      RestApiId: testapi_1
+
+  ApiGatewayDeployment1:
+    Type: AWS::ApiGateway::Deployment
+    DependsOn: ApiGatewayMethod
+    Properties:
+      Description: Mock API Deployment

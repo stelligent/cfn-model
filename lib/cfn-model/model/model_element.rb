@@ -46,6 +46,10 @@ module AWS
   module SQS
 
   end
+
+  module ApiGateway
+
+  end
 end
 
 module Custom
