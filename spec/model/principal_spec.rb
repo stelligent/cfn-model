@@ -38,6 +38,18 @@ describe Principal, :prin do
       end
     end
 
+    context '{"AWS":["1234", Ref]}', :fred do
+      it 'returns false' do
+        aws_wildcard_principal = {
+          'AWS' => [
+            '1234',
+            {'Ref' => 'SomePrincipal'}
+          ]
+        }
+        expect(Principal.wildcard?(aws_wildcard_principal)).to eq false
+      end
+    end
+
     context 'nil principal' do
       it 'returns false' do
         expect(Principal.wildcard?(nil)).to eq false
