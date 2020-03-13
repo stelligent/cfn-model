@@ -15,7 +15,13 @@ class Principal
         if principal_value.is_a? String
           has_wildcard ||= has_asterisk principal_value
         elsif principal_value.is_a? Array
-          wildcard_principal = principal_value.find { |principal_iter| principal_iter =~ /\*/ }
+          wildcard_principal = principal_value.find do |principal_iter|
+            if principal_iter.is_a? String
+              principal_iter =~ /\*/
+            else # could be Hash Ref/GetAtt
+              false
+            end
+          end
           has_wildcard ||= !wildcard_principal.nil?
         end
       end
