@@ -1,0 +1,58 @@
+{
+  "Resources": {
+    "ApiGatewayUsagePlan1": {
+      "Type": "AWS::ApiGateway::UsagePlan",
+      "Properties": {
+        "ApiStages": [
+          {
+            "ApiId": "testapi1",
+            "Stage": {
+              "Ref": "ApiGatewayStage1"
+            }
+          }
+        ],
+        "UsagePlanName": "testusageplan1"
+      }
+    },
+    "ApiGatewayUsagePlan2": {
+      "Type": "AWS::ApiGateway::UsagePlan",
+      "Properties": {
+        "ApiStages": [
+          {
+            "ApiId": "testapi1",
+            "Stage": {
+              "Ref": "ApiGatewayStage2"
+            }
+          },
+          {
+            "ApiId": "testapi1",
+            "Stage": "test-hardcode-stage"
+          }
+        ],
+        "UsagePlanName": "testusageplan1"
+      }
+    },
+    "ApiGatewayDeployment1": {
+      "Type": "AWS::ApiGateway::Deployment",
+      "Properties": {
+        "RestApiId": "testapi1"
+      }
+    },
+    "ApiGatewayStage1": {
+      "Type": "AWS::ApiGateway::Stage",
+      "Properties": {
+        "DeploymentId": {
+          "Ref": "ApiGatewayDeployment1"
+        }
+      }
+    },
+    "ApiGatewayStage2": {
+      "Type": "AWS::ApiGateway::Stage",
+      "Properties": {
+        "DeploymentId": {
+          "Ref": "ApiGatewayDeployment1"
+        }
+      }
+    }
+  }
+}
