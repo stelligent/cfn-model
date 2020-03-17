@@ -30,3 +30,13 @@ def api_deployment_without_stage_name(cfn_model: CfnModel.new)
                                           "Format" => '$context.requestId'}}
   api_deployment
 end
+
+def api_deployment_refd_in_stage_with_one_usage_plan(cfn_model: CfnModel.new)
+  api_deployment = AWS::ApiGateway::Deployment.new cfn_model
+  api_deployment.restApiId = 'testapi1'
+  ['ApiGatewayUsagePlan1','ApiGatewayUsagePlan2'].each do |apigw_up|
+    api_deployment.usage_plan_ids << apigw_up
+  end
+
+  api_deployment
+end
