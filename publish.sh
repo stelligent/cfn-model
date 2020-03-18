@@ -35,6 +35,6 @@ sed -i.bak "s/9\.9\.9/${new_version}/g" ${gem_name}.gemspec
 
 # publish rubygem to rubygems.org, https://rubygems.org/gems/cfn-model
 gem build ${gem_name}.gemspec
-# # gem push ${gem_name}-*.gem
+gem push ${gem_name}-*.gem
 
 echo "::set-output name=${gem_name/-/_}_version::${new_version}"
