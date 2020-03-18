@@ -1,0 +1,28 @@
+{
+  "Resources": {
+    "ApiGatewayUsagePlan1": {
+      "Type": "AWS::ApiGateway::UsagePlan",
+      "Properties": {
+        "ApiStages": [
+          {
+            "ApiId": "testapi1",
+            "Stage": "other-stage"
+          }
+        ],
+        "UsagePlanName": "testusageplan1"
+      }
+    },
+    "ApiGatewayDeployment1": {
+      "Type": "AWS::ApiGateway::Deployment",
+      "Properties": {
+        "RestApiId": "testapi1",
+        "StageDescription": {
+          "AccessLogSetting": {
+            "DestinationArn": "arn:aws:iam::123456789012:log-group/api-gateway-stage",
+            "Format": "$context.requestId"
+          }
+        }
+      }
+    }
+  }
+}
