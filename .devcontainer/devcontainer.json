@@ -1,7 +1,7 @@
 {
 	"name": "cfn-model Development",
 	"dockerFile": "Dockerfile",
-	"appPort": 9001,
+	"appPort": 9002,
 	"remote.containers.workspaceMountConsistency": "consistent",
 	"containerEnv": {
 		// Docker-in-Docker Present Working Directory
