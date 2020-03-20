@@ -33,28 +33,8 @@ fi
 
 sed -i.bak "s/9\.9\.9/${new_version}/g" ${gem_name}.gemspec
 
-#on circle ci - head is ambiguous for reasons that i don't grok
-#we haven't made the new tag and we can't if we are going to annotate
-head=$(git log -n 1 --oneline | awk '{print $1}')
-
-issue_prefix='^#[0-9][0-9]*'
-echo "Remember! You need to start your commit messages with #{issue_prefix}x, where x is the issue number your commit resolves."
-
-if [[ ${current_version} == nil ]];
-then
-  log_rev_range=${head}
-else
-  log_rev_range="v${minor_version}.${current_version}..${head}"
-fi
-
-git log ${log_rev_range} --pretty="format:%s"
-issues=$(git log ${log_rev_range} --pretty="format:%s" | \
-         egrep "${issue_prefix}" | \
-         cut -d " " -f 1 | sort | uniq)
-
-git tag -a v${new_version} -m "${new_version}" -m "Issues with commits, not necessarily closed: ${issues}"
-
-git push --tags
-
+# publish rubygem to rubygems.org, https://rubygems.org/gems/cfn-model
 gem build ${gem_name}.gemspec
 gem push ${gem_name}-*.gem
+
+echo "::set-output name=${gem_name/-/_}_version::${new_version}"

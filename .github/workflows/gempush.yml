@@ -37,11 +37,16 @@ jobs:
       - run: |
           git fetch --depth=1 origin +refs/tags/*:refs/tags/*
           git fetch --prune --unshallow
-      - name: Set up Ruby 2.5
-        uses: actions/setup-ruby@v1
-        with:
-          ruby-version: 2.5.x
       - name: Publish to RubyGems
+        id: publish
         run: bash ./publish.sh
         env:
           rubygems_api_key: ${{secrets.rubygems_api_key}}
+      - name: Create release with changelog
+        id: gh_release
+        uses: release-drafter/release-drafter@f677696
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          publish: true
+          version: ${{ steps.publish.outputs.cfn_model_version }}
