@@ -13,6 +13,8 @@ class CloudFormationValidator
     schema = SchemaGenerator.new.generate cloudformation_string
     validator = Kwalify::Validator.new(schema)
     validator.validate(YAML.load(cloudformation_string))
+  rescue ArgumentError, IOError, NameError => e
+    raise ParserError, e.inspect
   end
 
   private
@@ -21,8 +23,6 @@ class CloudFormationValidator
     first_character = cloudformation_string.gsub(/\s/, '').split('').first
     matches = cloudformation_string.scan(/\{[^}]*\}/)
     first_character == '{' && !matches.empty?
-  rescue ArgumentError => e
-    raise ParserError, e.inspect
   end
 
   def valid_json?(cloudformation_string)
