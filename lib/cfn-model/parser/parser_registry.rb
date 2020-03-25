@@ -23,7 +23,8 @@ class ParserRegistry
       'AWS::SNS::TopicPolicy' => WithPolicyDocumentParser,
       'AWS::SQS::QueuePolicy' => WithPolicyDocumentParser,
       'AWS::ApiGateway::Stage' => ApiGatewayStageParser,
-      'AWS::ApiGateway::Deployment' => ApiGatewayDeploymentParser
+      'AWS::ApiGateway::Deployment' => ApiGatewayDeploymentParser,
+      'AWS::EC2::NetworkAcl' => Ec2NetworkAclParser
     }
   end
 
