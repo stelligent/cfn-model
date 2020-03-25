@@ -21,6 +21,8 @@ class CloudFormationValidator
     first_character = cloudformation_string.gsub(/\s/, '').split('').first
     matches = cloudformation_string.scan(/\{[^}]*\}/)
     first_character == '{' && !matches.empty?
+  rescue ArgumentError => e
+    raise ParserError, e.inspect
   end
 
   def valid_json?(cloudformation_string)
