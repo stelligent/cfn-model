@@ -13,6 +13,8 @@ class CloudFormationValidator
     schema = SchemaGenerator.new.generate cloudformation_string
     validator = Kwalify::Validator.new(schema)
     validator.validate(YAML.load(cloudformation_string))
+  rescue ArgumentError, IOError, NameError => e
+    raise ParserError, e.inspect
   end
 
   private
