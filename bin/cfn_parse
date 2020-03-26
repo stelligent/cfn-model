@@ -4,5 +4,5 @@ require 'cfn-model'
 puts '======'
 puts ARGV[0]
 puts '======'
-cfn_model = CfnParser.new.parse IO.read(ARGV[0]), nil, true
+cfn_model = CfnParser.new.parse IO.read(ARGV[0], encoding: Encoding::UTF_8), nil, true
 puts cfn_model
