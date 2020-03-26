@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'cfn-model/parser/parser_error'
+
 ##
 # this is a placeholder for anything related to resolving references
 #
@@ -43,6 +45,8 @@ module References
       # so don't/can't link it up
       return nil
     end
+  rescue NoMethodError => e
+    raise ParserError, e.inspect
   end
 
   def self.is_security_group_id_external(group_id)
