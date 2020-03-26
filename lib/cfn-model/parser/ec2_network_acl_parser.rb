@@ -3,6 +3,7 @@
 require_relative 'parser_error'
 require 'cfn-model/model/ec2_network_acl'
 require 'cfn-model/model/references'
+require 'cfn-model/util/truthy'
 
 class Ec2NetworkAclParser
   def parse(cfn_model:, resource:)
@@ -22,7 +23,7 @@ class Ec2NetworkAclParser
   def ingress_network_acl_entries(cfn_model)
     network_acl_entries = cfn_model.resources_by_type 'AWS::EC2::NetworkAclEntry'
     network_acl_entries.select do |network_acl_entry|
-      network_acl_entry.egress.nil? || !network_acl_entry.egress
+      not_truthy?(network_acl_entry.egress)
     end
   end
 
