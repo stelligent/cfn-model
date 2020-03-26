@@ -52,7 +52,8 @@ TEMPLATE
 
     it 'raises an error when JSON contains UTF-8 characters' do
       invalid_character_json = File.read(
-        'spec/test_templates/json/template_with_utf8_characters.json'
+        'spec/test_templates/json/template_with_utf8_characters.json',
+        encoding: Encoding::US_ASCII
       )
 
       expect do
@@ -72,7 +73,8 @@ TEMPLATE
 
     it 'raises an error when YAML contains UTF-8 characters' do
       invalid_character_template = File.read(
-        'spec/test_templates/yaml/template_with_utf8_characters.yml'
+        'spec/test_templates/yaml/template_with_utf8_characters.yml',
+        encoding: Encoding::US_ASCII
       )
 
       expect do
