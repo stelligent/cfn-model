@@ -1,0 +1,15 @@
+---
+type: map
+mapping:
+  Type:
+    type: str
+    required: yes
+    pattern: /AWS::EC2::NetworkAcl/
+  Properties:
+    type: map
+    required: yes
+    mapping:
+      =:
+        type: any
+  =:
+    type: any
