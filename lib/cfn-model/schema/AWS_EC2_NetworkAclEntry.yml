@@ -1,0 +1,21 @@
+---
+type: map
+mapping:
+  Type:
+    type: str
+    required: yes
+    pattern: /AWS::EC2::NetworkAclEntry/
+  Properties:
+    type: map
+    required: yes
+    mapping:
+      Icmp:
+        type: any
+        required: no
+      PortRange:
+        type: any
+        required: no
+      =:
+        type: any
+  =:
+    type: any
