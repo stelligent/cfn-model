@@ -76,6 +76,8 @@ class CfnParser
 
     process_conditions cfn_hash, cfn_model, condition_values_json
 
+    process_mappings cfn_hash, cfn_model
+
     # pass 1: wire properties into ModelElement objects
     if with_line_numbers
       transform_hash_into_model_elements_with_numbers cfn_hash, cfn_model
@@ -92,6 +94,14 @@ class CfnParser
   end
 
   private
+
+  def process_mappings(cfn_hash, cfn_model)
+    if cfn_hash.key?('Mappings')
+      cfn_hash['Mappings'].each do |mapping_key, mapping_value|
+        cfn_model.mappings[mapping_key] = mapping_value
+      end
+    end
+  end
 
   def process_conditions(cfn_hash, cfn_model, condition_values_json)
     if cfn_hash.key?('Conditions')

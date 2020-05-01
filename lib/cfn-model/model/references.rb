@@ -10,24 +10,34 @@ require 'cfn-model/parser/parser_error'
 # clear
 module References
   def self.resolve_value(cfn_model, value)
+
     if value.is_a? Hash
       if value.has_key?('Ref')
-        ref_id = value['Ref']
-        if ref_id.is_a? String
-          if cfn_model.parameters.has_key?(ref_id)
-            return value if cfn_model.parameters[ref_id].synthesized_value.nil?
-            return cfn_model.parameters[ref_id].synthesized_value
-          else
-            return value
-          end
-        else
-          return value
-        end
+        resolve_reference(cfn_model, value)
+      elsif value.has_key?('Fn::FindInMap')
+        resolve_map(cfn_model, value)
+      else
+        value
+      end
+    else
+      value
+    end
+  end
+
+  ##
+  # For a !Ref to another resource.... just returns the !REf
+  # For a !Ref to a Parameter, then try to synthesize the value
+  def self.resolve_reference(cfn_model, value)
+    ref_id = value['Ref']
+    if ref_id.is_a? String
+      if cfn_model.parameters.has_key?(ref_id)
+        return value if cfn_model.parameters[ref_id].synthesized_value.nil?
+        return cfn_model.parameters[ref_id].synthesized_value
       else
         return value
       end
     else
-      return value
+      value
     end
   end
 
@@ -55,6 +65,33 @@ module References
 
   def self.resolve_security_group_id(group_id)
     resolve_resource_id group_id, 'GroupId'
+  end
+
+  ##
+  # Try to compute the FindInMap against a real Mapping
+  #
+  # If anything doesn't match up - either a syntax error,
+  # a missing Mapping, or some other kind Cfn evaluation
+  # we don't understand, just return the call to FindInMap
+  def self.resolve_map(cfn_model, find_in_map)
+    map_name = find_in_map['Fn::FindInMap'][0]
+    top_level_key = find_in_map['Fn::FindInMap'][1]
+    second_level_key = find_in_map['Fn::FindInMap'][2]
+
+    map = cfn_model.mappings[map_name]
+
+    return find_in_map if map.nil?
+
+    top_level_resolved = resolve_value(cfn_model, top_level_key)
+
+    return find_in_map if !map.has_key?(top_level_resolved)
+
+    top_level = map[top_level_resolved]
+    second_level = top_level[resolve_value(cfn_model, second_level_key)]
+
+    return find_in_map if second_level.nil?
+
+    second_level
   end
 
   private

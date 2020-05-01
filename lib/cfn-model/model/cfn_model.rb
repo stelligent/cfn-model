@@ -3,7 +3,7 @@
 require_relative 'references'
 
 class CfnModel
-  attr_reader :resources, :parameters, :line_numbers, :conditions, :globals
+  attr_reader :resources, :parameters, :line_numbers, :conditions, :globals, :mappings
 
   ##
   # if you really want it, here it is - the raw Hash from YAML.load.  you'll have to mess with structural nits of
@@ -16,6 +16,7 @@ class CfnModel
     @resources = {}
     @conditions = {}
     @globals = {}
+    @mappings = {}
     @raw_model = nil
     @line_numbers = {}
   end
@@ -37,6 +38,9 @@ class CfnModel
     end
     @resources.each do |k, v|
       new_cfn_model.resources[k] = v
+    end
+    @mappings.each do |k, v|
+      new_cfn_model.mappings[k] = v
     end
     new_cfn_model.raw_model = @raw_model.dup unless @raw_model.nil?
     new_cfn_model

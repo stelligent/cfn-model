@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'cfn-model/parser/cfn_parser'
 require 'cfn-model/model/references'
 require 'cfn-model/model/parameter'
 
@@ -170,5 +171,162 @@ describe References do
         expect(actual_value).to eq expected_value
       end
     end
+
+    context 'hash that is a FindInMap to something static' do
+      it 'returns static value' do
+        cfn_model = CfnModel.new
+        cfn_model.mappings['AWSRegionArch2AMI'] = {
+          "us-east-1" => {"HVM64" => "ami-0080e4c5bc078760e", "HVMG2" => "ami-0aeb704d503081ea6"},
+          "eu-west-2" => {"HVM64" => "ami-01419b804382064e4", "HVMG2" => "NOT_SUPPORTED"}
+        }
+        ref_find_in_map = {
+          'Fn::FindInMap' => %w[AWSRegionArch2AMI us-east-1 HVMG2]
+        }
+        actual_value = References.resolve_value(cfn_model, ref_find_in_map)
+        expected_value = 'ami-0aeb704d503081ea6'
+
+        expect(actual_value).to eq expected_value
+      end
+    end
+
+    context 'hash that is a FindInMap using pseudo function', :moo do
+      it 'returns the findinmap' do
+        cloudformation_yml = <<END
+---
+Mappings:
+  AWSRegionArch2AMI:
+    us-east-1:
+      HVM64: ami-0080e4c5bc078760e
+      HVMG2: ami-0aeb704d503081ea6
+    eu-west-2:
+      HVM64: ami-01419b804382064e4
+      HVMG2: NOT_SUPPORTED
+
+Resources:
+  newResource:
+    Type: "AWS::TimeTravel::Machine"
+    Properties:
+      Fuel: !FindInMap
+        - AWSRegionArch2AMI
+        - !Ref AWS::Region
+        - HVMG2
+END
+        cfn_model = CfnParser.new.parse cloudformation_yml,parameter_values_json='{"Parameters":{}}'
+
+        actual_value = cfn_model.resources['newResource'].fuel
+        expected_value = 'ami-0aeb704d503081ea6'
+        expect(actual_value).to eq expected_value
+
+        cfn_model = CfnParser.new.parse cloudformation_yml,parameter_values_json='{"Parameters":{"AWS::Region":"eu-west-2"}}'
+        actual_value = cfn_model.resources['newResource'].fuel
+        expected_value = 'NOT_SUPPORTED'
+        expect(actual_value).to eq expected_value
+      end
+    end
   end
+
+  context 'nested FindInMap', :moo do
+    it 'returns the proper value from the nested map' do
+      cloudformation_yml = <<END
+---
+Mappings:
+  Arch:
+    us-east-1:
+      arch: HVM64
+
+  AWSRegionArch2AMI:
+    us-east-1:
+      HVM64: ami-0080e4c5bc078760e
+      HVMG2: ami-0aeb704d503081ea6
+    eu-west-2:
+      HVM64: ami-01419b804382064e4
+      HVMG2: NOT_SUPPORTED
+
+Resources:
+  newResource:
+    Type: "AWS::TimeTravel::Machine"
+    Properties:
+      Fuel: !FindInMap
+        - AWSRegionArch2AMI
+        - !Ref AWS::Region
+        - !FindInMap
+          - Arch
+          - !Ref AWS::Region
+          - arch
+END
+      cfn_model = CfnParser.new.parse cloudformation_yml,parameter_values_json='{"Parameters":{}}'
+
+      actual_value = cfn_model.resources['newResource'].fuel
+      expected_value = 'ami-0080e4c5bc078760e'
+      expect(actual_value).to eq expected_value
+    end
+  end
+
+  context 'parameter based key', :moo do
+    it 'returns the proper value from the map' do
+      cloudformation_yml = <<END
+---
+Parameters:
+  MyKey:
+    Type: String
+
+Mappings:
+  AWSRegionArch2AMI:
+    us-east-1:
+      HVM64: ami-0080e4c5bc078760e
+      HVMG2: ami-0aeb704d503081ea6
+    eu-west-2:
+      HVM64: ami-01419b804382064e4
+      HVMG2: NOT_SUPPORTED
+
+Resources:
+  newResource:
+    Type: "AWS::TimeTravel::Machine"
+    Properties:
+      Fuel: !FindInMap
+        - AWSRegionArch2AMI
+        - !Ref AWS::Region
+        - !Ref MyKey
+END
+      cfn_model = CfnParser.new.parse cloudformation_yml,parameter_values_json='{"Parameters":{"MyKey":"HVM64","AWS::Region":"eu-west-2"}}'
+
+      actual_value = cfn_model.resources['newResource'].fuel
+      expected_value = 'ami-01419b804382064e4'
+      expect(actual_value).to eq expected_value
+    end
+  end
+
+  context 'missing parameter based key', :moo do
+    it 'returns the proper value from the map' do
+      cloudformation_yml = <<END
+---
+Parameters:
+  MyKey:
+    Type: String
+Mappings:
+  AWSRegionArch2AMI:
+    us-east-1:
+      HVM64: ami-0080e4c5bc078760e
+      HVMG2: ami-0aeb704d503081ea6
+    eu-west-2:
+      HVM64: ami-01419b804382064e4
+      HVMG2: NOT_SUPPORTED
+
+Resources:
+  newResource:
+    Type: "AWS::TimeTravel::Machine"
+    Properties:
+      Fuel: !FindInMap
+        - AWSRegionArch2AMI
+        - !Ref AWS::Region
+        - !Ref MyKey
+END
+      cfn_model = CfnParser.new.parse cloudformation_yml,parameter_values_json='{"Parameters":{}}'
+
+      actual_value = cfn_model.resources['newResource'].fuel
+      expected_value = {'Fn::FindInMap' => ['AWSRegionArch2AMI', {'Ref'=>'AWS::Region'},{'Ref'=>'MyKey'}]}
+      expect(actual_value).to eq expected_value
+    end
+  end
+
 end
