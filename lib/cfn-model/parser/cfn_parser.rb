@@ -44,6 +44,9 @@ class CfnParser
 
     apply_parameter_values(cfn_model, parameter_values_json)
 
+    # pass 2: tie together separate resources only where necessary to make life easier for rule logic
+    post_process_resource_model_elements cfn_model
+
     cfn_model
   end
 
@@ -87,8 +90,7 @@ class CfnParser
     transform_hash_into_parameters cfn_hash, cfn_model
     transform_hash_into_globals cfn_hash, cfn_model
 
-    # pass 2: tie together separate resources only where necessary to make life easier for rule logic
-    post_process_resource_model_elements cfn_model
+
 
     cfn_model
   end

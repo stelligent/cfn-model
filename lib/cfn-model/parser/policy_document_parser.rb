@@ -1,16 +1,18 @@
 # frozen_string_literal: true
 
 require 'cfn-model/model/iam_policy'
+require 'cfn-model/model/references'
+
 require 'cfn-model/model/policy_document'
 
 class PolicyDocumentParser
-  def parse(raw_policy_document)
+  def parse(cfn_model, raw_policy_document)
     policy_document = PolicyDocument.new
 
-    policy_document.version = raw_policy_document['Version']
+    policy_document.version = References.resolve_value(cfn_model, raw_policy_document['Version'])
 
     policy_document.statements = streamline_array(raw_policy_document['Statement']) do |statement|
-      parse_statement statement
+      parse_statement cfn_model, statement
     end
 
     policy_document
@@ -18,17 +20,17 @@ class PolicyDocumentParser
 
   private
 
-  def parse_statement(raw_statement)
+  def parse_statement(cfn_model, raw_statement)
     statement = Statement.new
-    statement.effect = raw_statement['Effect']
-    statement.sid = raw_statement['Sid']
-    statement.condition = raw_statement['Condition']
-    statement.actions = streamline_array(raw_statement['Action'])
-    statement.not_actions = streamline_array(raw_statement['NotAction'])
-    statement.resources = streamline_array(raw_statement['Resource'])
-    statement.not_resources = streamline_array(raw_statement['NotResource'])
-    statement.principal = raw_statement['Principal']
-    statement.not_principal = raw_statement['NotPrincipal']
+    statement.effect = References.resolve_value(cfn_model, raw_statement['Effect'])
+    statement.sid = References.resolve_value(cfn_model, raw_statement['Sid'])
+    statement.condition = References.resolve_value(cfn_model, raw_statement['Condition'])
+    statement.actions = References.resolve_value(cfn_model, streamline_array(raw_statement['Action']))
+    statement.not_actions = References.resolve_value(cfn_model, streamline_array(raw_statement['NotAction']))
+    statement.resources = References.resolve_value(cfn_model, streamline_array(raw_statement['Resource']))
+    statement.not_resources = References.resolve_value(cfn_model, streamline_array(raw_statement['NotResource']))
+    statement.principal = References.resolve_value(cfn_model, raw_statement['Principal'])
+    statement.not_principal = References.resolve_value(cfn_model, raw_statement['NotPrincipal'])
     statement
   end
 

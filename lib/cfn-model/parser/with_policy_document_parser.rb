@@ -6,7 +6,7 @@ require_relative 'policy_document_parser'
 
 class WithPolicyDocumentParser
   def parse(cfn_model:, resource:)
-    resource.policy_document = PolicyDocumentParser.new.parse(resource.policyDocument)
+    resource.policy_document = PolicyDocumentParser.new.parse(cfn_model, resource.policyDocument)
     resource
   end
 end

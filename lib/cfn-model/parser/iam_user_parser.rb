@@ -2,6 +2,7 @@
 
 require 'cfn-model/model/policy_document'
 require 'cfn-model/model/policy'
+require 'cfn-model/model/references'
 require_relative 'policy_document_parser'
 
 class IamUserParser
@@ -12,8 +13,8 @@ class IamUserParser
       next unless policy.has_key? 'PolicyName'
 
       new_policy = Policy.new
-      new_policy.policy_name = policy['PolicyName']
-      new_policy.policy_document = PolicyDocumentParser.new.parse(policy['PolicyDocument'])
+      new_policy.policy_name = References.resolve_value(cfn_model, policy['PolicyName'])
+      new_policy.policy_document = PolicyDocumentParser.new.parse(cfn_model, policy['PolicyDocument'])
       new_policy
     end.reject { |policy| policy.nil? }
 
@@ -22,8 +23,8 @@ class IamUserParser
     user_to_group_additions = cfn_model.resources_by_type 'AWS::IAM::UserToGroupAddition'
     user_to_group_additions.each do |user_to_group_addition|
 
-      if user_to_group_addition_has_username(user_to_group_addition.users,iam_user)
-        iam_user.group_names << user_to_group_addition.groupName
+      if user_to_group_addition_has_username(user_to_group_addition.users, iam_user)
+        iam_user.group_names << References.resolve_value(cfn_model, user_to_group_addition.groupName)
 
         # we need to figure out the story on resolving Refs i think for this to be real
       end

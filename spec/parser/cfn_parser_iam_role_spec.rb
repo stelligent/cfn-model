@@ -40,4 +40,18 @@ describe CfnParser do
       end
     end
   end
+
+  context 'an iam role with embedded refs in a policy', :moo8 do
+    it 'returns role with statements array of size 1' do
+      yaml_test_templates('iam_role/embedded_ref').each do |test_template|
+        cfn_model = @cfn_parser.parse IO.read(test_template), '{"Parameters":{"Resource":"*"}}'
+
+        roles = cfn_model.resources_by_type('AWS::IAM::Role')
+
+        expect(roles.size).to eq 1
+        role = roles.first
+        expect(role.policy_objects.first.policy_document.statements.first.resources.first).to eq '*'
+      end
+    end
+  end
 end

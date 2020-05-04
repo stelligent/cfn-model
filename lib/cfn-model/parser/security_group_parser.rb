@@ -38,7 +38,7 @@ class SecurityGroupParser
       ingress_object = AWS::EC2::SecurityGroupIngress.new cfn_model
       ingress.each do |k, v|
         silently_fail do
-          ingress_object.send("#{initialLower(k)}=", v)
+          ingress_object.send("#{initialLower(k)}=", References.resolve_value(cfn_model, v))
           mapped_at_least_one_attribute = true
         end
       end
@@ -59,7 +59,7 @@ class SecurityGroupParser
       egress.each do |k, v|
         next if k.match /::/
         silently_fail do
-          egress_object.send("#{initialLower(k)}=", v)
+          egress_object.send("#{initialLower(k)}=", References.resolve_value(cfn_model, v))
           mapped_at_least_one_attribute = true
         end
 

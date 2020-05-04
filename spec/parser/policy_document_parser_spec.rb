@@ -17,7 +17,7 @@ describe PolicyDocumentParser do
         'Action' => '*'
       }
 
-      policy_document = @policy_document_parser.parse raw_policy_document
+      policy_document = @policy_document_parser.parse CfnModel.new, raw_policy_document
 
       expect(policy_document.version).to eq '1234'
       expect(policy_document.statements.size).to eq 1
@@ -50,7 +50,7 @@ describe PolicyDocumentParser do
         }
       ]
 
-      policy_document = @policy_document_parser.parse raw_policy_document
+      policy_document = @policy_document_parser.parse CfnModel.new, raw_policy_document
 
       expect(policy_document.version).to eq '1234'
       expect(policy_document.statements.size).to eq 2

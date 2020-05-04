@@ -410,7 +410,6 @@ Resources:
 END
       cfn_model = CfnParser.new.parse cloudformation_yml
 
-      puts  cfn_model.resources['SecGroup'].egresses[1]
       actual_value = cfn_model.resources['SecGroup'].securityGroupEgress[1]['CidrIp']
       expected_value = '1.2.3.4/32'
       expect(actual_value).to eq expected_value
