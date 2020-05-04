@@ -4,8 +4,8 @@ require 'cfn-model/model/cfn_model'
 def valid_iam_policy(cfn_model: CfnModel.new)
   statement = Statement.new
   statement.effect = 'Allow'
-  statement.actions << '*'
-  statement.resources << '*'
+  statement.actions += ['*']
+  statement.resources += ['*']
 
   policy_document = PolicyDocument.new
   policy_document.version = '2012-10-17'

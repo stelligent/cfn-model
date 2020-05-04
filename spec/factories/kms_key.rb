@@ -3,8 +3,8 @@ require 'cfn-model/model/kms_key'
 def kms_key_with_single_statement(cfn_model: CfnModel.new)
   statement = Statement.new
   statement.effect = 'Allow'
-  statement.actions << 'kms:*'
-  statement.resources << '*'
+  statement.actions += ['kms:*']
+  statement.resources += ['*']
   statement.principal = {
     'AWS' => 'arn:aws:iam::123456789012:user/Test'
   }

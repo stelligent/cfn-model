@@ -3,8 +3,8 @@ require 'cfn-model/model/bucket_policy'
 def valid_bucket_policy(cfn_model: CfnModel.new)
   statement = Statement.new
   statement.effect = 'Allow'
-  statement.actions << '*'
-  statement.resources << 'arn:aws:s3:::fakebucketfakebucket/*'
+  statement.actions += ['*']
+  statement.resources += ['arn:aws:s3:::fakebucketfakebucket/*']
   statement.principal = {
     'AWS' => ['156460612806']
   }

@@ -15,12 +15,12 @@ def security_group_with_one_ingress_rule(cfn_model: CfnModel.new, security_group
   expected_security_group.groupDescription = 'some_group_desc'
   expected_security_group.logical_resource_id = security_group_id
   expected_security_group.ingresses << ingress_rule
-  expected_security_group.securityGroupIngress << {
+  expected_security_group.securityGroupIngress += [{
     'CidrIp' => '10.1.2.3/32',
     'FromPort' => 34,
     'ToPort' => 36,
     'IpProtocol' => 'tcp'
-  }
+  }]
 
   yield expected_security_group, ingress_rule if block_given?
   expected_security_group
@@ -37,10 +37,10 @@ def security_group_with_one_ingress_rule_ipprotocol(cfn_model: CfnModel.new, sec
   expected_security_group.groupDescription = 'some_group_desc'
   expected_security_group.logical_resource_id = security_group_id
   expected_security_group.ingresses << ingress_rule
-  expected_security_group.securityGroupIngress << {
+  expected_security_group.securityGroupIngress += [{
       'CidrIp' => '10.1.2.3/32',
       'IpProtocol' => '-1'
-  }
+  }]
 
   yield expected_security_group, ingress_rule if block_given?
   expected_security_group
@@ -131,7 +131,7 @@ def security_group_with_one_egress_rule(cfn_model: CfnModel.new, security_group_
   expected_security_group.groupDescription = 'some_group_desc'
   expected_security_group.logical_resource_id = security_group_id
   expected_security_group.egresses << egress_rule
-  expected_security_group.securityGroupEgress << raw_egress
+  expected_security_group.securityGroupEgress += [raw_egress]
 
   yield expected_security_group, egress_rule, raw_egress if block_given?
 
@@ -158,19 +158,19 @@ def security_group_with_one_ingress_and_one_egress_rule(cfn_model: CfnModel.new,
   expected_security_group.ingresses << ingress_rule
   expected_security_group.egresses << egress_rule
 
-  expected_security_group.securityGroupIngress << {
+  expected_security_group.securityGroupIngress +=  [{
     'CidrIp' => '10.1.2.3/32',
     'FromPort' => 34,
     'ToPort' => 36,
     'IpProtocol' => 'tcp'
-  }
+  }]
 
-  expected_security_group.securityGroupEgress << {
+  expected_security_group.securityGroupEgress += [{
     'CidrIp' => '1.2.3.4/32',
     'FromPort' => 55,
     'ToPort' => 56,
     'IpProtocol' => 'tcp'
-  }
+  }]
 
   yield expected_security_group, ingress_rule, egress_rule if block_given?
   expected_security_group
@@ -187,10 +187,10 @@ def security_group_with_one_egress_rule_ipprotocol(cfn_model: CfnModel.new, secu
   expected_security_group.groupDescription = 'some_group_desc'
   expected_security_group.logical_resource_id = security_group_id
   expected_security_group.egresses << egress_rule
-  expected_security_group.securityGroupEgress << {
+  expected_security_group.securityGroupEgress += [{
       'CidrIp' => '10.1.2.3/32',
       'IpProtocol' => '-1'
-  }
+  }]
 
   yield expected_security_group, egress_rule if block_given?
   expected_security_group

@@ -146,7 +146,7 @@ describe References do
       it 'returns hash as-is' do
         cfn_model = CfnModel.new
         ref_hash = {
-          'Ref' => {'something_weird':'verboten'}
+          'Ref' => {'something_weird' => 'verboten'}
         }
         actual_value = References.resolve_value(cfn_model, ref_hash)
         expected_value = ref_hash
@@ -189,7 +189,7 @@ describe References do
       end
     end
 
-    context 'hash that is a FindInMap using pseudo function', :moo do
+    context 'hash that is a FindInMap using pseudo function' do
       it 'returns the findinmap' do
         cloudformation_yml = <<END
 ---
@@ -225,7 +225,7 @@ END
     end
   end
 
-  context 'nested FindInMap', :moo do
+  context 'nested FindInMap' do
     it 'returns the proper value from the nested map' do
       cloudformation_yml = <<END
 ---
@@ -262,7 +262,7 @@ END
     end
   end
 
-  context 'parameter based key', :moo do
+  context 'parameter based key' do
     it 'returns the proper value from the map' do
       cloudformation_yml = <<END
 ---
@@ -296,7 +296,7 @@ END
     end
   end
 
-  context 'missing parameter based key', :moo do
+  context 'missing parameter based key' do
     it 'returns the proper value from the map' do
       cloudformation_yml = <<END
 ---
@@ -329,4 +329,91 @@ END
     end
   end
 
+  context 'embedded ref' do
+    it 'substitutues the embedded ref' do
+      cloudformation_yml = <<END
+Parameters:
+  Resource:
+    Type: String
+
+Resources:
+  HelperRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+            Path: /
+      Policies:
+        - PolicyName: awstestingLambdaExecutePolicies
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - tag:TagResources
+                  - tag:UntagResources
+                  - elasticloadbalancing:DescribeLoadBalancerAttributes
+                  - elasticloadbalancing:DescribeLoadBalancers
+                  - elasticloadbalancing:AddTags
+                  - elasticloadbalancing:RemoveTags
+                  - elasticloadbalancing:ModifyLoadBalancerAttributes
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                  - s3:GetBucketPolicy
+                  - s3:PutBucketPolicy
+                Resource: !Ref Resource
+END
+      cfn_model = CfnParser.new.parse cloudformation_yml,parameter_values_json='{"Parameters":{"Resource":"*"}}'
+
+      actual_value = cfn_model.resources['HelperRole'].policies.first['PolicyDocument']['Statement'].first['Resource']
+      expected_value = '*'
+      expect(actual_value).to eq expected_value
+    end
+  end
+
+  context 'embedded if' do
+    it 'substitutes the true condition' do
+      cloudformation_yml = <<END
+Conditions:
+  MicroInt: true
+
+Mappings:
+  AccountTypeCIDRMap:
+    micro-int: 
+      California: 1.2.3.4/32
+
+Resources:
+  SecGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties: 
+      GroupDescription: moocow
+      GroupName: zootime
+      SecurityGroupEgress: 
+        - IpProtocol: icmp
+          FromPort: '-1'
+          ToPort: '-1'
+          CidrIp: 0.0.0.0/0
+        - !If
+          - MicroInt
+          - IpProtocol: '-1'
+            FromPort: '-1'
+            ToPort: '-1'
+            CidrIp: !FindInMap [AccountTypeCIDRMap, micro-int, California]
+          - {}
+      VpcId: vpc-1234
+END
+      cfn_model = CfnParser.new.parse cloudformation_yml
+
+      puts  cfn_model.resources['SecGroup'].egresses[1]
+      actual_value = cfn_model.resources['SecGroup'].securityGroupEgress[1]['CidrIp']
+      expected_value = '1.2.3.4/32'
+      expect(actual_value).to eq expected_value
+    end
+  end
 end

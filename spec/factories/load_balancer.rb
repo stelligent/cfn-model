@@ -8,12 +8,12 @@ def load_balancer_with_open_http_ingress(cfn_model: CfnModel.new)
   expected_security_group = AWS::EC2::SecurityGroup.new cfn_model
   expected_security_group.groupDescription = 'some_group_desc'
   expected_security_group.ingresses << ingress_rule
-  expected_security_group.securityGroupIngress << {
+  expected_security_group.securityGroupIngress += [{
     'CidrIp' => '0.0.0.0/0',
     'FromPort' => 80,
     'ToPort' => 80,
     'IpProtocol' => 'tcp'
-  }
+  }]
   expected_security_group.vpcId = {
     'Ref' => 'VpcId'
   }
@@ -26,9 +26,9 @@ def load_balancer_with_open_http_ingress(cfn_model: CfnModel.new)
       'Protocol' => 'HTTP'
     }
   ]
-  expected_load_balancer.securityGroups << {
+  expected_load_balancer.securityGroups += [{
     'Ref' => 'httpSg'
-  }
+  }]
   expected_load_balancer.security_groups << expected_security_group
   expected_load_balancer.subnets = [
     {
@@ -68,26 +68,26 @@ def load_balancer2_with_open_http_ingress(cfn_model: CfnModel.new)
   expected_security_group = AWS::EC2::SecurityGroup.new cfn_model
   expected_security_group.groupDescription = 'some_group_desc'
   expected_security_group.ingresses << ingress_rule
-  expected_security_group.securityGroupIngress << {
+  expected_security_group.securityGroupIngress += [{
     'CidrIp' => '0.0.0.0/0',
     'FromPort' => 80,
     'ToPort' => 80,
     'IpProtocol' => 'tcp'
-  }
+  }]
   expected_security_group.vpcId = {
     'Ref' => 'VpcId'
   }
 
   expected_load_balancer = AWS::ElasticLoadBalancingV2::LoadBalancer.new cfn_model
   expected_load_balancer.scheme = 'internal'
-  expected_load_balancer.securityGroups << {
+  expected_load_balancer.securityGroups += [{
     'Ref' => 'httpSg'
-  }
+  }]
   expected_load_balancer.security_groups << expected_security_group
-  expected_load_balancer.loadBalancerAttributes << {
+  expected_load_balancer.loadBalancerAttributes += [{
     'Key' => 'idle_timeout.timeout_seconds',
     'Value' => '50'
-  }
+  }]
   expected_load_balancer.subnets = [
     {
       'Ref' => 'SubnetId1'

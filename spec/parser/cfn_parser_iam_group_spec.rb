@@ -36,9 +36,6 @@ describe CfnParser do
         cfn_model = @cfn_parser.parse IO.read(test_template)
 
         expect(cfn_model.resources_by_type('AWS::IAM::Group').first.policies.first).to eq({
-                                                                                       'Fn::If' => [
-                                                                                         'OtherPolicy',
-                                                                                         {
                                                                                            'PolicyDocument' => {
                                                                                              'Statement' => {
                                                                                                'Effect' => 'Allow',
@@ -47,12 +44,7 @@ describe CfnParser do
                                                                                              }
                                                                                            },
                                                                                            'PolicyName' => 'jimbob'
-                                                                                         },
-                                                                                         {
-                                                                                           'Ref' => 'AWS::NoValue'
-                                                                                         }
-                                                                                       ]
-                                                                                     })
+                                                                                         })
       end
     end
   end

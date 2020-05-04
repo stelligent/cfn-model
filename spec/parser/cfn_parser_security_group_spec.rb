@@ -187,7 +187,7 @@ describe CfnParser do
     end
   end
 
-  context 'a security group with one inline and one externalized egress - using Ref(GroupId)', :egress do
+  context 'a security group with one inline and one externalized egress - using Ref(GroupId)' do
     it 'returns a size-2 collection of SecurityGroup object with size-1 collection of egress rules' do
       expected_security_groups = [
         security_group_with_one_external_egress_rule(security_group_id: 'sg1', egress_group_id: {'Ref' => 'sg1'}) do |sg, _|
@@ -235,21 +235,12 @@ describe CfnParser do
 
         expectation = [
           {
-            'Fn::If' => [
-              'ExtraIngress',
-              {
-                'CidrIp' => '10.1.2.4/32',
-                'FromPort' => 44,
-                'ToPort' => 46,
-                'IpProtocol' => 'tcp'
-              },
-              {
-                'Ref' => 'AWS::NoValue'
-              }
-            ]
+            'CidrIp' => '10.1.2.4/32',
+            'FromPort' => 44,
+            'ToPort' => 46,
+            'IpProtocol' => 'tcp'
           }
         ]
-
         expect(cfn_model.resources_by_type('AWS::EC2::SecurityGroup').first.securityGroupIngress).to eq expectation
       end
     end
@@ -284,7 +275,7 @@ describe CfnParser do
     end
   end
 
-  context 'egresses are parameterized', :synth do
+  context 'egresses are parameterized' do
     it 'maps the Fn::If to a hash and skips objectification of it' do
       yaml_test_templates('security_group/security_group_with_parameterized_egress').each do |test_template|
         cfn_model = @cfn_parser.parse IO.read(test_template),

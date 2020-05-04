@@ -58,7 +58,7 @@ describe CfnModel, :model do
 
         @cfn_model.resources['TestRole'] = AWS::IAM::Role.new @cfn_model
         @cfn_model.resources['TestRole'].logical_resource_id = 'TestRole'
-        @cfn_model.resources['TestRole'].managedPolicyArns << managed_policy_arn
+        @cfn_model.resources['TestRole'].managedPolicyArns += [managed_policy_arn]
 
         matching_resource = @cfn_model.resource_by_id('TestRole')
         expect(matching_resource.managedPolicyArns[0]).to eq managed_policy_arn
@@ -74,7 +74,7 @@ describe CfnModel, :model do
 
         @cfn_model.resources['TestRole'] = AWS::IAM::Role.new @cfn_model
         @cfn_model.resources['TestRole'].logical_resource_id = 'TestRole'
-        @cfn_model.resources['TestRole'].managedPolicyArns << managed_policy_arn
+        @cfn_model.resources['TestRole'].managedPolicyArns += [managed_policy_arn]
 
         matching_resource = @cfn_model.resource_by_ref(role_ref)
         expect(matching_resource.managedPolicyArns[0]).to eq managed_policy_arn
@@ -86,7 +86,7 @@ describe CfnModel, :model do
 
         @cfn_model.resources['TestRole'] = AWS::IAM::Role.new @cfn_model
         @cfn_model.resources['TestRole'].logical_resource_id = 'TestRole'
-        @cfn_model.resources['TestRole'].managedPolicyArns << managed_policy_arn
+        @cfn_model.resources['TestRole'].managedPolicyArns += [managed_policy_arn]
 
         matching_resource = @cfn_model.resource_by_ref(role_ref)
         expect(matching_resource).to be_nil
@@ -100,7 +100,7 @@ describe CfnModel, :model do
 
         @cfn_model.resources['TestRole'] = AWS::IAM::Role.new @cfn_model
         @cfn_model.resources['TestRole'].logical_resource_id = 'TestRole'
-        @cfn_model.resources['TestRole'].managedPolicyArns << managed_policy_arn
+        @cfn_model.resources['TestRole'].managedPolicyArns += [managed_policy_arn]
 
         matching_resource = @cfn_model.resource_by_ref(role_ref)
         expect(matching_resource.managedPolicyArns[0]).to eq managed_policy_arn
@@ -112,7 +112,7 @@ describe CfnModel, :model do
 
         @cfn_model.resources['TestRole'] = AWS::IAM::Role.new @cfn_model
         @cfn_model.resources['TestRole'].logical_resource_id = 'TestRole'
-        @cfn_model.resources['TestRole'].managedPolicyArns << managed_policy_arn
+        @cfn_model.resources['TestRole'].managedPolicyArns += [managed_policy_arn]
 
         matching_resource = @cfn_model.resource_by_ref(role_ref)
         expect(matching_resource).to be_nil

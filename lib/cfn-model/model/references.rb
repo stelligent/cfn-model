@@ -10,15 +10,20 @@ require 'cfn-model/parser/parser_error'
 # clear
 module References
   def self.resolve_value(cfn_model, value)
-
     if value.is_a? Hash
       if value.has_key?('Ref')
         resolve_reference(cfn_model, value)
       elsif value.has_key?('Fn::FindInMap')
         resolve_map(cfn_model, value)
+      elsif value.has_key?('Fn::If')
+        resolve_if(cfn_model, value)
       else
-        value
+        value.map do |k,v|
+          [k, resolve_value(cfn_model, v)]
+        end.to_h
       end
+    elsif value.is_a? Array
+      value.map { |item| resolve_value(cfn_model, item) }
     else
       value
     end
@@ -95,6 +100,16 @@ module References
   end
 
   private
+
+  def self.resolve_if(cfn_model, expression)
+    if_expression = expression['Fn::If']
+    condition_name = if_expression[0]
+    if cfn_model.conditions[condition_name]
+      resolve_value(cfn_model, if_expression[1])
+    else
+      resolve_value(cfn_model, if_expression[2])
+    end
+  end
 
   def self.logical_resource_id_from_get_att(attribute_spec, attr_to_retrieve=nil)
     if attribute_spec.is_a? Array

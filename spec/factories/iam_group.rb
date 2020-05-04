@@ -10,7 +10,7 @@ end
 def iam_group_with_policies(cfn_model: CfnModel.new)
   expected_group = AWS::IAM::Group.new cfn_model
 
-  expected_group.policies << {
+  expected_group.policies += [{
     'PolicyDocument' => {
       'Statement' => {
         'Effect' => 'Allow',
@@ -19,15 +19,15 @@ def iam_group_with_policies(cfn_model: CfnModel.new)
       }
     },
     'PolicyName' => 'jimbob'
-  }
+  }]
 
   policy = Policy.new
   policy.policy_name = 'jimbob'
 
   statement = Statement.new
   statement.effect = 'Allow'
-  statement.actions << '*'
-  statement.resources << '*'
+  statement.actions +=  ['*']
+  statement.resources += ['*']
 
   policy_document = PolicyDocument.new
   policy_document.statements << statement

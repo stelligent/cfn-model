@@ -18,7 +18,7 @@ describe CfnParser do
     end
   end
 
-  context 'an iam user with two groups', :moo do
+  context 'an iam user with two groups' do
     it 'returns a user with two groups' do
       expected_iam_user = iam_user_with_two_groups(cfn_model: CfnModel.new)
 

@@ -40,8 +40,8 @@ def iam_role_with_single_statement(cfn_model: CfnModel.new)
     }
   }
   role.assume_role_policy_document = trust_policy
-  role.policy_objects << policy
-  role.policies << {
+  role.policy_objects += [policy]
+  role.policies += [{
     'PolicyName' => 'root',
     'PolicyDocument' => {
       'Version' => '2012-10-17',
@@ -51,7 +51,7 @@ def iam_role_with_single_statement(cfn_model: CfnModel.new)
         'Resource' => '*'
       }
     }
-  }
+  }]
 
   role
 end
