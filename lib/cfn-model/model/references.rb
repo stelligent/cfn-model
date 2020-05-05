@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'cfn-model/parser/parser_error'
+require 'netaddr'
 
 ##
 # this is a placeholder for anything related to resolving references
@@ -9,6 +10,10 @@ require 'cfn-model/parser/parser_error'
 # references yet... in the meantime pile things up here and hope a pattern becomes
 # clear
 module References
+  def self.unsupported_passthru?(value)
+    value.has_key?('Fn::GetAtt') || value.has_key?('Fn::ImportValue') || value.has_key?('Fn::Transform') || value.has_key?('Fn::Cidr')
+  end
+
   def self.resolve_value(cfn_model, value)
     if value.is_a? Hash
       if value.has_key?('Ref')
@@ -17,7 +22,21 @@ module References
         resolve_map(cfn_model, value)
       elsif value.has_key?('Fn::If')
         resolve_if(cfn_model, value)
-      else
+      elsif value.has_key?('Fn::Sub')
+        resolve_sub(cfn_model, value)
+      elsif value.has_key?('Fn::GetAZs')
+        resolve_getazs(cfn_model, value)
+      elsif value.has_key?('Fn::Split')
+        resolve_split(cfn_model, value)
+      elsif value.has_key?('Fn::Join')
+        resolve_join(cfn_model, value)
+      elsif value.has_key?('Fn::Base64')
+        resolve_base64(cfn_model, value)
+      elsif value.has_key?('Fn::Select')
+        resolve_select(cfn_model, value)
+      elsif unsupported_passthru?(value)
+        value
+      else # another mapping
         value.map do |k,v|
           [k, resolve_value(cfn_model, v)]
         end.to_h
@@ -100,6 +119,107 @@ module References
   end
 
   private
+
+  def self.resolve_sub(cfn_model, expression)
+    if expression['Fn::Sub'].is_a? String
+      resolve_shorthand_sub(cfn_model, expression)
+    elsif expression['Fn::Sub'].is_a? Array
+      resolve_longform_sub(cfn_model, expression)
+    else
+      expression
+    end
+  end
+
+  def self.resolve_select(cfn_model, reference)
+    index = reference['Fn::Select'][0]
+    collection = References.resolve_value(cfn_model, reference['Fn::Select'][1])
+    if collection.is_a? Array
+      collection[index]
+    else
+      reference
+    end
+  end
+
+  def self.resolve_base64(cfn_model, reference)
+    References.resolve_value(cfn_model, reference['Fn::Base64'])
+  end
+
+  def self.resolve_join(cfn_model, reference)
+    delimiter = reference['Fn::Join'][0]
+    items = References.resolve_value(cfn_model, reference['Fn::Join'][1])
+    return reference unless items.is_a?(Array)
+    items.join(delimiter)
+  end
+
+  def self.resolve_split(cfn_model, reference)
+    delimiter = reference['Fn::Split'][0]
+    target_string = References.resolve_value(cfn_model, reference['Fn::Split'][1])
+    return reference unless target_string.is_a?(String)
+    target_string.split(delimiter)
+  end
+
+  def self.resolve_getazs(cfn_model, reference)
+    number_azs = References.resolve_value(cfn_model, { 'Ref' => 'AWS::NumberAZs' })
+    region = reference['Fn::GetAZs']
+    if region == '' || region == { 'Ref' => 'AWS::Region' }
+      region = References.resolve_value(cfn_model, { 'Ref' => 'AWS::Region' })
+    end
+    (('a'.ord)..('a'.ord+number_azs)).map do |az_number|
+      "#{region}#{az_number.chr}"
+    end
+  end
+
+  def self.strip_cfn_interpolation(reference)
+    reference[2..-2]
+  end
+
+  def self.references_in_sub(string_value)
+    # ignore ${!foo} as cfn interprets that as the literal ${foo}
+    references = string_value.scan /\${[^!].*?}/
+    references.map { |reference| strip_cfn_interpolation(reference) }
+  end
+
+  def self.resolvable_reference?(cfn_model, reference)
+    resolved_value = References.resolve_value(cfn_model, {'Ref'=>reference})
+    resolved_value != {'Ref'=>reference}
+  end
+
+  def self.resolve_shorthand_sub(cfn_model, expression)
+    string_value = expression['Fn::Sub']
+    subbed_string_value = string_value
+    has_unresolved_references = false
+    references_in_sub(string_value).each do |reference|
+      if resolvable_reference?(cfn_model, reference)
+        subbed_string_value = subbed_string_value.gsub(
+          "${#{reference}}",
+          References.resolve_value(cfn_model, {'Ref'=>reference})
+        )
+      end
+    end
+    subbed_string_value
+  end
+
+  def self.resolve_longform_sub(cfn_model, expression)
+    array_value = expression['Fn::Sub']
+    subbed_string_value = array_value[0]
+    substitution_mapping = array_value[1]
+    references_in_sub(subbed_string_value).each do |reference|
+      if substitution_mapping.has_key? reference
+        if References.resolve_value(cfn_model, substitution_mapping[reference]).is_a?(String)
+          subbed_string_value = subbed_string_value.gsub(
+            "${#{reference}}",
+            References.resolve_value(cfn_model, substitution_mapping[reference])
+          )
+        end
+      elsif resolvable_reference?(cfn_model, reference)
+        subbed_string_value = subbed_string_value.gsub(
+          "${#{reference}}",
+          References.resolve_value(cfn_model, {'Ref'=>reference})
+        )
+      end
+    end
+    subbed_string_value
+  end
 
   def self.resolve_if(cfn_model, expression)
     if_expression = expression['Fn::If']

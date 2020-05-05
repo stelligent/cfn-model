@@ -415,4 +415,226 @@ END
       expect(actual_value).to eq expected_value
     end
   end
+
+  context 'sub to a parameter', :moo9 do
+    it 'substitutes the parameter value' do
+      cloudformation_yml = <<END
+Parameters:
+  Parm1:
+    Type: String
+  Parm2:
+    Type: String
+
+Resources:
+  Bucket:
+    Type: AWS::S3::Bucket
+    Properties: 
+      BucketName: !Sub ThisName${Parm1}ThatName${Parm2}${Parm1}
+END
+      cfn_model = CfnParser.new.parse cloudformation_yml, '{"Parameters":{"Parm1":"moo","Parm2":"cow"}}'
+
+      actual_value = cfn_model.resources['Bucket'].bucketName
+      expected_value = 'ThisNamemooThatNamecowmoo'
+      expect(actual_value).to eq expected_value
+    end
+  end
+
+  context 'literal sub', :moo9 do
+    it 'leaves it alone' do
+      cloudformation_yml = <<END
+Parameters:
+  Parm1:
+    Type: String
+  Parm2:
+    Type: String
+
+Resources:
+  Bucket:
+    Type: AWS::S3::Bucket
+    Properties: 
+      BucketName: !Sub ThisName${Parm1}ThatName${!Parm2}${Parm1}
+END
+      cfn_model = CfnParser.new.parse cloudformation_yml, '{"Parameters":{"Parm1":"moo","Parm2":"cow"}}'
+
+      actual_value = cfn_model.resources['Bucket'].bucketName
+      expected_value = 'ThisNamemooThatName${!Parm2}moo'
+      expect(actual_value).to eq expected_value
+    end
+  end
+
+  context 'sub to an attribute', :moo9 do
+    it 'leaves it alone' do
+      cloudformation_yml = <<END
+Parameters:
+  Parm1:
+    Type: String
+  Parm2:
+    Type: String
+
+Resources:
+  Bucket2:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: Fred
+  Bucket:
+    Type: AWS::S3::Bucket
+    Properties: 
+      BucketName: !Sub ThisName${Parm1}ThatName${Bucket2.Arn}${Parm1}
+END
+      cfn_model = CfnParser.new.parse cloudformation_yml, '{"Parameters":{"Parm1":"moo","Parm2":"cow"}}'
+
+      actual_value = cfn_model.resources['Bucket'].bucketName
+      expected_value = 'ThisNamemooThatName${Bucket2.Arn}moo'
+      expect(actual_value).to eq expected_value
+    end
+  end
+
+  context 'sub to a resource', :moo9 do
+    it 'ignores the resource value' do
+      cloudformation_yml = <<END
+Parameters:
+  Parm1:
+    Type: String
+  Parm2:
+    Type: String
+
+Resources:
+  Bucket2:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: Fred
+  Bucket:
+    Type: AWS::S3::Bucket
+    Properties: 
+      BucketName: !Sub ThisName${Parm1}ThatName${Bucket2}${Parm1}
+END
+      cfn_model = CfnParser.new.parse cloudformation_yml, '{"Parameters":{"Parm1":"moo","Parm2":"cow"}}'
+
+      actual_value = cfn_model.resources['Bucket'].bucketName
+      expected_value = 'ThisNamemooThatName${Bucket2}moo'
+      expect(actual_value).to eq expected_value
+    end
+  end
+
+  context 'long form sub', :moo9 do
+    it 'substitutes parameter references' do
+      cloudformation_yml = <<END
+Parameters:
+  Parm1:
+    Type: String
+  Parm2:
+    Type: String
+
+Resources:
+  Bucket2:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: Fred
+  Bucket:
+    Type: AWS::S3::Bucket
+    Properties: 
+      BucketName: !Sub 
+        - ThisName${Parm1}ThatName${Bucket2}${Parm1}${Parm3}
+        - { Parm1: !Ref Parm2, Parm3: !GetAtt Bucket2.Arn }
+END
+      cfn_model = CfnParser.new.parse cloudformation_yml, '{"Parameters":{"Parm1":"moo","Parm2":"zowee"}}'
+
+      actual_value = cfn_model.resources['Bucket'].bucketName
+      expected_value = 'ThisNamezoweeThatName${Bucket2}zowee${Parm3}'
+      expect(actual_value).to eq expected_value
+    end
+  end
+
+  context 'reference to getazs', :moo9 do
+    it 'substitutes fake azs' do
+      cloudformation_yml = <<END
+Resources:
+  VPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: "10.0.0.0/16"
+      EnableDnsSupport: true
+      EnableDnsHostnames: true
+      InstanceTenancy: "default"
+  mySubnet: 
+    Type: "AWS::EC2::Subnet"
+    Properties: 
+      VpcId: 
+        !Ref VPC
+      CidrBlock: 10.0.0.0/24
+      AvailabilityZone: 
+        Fn::Select: 
+          - 2
+          - Fn::GetAZs: ""
+  mySubnet2: 
+    Type: "AWS::EC2::Subnet"
+    Properties: 
+      VpcId: 
+        !Ref VPC
+      CidrBlock: 10.0.0.1/24
+      AvailabilityZone: 
+        Fn::Select: 
+          - 1
+          - Fn::GetAZs: eu-west-1
+END
+      cfn_model = CfnParser.new.parse cloudformation_yml, '{"Parameters":{"AWS::NumberAZs":3}}'
+
+      actual_value = cfn_model.resources['mySubnet'].availabilityZone
+      expected_value = 'us-east-1c'
+      expect(actual_value).to eq expected_value
+
+      actual_value = cfn_model.resources['mySubnet2'].availabilityZone
+      expected_value = 'eu-west-1b'
+      expect(actual_value).to eq expected_value
+    end
+  end
+
+  context 'reference to split', :moo9 do
+    it 'substitutes array' do
+      cloudformation_yml = <<END
+Parameters:
+  Parm1:
+    Type: String
+  Parm2:
+    Type: String
+
+Resources:
+  Bucket:
+    Type: AWS::S3::Bucket
+    Properties: 
+      BucketName: !Split [",", !Sub "bread,${Parm1},${Parm2},moo2"]
+END
+      cfn_model = CfnParser.new.parse cloudformation_yml, '{"Parameters":{"Parm1":"moo","Parm2":"zowee"}}'
+
+      actual_value = cfn_model.resources['Bucket'].bucketName
+      expected_value = %w[bread moo zowee moo2]
+      expect(actual_value).to eq expected_value
+    end
+  end
+
+  context 'reference to base64', :moo9 do
+    it 'passes through the value to encode' do
+      cloudformation_yml = <<END
+Resources:
+  MyInstance:
+    Type: AWS::EC2::Instance
+    Properties: 
+      UserData:
+        Fn::Base64:
+          !Sub |
+            #!/bin/bash -xe
+            yum update -y aws-cfn-bootstrap
+            /opt/aws/bin/cfn-init -v --stack ${AWS::StackName} --resource LaunchConfig --configsets wordpress_install --region ${AWS::Region}
+END
+      cfn_model = CfnParser.new.parse cloudformation_yml, '{"Parameters":{}}'
+
+      actual_value = cfn_model.resources['MyInstance'].userData
+      expected_value = <<END
+#!/bin/bash -xe
+yum update -y aws-cfn-bootstrap
+/opt/aws/bin/cfn-init -v --stack stackname --resource LaunchConfig --configsets wordpress_install --region us-east-1
+END
+      expect(actual_value).to eq expected_value
+    end
+  end
 end
