@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require 'cfn-model/parser/parser_error'
-require 'netaddr'
 
 ##
 # this is a placeholder for anything related to resolving references
