@@ -1,5 +1,5 @@
 #!/bin/bash -ex
-export minor_version="0.4"
+export minor_version="0.5"
 set -o pipefail
 
 gem_name=cfn-model
