@@ -77,13 +77,10 @@ describe CfnModel::Transforms::Serverless do
         cloudformation_template_yml = yaml_test_template('sam/globals')
         actual_cfn_model = @cfn_parser.parse cloudformation_template_yml
 
-        expected_bucket = {
-          'Fn::Sub' => 'bucket.lambda.${Site}'
-        }
+        expected_bucket = 'bucket.lambda.${Site}'
+
         expected_endpoint_configuration = 'REGIONAL'
-        expected_key = {
-          'Fn::Sub' => 'lambda/code/${Site}/jar-with-dependencies.jar'
-        }
+        expected_key = 'lambda/code/${Site}/jar-with-dependencies.jar'
         expected_runtime = 'java8'
 
         actual_bucket = actual_cfn_model.resources['SomeFunction'].code['S3Bucket']

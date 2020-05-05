@@ -11,13 +11,8 @@ describe CfnParser do
       json_test_templates('lambda_permission/lambda_permission_with_non_string_principal').each do |test_template|
         cfn_model = @cfn_parser.parse IO.read(test_template)
 
-
-        actual_permissions = cfn_model.resources_by_type('AWS::Lambda::Permission')
-        actual_computed_permission = actual_permissions.find do |permission|
-          permission.principal == { 'Fn::Join' => ['-', %w(jim bob)] }
-        end
-
-        expect(actual_computed_permission).to_not be_nil
+        actual_permissions = cfn_model.resources['lambdaPermission']
+        expect(actual_permissions.principal).to eq 'jim-bob'
       end
     end
   end

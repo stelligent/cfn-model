@@ -43,7 +43,8 @@ class ParameterSubstitution
       'AWS::AccountId' => '111111111111',
       'AWS::Region' => 'us-east-1',
       'AWS::StackId' => 'arn:aws:cloudformation:us-east-1:111111111111:stack/stackname/51af3dc0-da77-11e4-872e-1234567db123',
-      'AWS::StackName' => 'stackname'
+      'AWS::StackName' => 'stackname',
+      'AWS::NumberAZs' => 2
     }
     pseudo_function_defaults.each do |function_name, default_value|
       parameter = Parameter.new
