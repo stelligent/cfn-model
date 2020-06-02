@@ -112,8 +112,14 @@ class CfnModel
                                                           resource_name,
                                                           with_line_numbers)
 
-        cfn_hash['Resources'][resource_name] = lambda_function lambda_fn_params
-
+        cfn_hash['Resources'][resource_name] = lambda_function(
+          handler: lambda_fn_params[:handler],
+          code_bucket: lambda_fn_params[:code_bucket],
+          code_key: lambda_fn_params[:code_key],
+          role: lambda_fn_params[:role],
+          runtime: lambda_fn_params[:runtime],
+          with_line_numbers: lambda_fn_params[:with_line_numbers]
+        )
         unless serverless_function['Properties']['Role']
           cfn_hash['Resources'][resource_name + 'Role'] = function_role(serverless_function,
                                                                         resource_name,
