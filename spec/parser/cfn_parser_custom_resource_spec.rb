@@ -21,5 +21,19 @@ describe CfnParser do
                                                                   })
       end
     end
+
+    it 'returns a Custom::AWS object even when it collides with known Module' do
+      yaml_test_templates('custom_resource/custom_resource_collision').each do |test_template|
+        cfn_model = @cfn_parser.parse IO.read(test_template)
+
+        custom_resources = cfn_model.resources_by_type('Custom::AWS')
+
+        expect(custom_resources.size).to eq 1
+        actual_custom_resource = custom_resources.first
+        expect(actual_custom_resource.serviceToken).to eq({
+                                                                    'Fn::GetAtt' => %w(TestLambdaFunction Arn)
+                                                                  })
+      end
+    end
   end
 end
