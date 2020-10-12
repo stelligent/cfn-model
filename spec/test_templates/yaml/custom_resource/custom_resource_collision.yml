@@ -1,0 +1,85 @@
+Parameters:
+  Base:
+    Type: "String"
+    Default: "10"
+
+  CustomResourceId:
+    Type: "String"
+    Default: "SomeCustomResourceId"
+
+
+Resources:
+  TestCustomResource:
+    Type: "Custom::AWS"
+    Properties:
+      ServiceToken: !GetAtt "TestLambdaFunction.Arn"
+      Base: !Ref Base
+      Id: !Ref CustomResourceId
+      actions-csv: some_value
+
+  TestLambdaFunction:
+    Type: "AWS::Lambda::Function"
+    Properties:
+      Handler: "index.handler"
+      Role: !GetAtt "TestLambdaExecutionRole.Arn"
+      Code:
+        ZipFile: |
+          var response = require('cfn-response');
+          exports.handler = function(event, context) {
+              console.log('Received event:');
+              console.log(JSON.stringify(event));
+              var base = event.ResourceProperties.Base;
+              var customId = event.ResourceProperties.Id;
+              var outputData = {};
+              try {
+                 if(event.RequestType != 'Delete')
+                     outputData.Result = base*5;
+                 if(event.RequestType == 'Delete' || outputData.Result == parseInt(outputData.Result, 10))
+                     response.send(event, context, response.SUCCESS, outputData, customId);
+                 else
+                     response.send(event, context, response.FAILED, {}, customId);
+              } catch (e) {
+                 console.error(e);
+                 response.send(event, context, response.FAILED, { 'error': e }, customId);
+                 return
+              }
+          }
+      Timeout: "10"
+      MemorySize: "256"
+      Runtime: "nodejs4.3"
+
+  TestLambdaExecutionRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Principal:
+              Service:
+                - "lambda.amazonaws.com"
+            Action:
+              - "sts:AssumeRole"
+      Path: "/"
+      Policies:
+        - PolicyName: "cwlogs"
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: "Allow"
+                Action: "logs:CreateLogGroup"
+                Resource: !Join [":", ["arn:aws:logs", !Ref "AWS::Region", !Ref "AWS::AccountId", "*" ]]
+
+
+              - Effect: "Allow"
+                Action:
+                  - "logs:CreateLogStream"
+                  - "logs:PutLogEvents"
+
+                Resource:
+                  - !Join [":", ["arn:aws:logs", !Ref "AWS::Region", !Ref "AWS::AccountId", "log-group", "/aws/lambda/*", "*" ]]
+
+
+Outputs:
+  Result:
+    Value: !GetAtt "TestCustomResource.Result"

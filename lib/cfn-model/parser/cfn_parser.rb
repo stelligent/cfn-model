@@ -281,7 +281,7 @@ class CfnParser
 
   def map_non_aws_resource_name_to_class_name(module_names)
     # this is a little hacky.  we've been ignoring Custom so more for
-    # backward compat.  for Alexa and other transformed resources just jam the whole
+    # backward compat. for Alexa and other transformed resources just jam the whole
     # thing together
     if module_names.first == 'Custom'
       first_module_index = 1
@@ -308,7 +308,8 @@ class CfnParser
     else
       custom_resource_class_name = map_non_aws_resource_name_to_class_name(module_names)
       begin
-        resource_class = Object.const_get custom_resource_class_name
+        custom_class = Object.const_get custom_resource_class_name
+        resource_class = custom_class if custom_class.is_a?(ModelElement)
       rescue NameError
         Object.const_set(custom_resource_class_name, resource_class)
       end
