@@ -60,6 +60,9 @@ describe CfnModel::Transforms::Serverless do
       ).to(
         eq 'AWS::Lambda::Function'
       )
+      expect(
+        actual_cfn_model.raw_model['Resources']['MyServerlessFunctionLogicalID'].key?('Metadata')
+      ).to be false
     end
     it 'Ensures "FunctionNameRole" AWS::IAM::Role' do
       cloudformation_template_yml = \
@@ -95,6 +98,20 @@ describe CfnModel::Transforms::Serverless do
         expect(global_endpoint_configuration).to eq expected_endpoint_configuration
         expect(global_runtime).to eq expected_runtime
       end
+    end
+  end
+
+  context 'Template with serverless transform and metadata' do
+    it 'Adds metadata to transformed resources' do
+      cloudformation_template_yml = \
+        yaml_test_template('sam/valid_metadata_lambda_fn')
+      actual_cfn_model = @cfn_parser.parse cloudformation_template_yml
+      expect(
+        actual_cfn_model.raw_model['Resources']['MyServerlessFunctionLogicalID'].key?('Metadata')
+      ).to be true
+      expect(
+        actual_cfn_model.raw_model['Resources']['MyServerlessFunctionLogicalIDRole'].key?('Metadata')
+      ).to be true
     end
   end
 

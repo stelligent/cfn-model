@@ -128,6 +128,13 @@ class CfnModel
 
         transform_function_events(cfn_hash, serverless_function, resource_name, with_line_numbers) if \
           serverless_function['Properties']['Events']
+
+        # Handle passing along cfn-nag specific metadata. SAM itself does not support metadata during transformation.
+        # https://github.com/aws/serverless-application-model/issues/264
+        if serverless_function.key?('Metadata') && serverless_function['Metadata'].key?('cfn_nag')
+          cfn_hash['Resources'][resource_name]['Metadata'] = serverless_function['Metadata']
+          cfn_hash['Resources'][resource_name + 'Role']['Metadata'] = serverless_function['Metadata']
+        end
       end
 
       def lambda_service_can_assume_role
