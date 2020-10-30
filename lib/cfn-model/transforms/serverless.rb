@@ -133,7 +133,9 @@ class CfnModel
         # https://github.com/aws/serverless-application-model/issues/264
         if serverless_function.key?('Metadata') && serverless_function['Metadata'].key?('cfn_nag')
           cfn_hash['Resources'][resource_name]['Metadata'] = serverless_function['Metadata']
-          cfn_hash['Resources'][resource_name + 'Role']['Metadata'] = serverless_function['Metadata']
+          unless serverless_function['Properties']['Role']
+            cfn_hash['Resources'][resource_name + 'Role']['Metadata'] = serverless_function['Metadata']
+          end
         end
       end
 

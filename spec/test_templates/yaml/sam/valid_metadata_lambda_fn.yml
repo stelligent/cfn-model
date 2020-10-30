@@ -2,6 +2,9 @@
 # Example from
 # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/transform-aws-serverless.html
 Transform: AWS::Serverless-2016-10-31
+Parameters:
+  RoleArn:
+    Type: String
 Resources:
   MyServerlessFunctionLogicalID:
     Type: AWS::Serverless::Function
@@ -14,3 +17,15 @@ Resources:
       Handler: index.handler
       Runtime: nodejs12.x
       CodeUri: 's3://testBucket/mySourceCode.zip'
+  MyServerlessFunctionLogicalID2:
+    Type: AWS::Serverless::Function
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W58
+            reason: I know what I am doing
+    Properties:
+      Handler: index.handler
+      Runtime: nodejs12.x
+      CodeUri: 's3://testBucket/mySourceCode.zip'
+      Role: !Ref RoleArn
