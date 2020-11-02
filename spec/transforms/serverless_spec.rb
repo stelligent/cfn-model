@@ -113,6 +113,20 @@ describe CfnModel::Transforms::Serverless do
         actual_cfn_model.raw_model['Resources']['MyServerlessFunctionLogicalIDRole'].key?('Metadata')
       ).to be true
     end
+    it 'Adds metadata to transformed resources without role' do
+      cloudformation_template_yml = \
+        yaml_test_template('sam/valid_metadata_lambda_fn')
+      actual_cfn_model = @cfn_parser.parse cloudformation_template_yml
+      expect(
+        actual_cfn_model.raw_model['Resources']['MyServerlessFunctionLogicalID'].key?('Metadata')
+      ).to be true
+      expect(
+        actual_cfn_model.raw_model['Resources']['MyServerlessFunctionLogicalIDRole'].key?('Metadata')
+      ).to be true
+      expect(
+        actual_cfn_model.raw_model['Resources']['MyServerlessFunctionLogicalID2'].key?('Metadata')
+      ).to be true
+    end
   end
 
   context 'Template with serverless transform without URI' do
