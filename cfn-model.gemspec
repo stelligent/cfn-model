@@ -9,6 +9,13 @@ Gem::Specification.new do |s|
   s.summary       = 'cfn-model'
   s.description   = 'An object model for CloudFormation templates'
   s.homepage      = 'https://github.com/stelligent/cfn-model'
+  s.metadata      = {
+    'bug_tracker_uri'   => "#{s.homepage}/issues",
+    'changelog_uri'     => "#{s.homepage}/releases",
+    'documentation_uri' => "https://www.rubydoc.info/gems/#{s.name}/#{s.version}",
+    'homepage_uri'      => s.homepage,
+    'source_code_uri'   => "#{s.homepage}/tree/v#{s.version}",
+  }
   s.files         = FileList[ 'lib/**/*.rb', 'lib/**/*.yml', 'lib/**/*.erb']
 
   s.require_paths << 'lib'
