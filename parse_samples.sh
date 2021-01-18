@@ -1,6 +1,6 @@
 #!/bin/bash -l
 
-rvm use 2.2.1
+rvm use 2.5.8
 rvm --force gemset delete cfn_model
 rvm gemset use cfn_model --create
 
