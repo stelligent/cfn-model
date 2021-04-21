@@ -54,9 +54,9 @@ PLATFORMS
 DEPENDENCIES
   cfn-model!
   rake
-  rspec
+  rspec (~> 3.4)
   rubocop
-  simplecov
+  simplecov (~> 0.11)
 
 BUNDLED WITH
    2.2.3
