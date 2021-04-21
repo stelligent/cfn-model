@@ -1,5 +1,7 @@
 ---
 AllCops:
+  Exclude:
+    - 'spec/**/*'
   TargetRubyVersion: 2.5
 # Not going to use a Rails gem for this, disable until
 # Ruby 2.3+
