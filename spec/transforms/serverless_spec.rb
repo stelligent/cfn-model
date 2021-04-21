@@ -61,6 +61,9 @@ describe CfnModel::Transforms::Serverless do
         eq 'AWS::Lambda::Function'
       )
       expect(
+        actual_cfn_model.raw_model['Resources']['MyServerlessFunctionLogicalID']['Properties']
+      ).not_to include('ReservedConcurrentExecutions')
+      expect(
         actual_cfn_model.raw_model['Resources']['MyServerlessFunctionLogicalID'].key?('Metadata')
       ).to be false
     end
@@ -91,6 +94,10 @@ describe CfnModel::Transforms::Serverless do
         actual_runtime = actual_cfn_model.resources['SomeFunction'].runtime
         global_endpoint_configuration = actual_cfn_model.globals['Api'].endpointConfiguration
         global_runtime = actual_cfn_model.globals['Function'].runtime
+
+        expect(
+          actual_cfn_model.raw_model['Resources']['SomeFunction']['Properties']
+        ).to include('ReservedConcurrentExecutions')
 
         expect(actual_bucket).to eq expected_bucket
         expect(actual_key).to eq expected_key

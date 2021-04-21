@@ -93,6 +93,7 @@ class CfnModel
           handler: serverless_function_property(serverless_function, cfn_hash, 'Handler'),
           role: format_function_role(serverless_function, fn_name),
           runtime: serverless_function_property(serverless_function, cfn_hash, 'Runtime'),
+          reserved_concurrent_executions: serverless_function_property(serverless_function, cfn_hash, 'ReservedConcurrentExecutions'),
           with_line_numbers: with_line_numbers
         }
 
@@ -118,6 +119,7 @@ class CfnModel
           code_key: lambda_fn_params[:code_key],
           role: lambda_fn_params[:role],
           runtime: lambda_fn_params[:runtime],
+          reserved_concurrent_executions: lambda_fn_params[:reserved_concurrent_executions],
           with_line_numbers: lambda_fn_params[:with_line_numbers]
         )
         unless serverless_function['Properties']['Role']
@@ -223,6 +225,7 @@ class CfnModel
                           code_key: nil,
                           role:,
                           runtime:,
+                          reserved_concurrent_executions:,
                           with_line_numbers: false)
         fn_resource = {
           'Type' => format_resource_type('AWS::Lambda::Function', -1, with_line_numbers),
@@ -232,6 +235,8 @@ class CfnModel
             'Runtime' => runtime
           }
         }
+        fn_resource['Properties']['ReservedConcurrentExecutions'] = reserved_concurrent_executions unless reserved_concurrent_executions.nil?
+
         lambda_function_code(fn_resource, code_bucket, code_key)
       end
 
