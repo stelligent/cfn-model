@@ -1,5 +1,3 @@
-require 'rake'
-
 Gem::Specification.new do |s|
   s.name          = 'cfn-model'
   s.license       = 'MIT'
@@ -16,13 +14,16 @@ Gem::Specification.new do |s|
     'homepage_uri'      => s.homepage,
     'source_code_uri'   => "#{s.homepage}/tree/v#{s.version}",
   }
-  s.files         = FileList[ 'lib/**/*.rb', 'lib/**/*.yml', 'lib/**/*.erb']
+  s.files         = Dir.glob([ 'lib/**/*.rb', 'lib/**/*.yml', 'lib/**/*.erb'])
 
   s.require_paths << 'lib'
 
   s.required_ruby_version = '>= 2.5.0'
 
-  s.add_development_dependency 'rubocop'
+  s.add_development_dependency('rake')
+  s.add_development_dependency('rspec', '~> 3.4')
+  s.add_development_dependency('rubocop')
+  s.add_development_dependency('simplecov', '~> 0.11')
 
   s.add_runtime_dependency('kwalify', '0.7.2')
   s.add_runtime_dependency('psych', '~> 3')
