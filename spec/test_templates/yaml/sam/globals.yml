@@ -22,5 +22,6 @@ Resources:
       FunctionName: !Sub "${Site}-Function"
       Handler: "com.test.Function::handleRequest"
       Tracing: Active
+      ReservedConcurrentExecutions: 1
       Tags:
         warmup: True
