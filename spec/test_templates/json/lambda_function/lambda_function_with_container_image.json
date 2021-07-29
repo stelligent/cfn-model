@@ -1,0 +1,14 @@
+{
+  "Resources" : {
+    "ContainerImageFunction": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Role": "arn:aws:iam::123456789012:role/LambdaExecutionRole",
+        "Code": {
+          "ImageUri": "123456789012.dkr.ecr.us-east-1.amazonaws.com/hello-world:latest"
+        },
+        "PackageType": "Image"
+      }
+    }
+  }
+}
