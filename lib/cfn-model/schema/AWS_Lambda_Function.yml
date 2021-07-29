@@ -14,13 +14,13 @@ mapping:
         required: yes
       Handler:
         type: any
-        required: yes
+        required: no
       Role:
         type: any
         required: yes
       Runtime:
         type: any
-        required: yes
+        required: no
       =:
         type: any
   =:
