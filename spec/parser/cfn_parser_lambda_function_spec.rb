@@ -34,5 +34,18 @@ describe CfnParser do
         expect(actual_computed_role).to be_nil
       end
     end
+
+    it 'does not have handler or runtime when using container image' do
+      json_test_templates('lambda_function/lambda_function_with_container_image').each do |template|
+        cfn_model = @cfn_parser.parse IO.read(template)
+        lambda_functions = cfn_model.resources_by_type('AWS::Lambda::Function')
+
+        expect(lambda_functions.size).to eq 1
+        lambda_function = lambda_functions.first
+
+        expect(lambda_function.handler).to be_nil
+        expect(lambda_function.runtime).to be_nil
+      end
+    end
   end
 end
