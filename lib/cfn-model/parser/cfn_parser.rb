@@ -184,6 +184,7 @@ class CfnParser
       parameter = Parameter.new
       parameter.id = parameter_name
       parameter.type = parameter_hash['Type']
+      parameter.logical_resource_id = parameter_name
 
       parameter_hash.each do |property_name, property_value|
         next if %w(Type).include? property_name
@@ -191,6 +192,7 @@ class CfnParser
       end
 
       cfn_model.parameters[parameter_name] = parameter
+      cfn_model.line_numbers[parameter_name] = parameter_hash['Type']['line']
     end
     cfn_model
   end
