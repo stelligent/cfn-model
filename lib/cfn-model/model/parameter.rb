@@ -2,9 +2,7 @@
 
 #copy-paste alert with ModelElement which should instead be Resource anyway
 class Parameter
-  attr_accessor :id, :type
-
-  attr_accessor :synthesized_value
+  attr_accessor :id, :type, :logical_parameter_id, :synthesized_value
 
   def is_no_echo?
     !@noEcho.nil? && @noEcho.to_s.downcase == 'true'

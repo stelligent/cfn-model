@@ -184,10 +184,11 @@ class CfnParser
       parameter = Parameter.new
       parameter.id = parameter_name
       parameter.type = parameter_hash['Type']
-      parameter.logical_resource_id = parameter_name
+      parameter.logical_parameter_id = parameter_name
 
       parameter_hash.each do |property_name, property_value|
-        next if %w(Type).include? property_name
+        next if %w[Type].include? property_name
+
         parameter.send("#{map_property_name_to_attribute(property_name)}=", property_value)
       end
 
