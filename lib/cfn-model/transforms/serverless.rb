@@ -3,7 +3,7 @@
 class CfnModel
   class Transforms
     # Handle transformation of model elements performed by the
-    # Serverless trasnform, see
+    # Serverless transform, see
     # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/transform-aws-serverless.html
     class Serverless
       def perform_transform(cfn_hash)
@@ -108,6 +108,8 @@ class CfnModel
       def replace_serverless_function(cfn_hash, resource_name, with_line_numbers)
         serverless_function = cfn_hash['Resources'][resource_name]
 
+        original_line_number = serverless_function['Type']['line']
+
         lambda_fn_params = serverless_function_properties(cfn_hash,
                                                           serverless_function,
                                                           resource_name,
@@ -120,15 +122,17 @@ class CfnModel
           role: lambda_fn_params[:role],
           runtime: lambda_fn_params[:runtime],
           reserved_concurrent_executions: lambda_fn_params[:reserved_concurrent_executions],
+          line_number: original_line_number,
           with_line_numbers: lambda_fn_params[:with_line_numbers]
         )
         unless serverless_function['Properties']['Role']
           cfn_hash['Resources'][resource_name + 'Role'] = function_role(serverless_function,
                                                                         resource_name,
+                                                                        original_line_number,
                                                                         with_line_numbers)
         end
 
-        transform_function_events(cfn_hash, serverless_function, resource_name, with_line_numbers) if \
+        transform_function_events(cfn_hash, serverless_function, resource_name, original_line_number, with_line_numbers) if \
           serverless_function['Properties']['Events']
 
         # Handle passing along cfn-nag specific metadata. SAM itself does not support metadata during transformation.
@@ -156,9 +160,9 @@ class CfnModel
 
       # Return the hash structure of the '<function_name>Role'
       # AWS::IAM::Role resource as created by Serverless transform
-      def function_role(serverless_function, function_name, with_line_numbers)
+      def function_role(serverless_function, function_name, line_number, with_line_numbers)
         fn_role = {
-          'Type' => format_resource_type('AWS::IAM::Role', -1, with_line_numbers),
+          'Type' => format_resource_type('AWS::IAM::Role', line_number, with_line_numbers),
           'Properties' => {
             'ManagedPolicyArns' => function_role_managed_policies(serverless_function['Properties']),
             'AssumeRolePolicyDocument' => lambda_service_can_assume_role
@@ -226,9 +230,10 @@ class CfnModel
                           role:,
                           runtime:,
                           reserved_concurrent_executions:,
+                          line_number:,
                           with_line_numbers: false)
         fn_resource = {
-          'Type' => format_resource_type('AWS::Lambda::Function', -1, with_line_numbers),
+          'Type' => format_resource_type('AWS::Lambda::Function', line_number, with_line_numbers),
           'Properties' => {
             'Handler' => handler,
             'Role' => role,
@@ -242,16 +247,16 @@ class CfnModel
 
       # Return the Event structure of a AWS::Lambda::Function as created
       # by Serverless transform
-      def transform_function_events(cfn_hash, serverless_function, function_name, with_line_numbers)
+      def transform_function_events(cfn_hash, serverless_function, function_name, line_number, with_line_numbers)
         serverless_function['Properties']['Events'].each do |_, event|
-          serverlessrestapi_resources(cfn_hash, event, function_name, with_line_numbers) if \
+          serverlessrestapi_resources(cfn_hash, event, function_name, line_number, with_line_numbers) if \
             matching_resource_type?(event['Type'], 'Api')
         end
       end
 
-      def serverlessrestapi_resources(cfn_hash, event, func_name, with_line_numbers)
+      def serverlessrestapi_resources(cfn_hash, event, func_name, line_number, with_line_numbers)
         # ServerlessRestApi
-        cfn_hash['Resources']['ServerlessRestApi'] ||= serverlessrestapi_base with_line_numbers
+        cfn_hash['Resources']['ServerlessRestApi'] ||= serverlessrestapi_base line_number, with_line_numbers
         add_serverlessrestapi_event(
           cfn_hash['Resources']['ServerlessRestApi']['Properties']['Body']['paths'],
           event,
@@ -259,15 +264,15 @@ class CfnModel
         )
 
         # ServerlessRestApiDeployment
-        cfn_hash['Resources']['ServerlessRestApiDeployment'] = serverlessrestapi_deployment with_line_numbers
+        cfn_hash['Resources']['ServerlessRestApiDeployment'] ||= serverlessrestapi_deployment line_number, with_line_numbers
 
         # ServerlessRestApiProdStage
-        cfn_hash['Resources']['ServerlessRestApiProdStage'] = serverlessrestapi_stage with_line_numbers
+        cfn_hash['Resources']['ServerlessRestApiProdStage'] ||= serverlessrestapi_stage line_number, with_line_numbers
       end
 
-      def serverlessrestapi_base(with_line_nos)
+      def serverlessrestapi_base(line_number, with_line_numbers)
         {
-          'Type' => format_resource_type('AWS::ApiGateway::RestApi', -1, with_line_nos),
+          'Type' => format_resource_type('AWS::ApiGateway::RestApi', line_number, with_line_numbers),
           'Properties' => {
             'Body' => {
               'info' => {
@@ -294,9 +299,9 @@ class CfnModel
         }
       end
 
-      def serverlessrestapi_deployment(with_line_nos)
+      def serverlessrestapi_deployment(line_number, with_line_numbers)
         {
-          'Type' => format_resource_type('AWS::ApiGateway::Deployment', -1, with_line_nos),
+          'Type' => format_resource_type('AWS::ApiGateway::Deployment', line_number, with_line_numbers),
           'Properties' => {
             'Description' => 'Generated by cfn-model',
             'RestApiId' => { 'Ref' => 'ServerlessRestApi' },
@@ -311,9 +316,9 @@ class CfnModel
         }
       end
 
-      def serverlessrestapi_stage(with_line_nos)
+      def serverlessrestapi_stage(line_number, with_line_numbers)
         {
-          'Type' => format_resource_type('AWS::ApiGateway::Stage', -1, with_line_nos),
+          'Type' => format_resource_type('AWS::ApiGateway::Stage', line_number, with_line_numbers),
           'Properties' => {
             'DeploymentId' => { 'Ref' => 'ServerlessRestApiDeployment' },
             'RestApiId' => { 'Ref' => 'ServerlessRestApi' },
