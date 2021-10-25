@@ -1,4 +1,8 @@
 ---
+Parameters:
+  AccessKey:
+    Type: String
+
 Resources:
   iamUserWithAddition:
     Type: "AWS::IAM::User"
