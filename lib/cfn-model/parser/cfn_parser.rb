@@ -156,6 +156,7 @@ class CfnParser
       assign_fields_based_upon_properties resource_object, resource, cfn_model
 
       cfn_model.resources[resource_name] = resource_object
+      cfn_model.element_types[resource_name] = "resource"
     end
     cfn_model
   end
@@ -173,6 +174,7 @@ class CfnParser
 
       cfn_model.resources[resource_name] = resource_object
       cfn_model.line_numbers[resource_name] = resource['Type']['line']
+      cfn_model.element_types[resource_name] = "resource"
     end
     cfn_model
   end
@@ -193,6 +195,7 @@ class CfnParser
 
       cfn_model.parameters[parameter_name] = parameter
       cfn_model.line_numbers[parameter_name] = parameter_hash['Type']['line']
+      cfn_model.element_types[parameter_name] = "parameter"
     end
     cfn_model
   end
