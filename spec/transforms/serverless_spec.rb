@@ -224,4 +224,40 @@ describe CfnModel::Transforms::Serverless do
       expect(serverlessrestapi_stage).to be_nil
     end
   end
+
+  context 'Templates with line numbers enabled' do
+    it 'assigns line numbers to function resource' do
+      cloudformation_template_yml = yaml_test_template('sam/valid_simple_lambda_fn')
+      actual_cfn_model = @cfn_parser.parse cloudformation_template_yml, nil, true
+
+      lambda_function = actual_cfn_model.resources_by_type('AWS::Lambda::Function').first
+      expect(actual_cfn_model.line_numbers[lambda_function.logical_resource_id]).to eq(7)
+    end
+
+    it 'assigns line numbers to role resource' do
+      cloudformation_template_yml = yaml_test_template('sam/valid_simple_lambda_fn')
+      actual_cfn_model = @cfn_parser.parse cloudformation_template_yml, nil, true
+
+      iam_role = actual_cfn_model.resources_by_type('AWS::IAM::Role').first
+      expect(actual_cfn_model.line_numbers[iam_role.logical_resource_id]).to eq(7)
+    end
+
+    it 'assigns line numbers to serverless event resources' do
+      cloudformation_template_yml = yaml_test_template('sam/serverlessrestapi_as_ref')
+      actual_cfn_model = @cfn_parser.parse cloudformation_template_yml, nil, true
+
+      expect(actual_cfn_model.line_numbers['ServerlessRestApi']).to eq(15)
+      expect(actual_cfn_model.line_numbers['ServerlessRestApiDeployment']).to eq(15)
+      expect(actual_cfn_model.line_numbers['ServerlessRestApiProdStage']).to eq(15)
+    end
+  end
+
+  context 'Templates with line numbers disabled' do
+    it 'does not assign line numbers to function resource' do
+      cloudformation_template_yml = yaml_test_template('sam/valid_simple_lambda_fn')
+      actual_cfn_model = @cfn_parser.parse cloudformation_template_yml, nil, false
+
+      expect(actual_cfn_model.line_numbers).to be_empty
+    end
+  end
 end
