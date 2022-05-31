@@ -23,7 +23,7 @@ Resources:
       JimBob: !Ref someResource
 END
 
-      unresolved_references = ReferenceValidator.new.unresolved_references YAML.load(cfn_yaml_with_missing_ref)
+      unresolved_references = ReferenceValidator.new.unresolved_references YAML.safe_load(cfn_yaml_with_missing_ref)
       expect(unresolved_references).to eq Set.new(%w(dino))
     end
   end
@@ -48,7 +48,7 @@ Resources:
       JimBob: !Ref someResource
 END
 
-      unresolved_references = ReferenceValidator.new.unresolved_references YAML.load(cfn_yaml_with_missing_ref)
+      unresolved_references = ReferenceValidator.new.unresolved_references YAML.safe_load(cfn_yaml_with_missing_ref)
       expect(unresolved_references).to eq Set.new(%w(dino))
     end
   end
@@ -72,7 +72,7 @@ Resources:
 END
 
       expect {
-        _ = ReferenceValidator.new.unresolved_references YAML.load(cfn_yaml_with_missing_ref)
+        _ = ReferenceValidator.new.unresolved_references YAML.safe_load(cfn_yaml_with_missing_ref)
       }.to raise_error(ParserError, 'Ref target must be string literal: {"Ref"=>{"Fn::GetAtt"=>["someResource", "Fred"]}}')
     end
   end
@@ -90,7 +90,7 @@ Resources:
       Barney: !Ref AWS::Region
 END
 
-      unresolved_references = ReferenceValidator.new.unresolved_references YAML.load(cfn_yaml_with_missing_ref)
+      unresolved_references = ReferenceValidator.new.unresolved_references YAML.safe_load(cfn_yaml_with_missing_ref)
       expect(unresolved_references).to eq Set.new([])
     end
   end
@@ -115,7 +115,7 @@ Resources:
       JimBob: !Ref someResource
 END
 
-      unresolved_references = ReferenceValidator.new.unresolved_references YAML.load(cfn_yaml_with_missing_ref)
+      unresolved_references = ReferenceValidator.new.unresolved_references YAML.safe_load(cfn_yaml_with_missing_ref)
       expect(unresolved_references).to eq Set.new(%w(dino2))
     end
   end
@@ -144,7 +144,7 @@ Resources:
       JimBob: !Ref someResource
 END
 
-      unresolved_references = ReferenceValidator.new.unresolved_references YAML.load(cfn_yaml_with_missing_ref)
+      unresolved_references = ReferenceValidator.new.unresolved_references YAML.safe_load(cfn_yaml_with_missing_ref)
       expect(unresolved_references).to eq Set.new(%w(dino2))
     end
   end
@@ -170,7 +170,7 @@ Resources:
       Ricky: !Ref someResource.Version
 END
 
-      unresolved_references = ReferenceValidator.new.unresolved_references YAML.load(cfn_yaml_with_pseudo_refs)
+      unresolved_references = ReferenceValidator.new.unresolved_references YAML.safe_load(cfn_yaml_with_pseudo_refs)
       expect(unresolved_references).to eq Set.new(%w())
     end
   end
@@ -196,7 +196,7 @@ Resources:
       Ricky: !Ref bogus.Version
 END
 
-      unresolved_references = ReferenceValidator.new.unresolved_references YAML.load(cfn_yaml_with_pseudo_refs)
+      unresolved_references = ReferenceValidator.new.unresolved_references YAML.safe_load(cfn_yaml_with_pseudo_refs)
       expect(unresolved_references).to eq Set.new(%w(bogus.Version))
     end
   end

@@ -32,7 +32,7 @@ upon which static analysis can be conducted.
 The `CfnModel` is a container for other object that have been parsed, wrapped and potentially linked to
 other wrapped objects.
 
-The raw Hash output of `YAML.load` is also available from `CfnModel`.
+The raw Hash output of `YAML.safe_load` is also available from `CfnModel`.
 
     require 'cfn-model'
         
