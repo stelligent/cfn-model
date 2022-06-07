@@ -110,7 +110,7 @@ class CfnParser
       if condition_values_json.nil?
         condition_values = {}
       else
-        condition_values = JSON.load condition_values_json
+        condition_values = JSON.parse condition_values_json
       end
 
       cfn_hash['Conditions'].each do |condition_key, _|

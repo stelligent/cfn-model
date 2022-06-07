@@ -9,7 +9,7 @@ class ParameterSubstitution
 
   def apply_parameter_values(cfn_model, parameter_values_json)
     unless parameter_values_json.nil?
-      parameter_values = JSON.load parameter_values_json
+      parameter_values = JSON.parse parameter_values_json
       if is_aws_format?(parameter_values)
         parameter_values = convert_aws_to_legacy_format(parameter_values)
       elsif !is_legacy_format?(parameter_values)
