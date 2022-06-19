@@ -123,4 +123,42 @@ END
       expect(actual_hash).to eq expected_hash
     end
   end
+
+  context 'given a template with date and symbol values' do
+    let(:template) { <<~TEMPLATE }
+      ---      
+      AWSTemplateFormatVersion: 2010-09-09
+      Resources:
+        SecurityGroupIngress:
+          Type: AWS::EC2::SecurityGroupIngress
+          Properties:
+            GroupId: sg-12341234
+            CidrIpv6: ::/0
+            FromPort: 22
+            ToPort: 22
+            IpProtocol: tcp
+    TEMPLATE
+
+    it 'successfully returns the Hash of the parsed document' do
+      parsed_template = ResourceTypeValidator.validate(template)
+
+      expect(parsed_template).to eq(
+        {
+          'AWSTemplateFormatVersion' => Date.new(2010, 9, 9),
+          'Resources' => {
+            'SecurityGroupIngress' => {
+              'Type' => 'AWS::EC2::SecurityGroupIngress',
+              'Properties' => {
+                'GroupId' => 'sg-12341234',
+                'CidrIpv6' => :':/0',
+                'FromPort' => 22,
+                'ToPort' => 22,
+                'IpProtocol' => 'tcp'
+              }
+            }
+          }
+        }
+      )
+    end
+  end
 end

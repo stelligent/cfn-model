@@ -176,5 +176,23 @@ TEMPLATE
 
       expect(CloudFormationValidator.new.validate(valid_yaml)).to eq []
     end
+
+    it 'does not raise an error when template is YAML with date and symbol values' do
+      valid_yaml = <<~TEMPLATE
+        ---
+        AWSTemplateFormatVersion: 2010-09-09
+        Resources:
+          SecurityGroupIngress:
+            Type: AWS::EC2::SecurityGroupIngress
+            Properties:
+              GroupId: sg-12341234
+              CidrIpv6: ::/0
+              FromPort: 22
+              ToPort: 22
+              IpProtocol: tcp
+      TEMPLATE
+
+      expect(CloudFormationValidator.new.validate(valid_yaml)).to eq []
+    end
   end
 end

@@ -5,7 +5,7 @@ require 'cfn-model/parser/parser_error'
 class ResourceTypeValidator
 
   def self.validate(cloudformation_yml)
-    hash = YAML.safe_load cloudformation_yml, permitted_classes: [Date]
+    hash = YAML.safe_load cloudformation_yml, permitted_classes: [Date, Symbol]
     if hash == false || hash.nil?
       raise ParserError.new 'yml empty'
     end
