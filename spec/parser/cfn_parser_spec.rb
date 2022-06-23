@@ -271,6 +271,9 @@ Parameters:
     Type: String
     NoEcho: true
     Default: none
+  TestIPV6:
+    Type: String
+    Default: ::/0
 Conditions:
   IsNone: !Or
     - !Equals

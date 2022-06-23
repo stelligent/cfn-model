@@ -65,7 +65,7 @@ class CfnParser
       if with_line_numbers
         parse_with_line_numbers(cloudformation_yml)
       else
-        YAML.safe_load cloudformation_yml, permitted_classes: [Date]
+        YAML.safe_load cloudformation_yml, permitted_classes: [Date, Symbol]
       end
 
     # Transform raw resources in template as performed by
